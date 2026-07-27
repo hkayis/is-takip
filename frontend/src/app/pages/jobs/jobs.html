@@ -1,0 +1,122 @@
+<div class="ust-bar">
+  <h1>İşler</h1>
+  <button matButton="filled" (click)="yeniIsAc()">+ Yeni İş</button>
+</div>
+
+<div class="board-layout">
+  <div class="pano">
+    <div class="sutun">
+      <h2>Bekleyen <span class="sayi">{{ bekleyenler().length }}</span></h2>
+      <div class="kartlar">
+        @for (job of bekleyenler(); track job.id) {
+          <div class="is-kart" [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
+            <div class="kart-baslik">{{ job.title }}</div>
+            <div class="kart-alt">
+              <span class="tarih">{{ job.deadline | date:'d MMM' }}</span>
+            </div>
+          </div>
+        } @empty {
+          <p class="bos">İş yok</p>
+        }
+      </div>
+    </div>
+
+    <div class="sutun">
+      <h2>Devam Eden <span class="sayi">{{ devamEdenler().length }}</span></h2>
+      <div class="alt-sutunlar">
+        @for (asama of doluAsamalar(); track asama) {
+          <div class="alt-sutun">
+            <div class="alt-baslik">{{ asama }}</div>
+            @for (job of asamaninIsleri(asama); track job.id) {
+              <div class="is-kart" [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
+                <div class="kart-baslik">{{ job.title }}</div>
+                <div class="kart-alt">
+                  <span class="tarih">{{ job.deadline | date:'d MMM' }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        } @empty {
+          <p class="bos">İş yok</p>
+        }
+      </div>
+    </div>
+
+    <div class="sutun">
+      <h2>Tamamlanan <span class="sayi">{{ tamamlananlar().length }}</span></h2>
+      <div class="kartlar">
+        @for (job of tamamlananlar(); track job.id) {
+          <div class="is-kart" [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
+            <div class="kart-baslik">{{ job.title }}</div>
+            <div class="kart-alt">
+              <span class="tarih">{{ job.deadline | date:'d MMM' }}</span>
+            </div>
+          </div>
+        } @empty {
+          <p class="bos">İş yok</p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <aside class="yan-panel">
+    @if (seciliDetay(); as s) {
+      <div class="panel-icerik">
+        <h2>{{ s.title }}</h2>
+        <span class="rozet" [attr.data-durum]="s.status">{{ s.status }}</span>
+        <p class="aciklama">{{ s.description }}</p>
+        <div class="meta">
+          <span>Aşama: {{ s.stage ?? '—' }}</span>
+          <span>Son tarih: {{ s.deadline | date:'d MMMM y' }}</span>
+        </div>
+
+        
+
+        <h3>Durum Değiştir</h3>
+        <mat-form-field appearance="outline">
+          <mat-label>Yeni durum</mat-label>
+          <mat-select [(ngModel)]="yeniDurum">
+            <mat-option value="Beklemede">Beklemede</mat-option>
+            <mat-option value="DevamEdiyor">Devam Ediyor</mat-option>
+            <mat-option value="Tamamlandi">Tamamlandı</mat-option>
+            <mat-option value="Iptal">İptal</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        @if (yeniDurum === 'DevamEdiyor') {
+          <mat-form-field appearance="outline">
+            <mat-label>Aşama</mat-label>
+            <mat-select [(ngModel)]="yeniAsama">
+              <mat-option value="Plan">Plan</mat-option>
+              <mat-option value="Design">Design</mat-option>
+              <mat-option value="Develop">Develop</mat-option>
+              <mat-option value="Test">Test</mat-option>
+              <mat-option value="Deploy">Deploy</mat-option>
+              <mat-option value="Review">Review</mat-option>
+            </mat-select>
+          </mat-form-field>
+        }
+
+        <mat-form-field appearance="outline">
+          <mat-label>Not</mat-label>
+          <input matInput [(ngModel)]="not" />
+        </mat-form-field>
+
+        <button matButton="filled" (click)="durumDegistir()">Güncelle</button>
+        <button matButton (click)="sil(s.id)">Bu işi sil</button>
+      </div>
+      <h3>Geçmiş</h3>
+        @for (h of s.history; track h.id) {
+          <div class="gecmis-satiri">
+            <span class="tarih">{{ h.changedAt | date:'d MMM y, HH:mm' }}</span>
+            <span>{{ h.oldStatus ?? 'yeni' }} → {{ h.newStatus }}</span>
+            @if (h.note) { <span class="not">({{ h.note }})</span> }
+          </div>
+        } @empty {
+          <p class="bos">Geçmiş yok.</p>
+        }
+    } @else {
+      <div class="panel-bos">Bir iş seçin</div>
+    }
+  </aside>
+</div>

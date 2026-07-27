@@ -1,0 +1,63 @@
+@if (job(); as j) {
+  <mat-card class="detay-kart">
+    <div class="baslik-satiri">
+      <h1>{{ j.title }}</h1>
+      <span class="rozet" [attr.data-durum]="j.status">{{ j.status }}</span>
+    </div>
+    <p class="aciklama">{{ j.description }}</p>
+    <div class="meta">
+      <span>Aşama: {{ j.stage ?? '—' }}</span>
+      <span>Son tarih: {{ j.deadline }}</span>
+    </div>
+  </mat-card>
+
+  <mat-card class="gecmis-kart">
+    <h2>Geçmiş</h2>
+    @for (h of j.history; track h.id) {
+      <div class="gecmis-satiri">
+        <span class="tarih">{{ h.changedAt }}</span>
+        <span>{{ h.oldStatus ?? 'yeni' }} → {{ h.newStatus }}</span>
+        @if (h.note) { <span class="not">({{ h.note }})</span> }
+      </div>
+    } @empty {
+      <p>Geçmiş kaydı yok.</p>
+    }
+  </mat-card>
+
+  <mat-card class="form-kart">
+    <h2>Durum Değiştir</h2>
+    <div class="form-alanlari">
+      <mat-form-field appearance="outline">
+        <mat-label>Yeni durum</mat-label>
+        <mat-select [(ngModel)]="yeniDurum">
+          <mat-option value="Beklemede">Beklemede</mat-option>
+          <mat-option value="DevamEdiyor">Devam Ediyor</mat-option>
+          <mat-option value="Tamamlandi">Tamamlandı</mat-option>
+          <mat-option value="Iptal">İptal</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      @if (yeniDurum === 'DevamEdiyor') {
+        <mat-form-field appearance="outline">
+          <mat-label>Aşama</mat-label>
+          <mat-select [(ngModel)]="yeniAsama">
+            <mat-option value="Plan">Plan</mat-option>
+            <mat-option value="Design">Design</mat-option>
+            <mat-option value="Develop">Develop</mat-option>
+            <mat-option value="Test">Test</mat-option>
+            <mat-option value="Deploy">Deploy</mat-option>
+            <mat-option value="Review">Review</mat-option>
+          </mat-select>
+        </mat-form-field>
+      }
+
+      <mat-form-field appearance="outline">
+        <mat-label>Not</mat-label>
+        <input matInput [(ngModel)]="not" />
+      </mat-form-field>
+    </div>
+    <button matButton="filled" (click)="durumDegistir()">Güncelle</button>
+  </mat-card>
+} @else {
+  <p>Yükleniyor…</p>
+}

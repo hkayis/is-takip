@@ -1,0 +1,18 @@
+.icerik {
+  padding: 16px 24px;
+}
+
+
+
+mat-toolbar a {
+  color: inherit;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+mat-toolbar a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}

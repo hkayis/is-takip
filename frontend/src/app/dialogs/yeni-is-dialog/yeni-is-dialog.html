@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>Yeni İş</h2>
+
+<mat-dialog-content class="form">
+  <mat-form-field appearance="outline">
+    <mat-label class="bas">Başlık</mat-label>
+    <input matInput [(ngModel)]="baslik" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Açıklama</mat-label>
+    <input matInput [(ngModel)]="aciklama" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Son tarih</mat-label>
+    <input matInput type="date" [(ngModel)]="tarih" />
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton (click)="iptal()">İptal</button>
+  <button matButton="filled" (click)="kaydet()">Ekle</button>
+</mat-dialog-actions>

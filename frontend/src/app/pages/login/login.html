@@ -1,0 +1,20 @@
+<div class="login-page">
+  <mat-card class="login-card">
+    <h1>Giriş Yap</h1>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Kullanıcı adı</mat-label>
+      <input matInput [(ngModel)]="username" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Şifre</mat-label>
+      <input matInput type="password" [(ngModel)]="password" />
+    </mat-form-field>
+
+    <button matButton="filled" (click)="girisYap()">Giriş Yap</button>
+        @if (hata) {
+      <p class="hata">{{ hata }}</p>
+    }
+  </mat-card>
+</div>

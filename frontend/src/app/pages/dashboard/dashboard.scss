@@ -1,0 +1,33 @@
+.kpi-satiri {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.kpi {
+  flex: 1;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px;
+  border-top: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.kpi .sayi {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.kpi .etiket {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.kpi.bekleyen { border-top-color: #f57c00; }
+.kpi.devam    { border-top-color: #1976d2; }
+.kpi.tamam    { border-top-color: #388e3c; }
+.kpi.geciken  { border-top-color: #d32f2f; }
+
+.kpi.geciken .sayi { color: #d32f2f; }

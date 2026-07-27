@@ -1,0 +1,20 @@
+# ---- .NET / backend ----
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# ---- Node / Angular / frontend ----
+node_modules/
+dist/
+.angular/
+npm-debug.log*
+
+# ---- Ortam / IDE ----
+.vscode/
+.idea/
+
+# ---- İşletim sistemi ----
+Thumbs.db
+.DS_Store

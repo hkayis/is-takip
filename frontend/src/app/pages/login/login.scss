@@ -1,0 +1,14 @@
+.login-page {
+  display: flex;
+  justify-content: center;   /* yatayda ortala */
+  align-items: center;       /* dikeyde ortala */
+  min-height: 100vh;         /* ekran yüksekliği kadar alan kapla */
+}
+
+.login-card {
+  display: flex;
+  flex-direction: column;    /* içindekiler alt alta dizilsin */
+  gap: 16px;                  /* aralarında 16px boşluk */
+  width: 320px;
+  padding: 24px;
+}
