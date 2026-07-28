@@ -29,6 +29,20 @@ export class Jobs implements OnInit {
   );
   seciliDetay = signal<JobDetail | null>(null);
 
+  // Liste görünümü durumu
+  gorunum = signal<'liste' | 'pano'>('liste');
+  arama = signal('');
+  durumFiltre = signal('hepsi');
+
+  filtrelenmisIsler = computed(() => {
+    const metin = this.arama().toLowerCase().trim();
+    const durum = this.durumFiltre();
+    return this.jobs()
+      .filter(j => durum === 'hepsi' || j.status === durum)
+      .filter(j => j.title.toLowerCase().includes(metin))
+      .sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
+  });
+
   yeniDurum = '';
   yeniAsama: string | null = null;
   not = '';
