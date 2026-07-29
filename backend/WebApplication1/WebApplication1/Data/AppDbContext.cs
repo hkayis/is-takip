@@ -30,6 +30,9 @@ namespace WebApplication1.Data
 
             modelBuilder.Entity<Job>(entity =>
             {
+                // Id'yi kullanıcı belirliyor -> otomatik artan (IDENTITY) kapalı
+                entity.Property(j => j.Id).ValueGeneratedNever();
+
                 entity.Property(j => j.Title)
                       .IsRequired()
                       .HasMaxLength(200);
@@ -41,6 +44,9 @@ namespace WebApplication1.Data
                 entity.Property(j => j.Stage)
                       .HasConversion<string>()
                       .HasMaxLength(30);
+                entity.Property(j=> j.Priority)
+                    .HasConversion<string>()
+                    .HasMaxLength (30);
 
                 entity.Property(j => j.CreatedAt).HasConversion(utcConverter);
                 entity.Property(j => j.Deadline).HasConversion(utcConverter);

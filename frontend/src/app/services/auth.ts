@@ -1,4 +1,4 @@
-import { Service, inject } from '@angular/core';
+import { Service, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 export interface LoginResponse{
@@ -22,5 +22,17 @@ export class Auth {
             password,
 
         }); 
+    }
+    girisYapildi=signal(!!localStorage.getItem('token'));
+
+    tokenKaydet(token: string){
+        localStorage.setItem('token', token);
+        this.girisYapildi.set(true);
+
+    }
+
+    cikis(){
+        localStorage.removeItem('token');
+        this.girisYapildi.set(false);
     }
 }

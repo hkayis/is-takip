@@ -1,33 +1,186 @@
 .kpi-satiri {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
 }
 
-.kpi {
-  flex: 1;
-  min-width: 150px;
+.toplam-kart {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 4px;
-  padding: 20px;
-  border-top: 3px solid rgba(0, 0, 0, 0.15);
+  position: relative;
+  min-width: 200px;
+  padding: 20px 44px 20px 20px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+  border-top: 3px solid #1976d2;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: box-shadow 0.15s ease;
 }
 
-.kpi .sayi {
+.toplam-kart:hover {
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+}
+
+.toplam-kart .sayi {
   font-size: 32px;
   font-weight: 700;
   line-height: 1;
 }
 
-.kpi .etiket {
+.toplam-kart .etiket {
   font-size: 13px;
   color: rgba(0, 0, 0, 0.6);
 }
 
-.kpi.bekleyen { border-top-color: #f57c00; }
-.kpi.devam    { border-top-color: #1976d2; }
-.kpi.tamam    { border-top-color: #388e3c; }
-.kpi.geciken  { border-top-color: #d32f2f; }
+.toplam-kart .ok {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: rgba(0, 0, 0, 0.35);
+}
+.kirilim {
+  margin-top: 28px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+}
 
-.kpi.geciken .sayi { color: #d32f2f; }
+.kirilim-ust {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.kirilim-ust h2 {
+  margin: 0;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.kirilim-toplam {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.cubuk {
+  display: flex;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.parca {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.dagilim-listesi {
+  margin-top: 14px;
+}
+
+.dagilim-satiri {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 8px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.dagilim-satiri:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.nokta {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dagilim-satiri .etiket {
+  flex: 1;
+}
+
+.dagilim-satiri .sayi {
+  font-weight: 700;
+}
+
+.dagilim-satiri .ok {
+  font-size: 18px;
+  color: rgba(0, 0, 0, 0.35);
+}
+
+.parca,
+.nokta {
+  &[data-durum="Beklemede"]   { background: #f57c00; }
+  &[data-durum="DevamEdiyor"] { background: #1976d2; }
+  &[data-durum="Tamamlandi"]  { background: #388e3c; }
+  &[data-durum="Iptal"]       { background: #9e9e9e; }
+}
+.dagilim-satiri.secili {
+  background: rgba(0, 0, 0, 0.05);
+  font-weight: 600;
+}
+
+.ozet {
+  margin: 4px 0 10px 28px;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.03);
+  border-left: 3px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0 8px 8px 0;
+}
+
+.ozet-satir {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.ozet-satir.uyari strong {
+  color: #d32f2f;
+}
+
+.ozet-baslik {
+  margin: 10px 0 2px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.listeye-git {
+  margin-top: 12px;
+  padding: 7px 12px;
+  border: 1px solid #1976d2;
+  border-radius: 6px;
+  background: #fff;
+  color: #1976d2;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.listeye-git:hover {
+  background: rgba(25, 118, 210, 0.08);
+}

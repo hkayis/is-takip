@@ -18,6 +18,14 @@
         Review = 5
     }
 
+    public enum JobPriority
+    {
+
+        Dusuk= 0,
+        Normal=1,
+        Yuksek=2,
+        Acil=3
+    }
     public class Job
     {
         public int Id { get; set; }
@@ -26,10 +34,15 @@
         public JobStatus Status { get; set; } = JobStatus.Beklemede;
         public JobStage? Stage { get; set; }
 
+        public JobPriority Priority { get; set; }= JobPriority.Normal;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         
         public DateTime? CompletedAt { get; set; }
         public DateTime Deadline { get; set; }
+
+        // Efor tahmini: kaç kişi × kaç gün = adam-gün
+        public int? Adam { get; set; }
+        public int? Gun { get; set; }
 
         public List<JobHistory> History { get; set; } = new List<JobHistory>();
     }

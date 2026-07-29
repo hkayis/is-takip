@@ -8,7 +8,9 @@ export interface Job{
     deadline: string;
     status: string;
     stage: string | null;
-
+    priority: string;
+    adam: number | null;
+    gun: number | null;
 }
 
 export interface JobHistory{
@@ -29,10 +31,13 @@ export interface JobDetail {
     description: string;
     status: string;
     stage: string | null;
+    priority: string;
     createdAt: string;
     deadline: string;
     completedAt: string | null;
     history: JobHistory[];
+    adam: number | null;
+    gun: number | null;
 }
 
 @Service()
@@ -44,8 +49,11 @@ export class JobApi {
     getAll(){
         return this.http.get<Job[]>(`${this.apiUrl}/jobs`);
     }
-    create(dto: { title: string; description: string; deadline: string }) {
+    create(dto: { id: number; title: string; description: string; deadline: string;priority: string; adam: number | null; gun: number | null }) {
         return this.http.post(`${this.apiUrl}/jobs`, dto);
+    }
+    update(id: number, dto: {title: string; description: string; deadline:string;priority: string; adam: number |null; gun: number| null;}){
+        return this.http.put(`${this.apiUrl}/jobs/${id}`, dto);
     }
     delete(id: number){
         return this.http.delete(`${this.apiUrl}/jobs/${id}`)

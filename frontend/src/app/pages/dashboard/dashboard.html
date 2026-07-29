@@ -1,28 +1,66 @@
 <h1>Özet</h1>
 
 <div class="kpi-satiri">
-  <mat-card class="kpi">
+  <button type="button" class="toplam-kart" (click)="dagilimiCevir()">
     <span class="sayi">{{ toplam() }}</span>
     <span class="etiket">Toplam İş</span>
-  </mat-card>
-
-  <mat-card class="kpi bekleyen">
-    <span class="sayi">{{ bekleyen() }}</span>
-    <span class="etiket">Bekleyen</span>
-  </mat-card>
-
-  <mat-card class="kpi devam">
-    <span class="sayi">{{ devamEden() }}</span>
-    <span class="etiket">Devam Eden</span>
-  </mat-card>
-
-  <mat-card class="kpi tamam">
-    <span class="sayi">{{ tamamlanan() }}</span>
-    <span class="etiket">Tamamlanan</span>
-  </mat-card>
-
-  <mat-card class="kpi geciken">
-    <span class="sayi">{{ geciken() }}</span>
-    <span class="etiket">Geciken</span>
-  </mat-card>
+    <span class="ok">{{ dagilimAcik() ? '⌄' : '›' }}</span>
+  </button>
 </div>
+@if (dagilimAcik()){
+<section class="kirilim">
+  <div class="kirilim-ust">
+    <h2>Durum Dağılımı</h2>
+    <span class="kirilim-toplam">{{ toplam() }} iş</span>
+  </div>
+
+  <div class="cubuk">
+    @for (d of durumDagilimi(); track d.durum) {
+      <div class="parca" [attr.data-durum]="d.durum" [style.width.%]="d.yuzde"></div>
+    }
+  </div>
+
+  <div class="dagilim-listesi">
+        @for (d of durumDagilimi(); track d.durum) {
+      <button type="button" class="dagilim-satiri"
+              [class.secili]="seciliDurum() === d.durum"
+              (click)="secDurum(d.durum)">
+        <span class="nokta" [attr.data-durum]="d.durum"></span>
+        <span class="etiket">{{ d.etiket }}</span>
+        <span class="sayi">{{ d.sayi }}</span>
+        <span class="ok">{{ seciliDurum() === d.durum ? '⌄' : '›' }}</span>
+      </button>
+
+      @if (seciliDurum() === d.durum && seciliOzet(); as o) {
+        <div class="ozet">
+          <div class="ozet-satir">
+            <span>Toplam içindeki payı</span>
+            <strong>%{{ o.yuzde }}</strong>
+          </div>
+
+          @if (o.geciken > 0) {
+            <div class="ozet-satir uyari">
+              <span>Geciken</span>
+              <strong>{{ o.geciken }}</strong>
+            </div>
+          }
+
+          @if (o.asamalar.length) {
+            <div class="ozet-baslik">Aşamalar</div>
+            @for (a of o.asamalar; track a.asama) {
+              <div class="ozet-satir">
+                <span>{{ a.asama }}</span>
+                <strong>{{ a.sayi }}</strong>
+              </div>
+            }
+          }
+
+          <button type="button" class="listeye-git" (click)="listeyeGit(d.durum)">
+            İşleri listede gör ›
+          </button>
+        </div>
+      }
+    }
+  </div>
+</section>
+}

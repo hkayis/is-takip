@@ -40,10 +40,21 @@ namespace WebApplication1.Controllers
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] CreateJobDto dto)
         {
+            if (await _service.IdKullanimdaMi(dto.Id))
+            {
+                return Conflict(new { message = $"{dto.Id} numaralı iş zaten var." });
+            }
+
             var job = await _service.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = job.Id }, null);
         }
-
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Update(int id,[FromBody] UpdateJobDto dto)
+        {
+            if (await _service.UpdateAsync(id, dto))
+                return NoContent();
+            return NotFound(new { message = "İş bulunamadı." });
+        }
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {

@@ -1,8 +1,15 @@
-<h2 mat-dialog-title>Yeni İş</h2>
-
+<h2 mat-dialog-title>{{ duzenleme ? 'İşi Düzenle' : 'Yeni İş' }}</h2>
 <mat-dialog-content class="form">
+      <mat-form-field appearance="outline">
+    <mat-label>İş numarası</mat-label>
+    <input matInput type="number" [(ngModel)]="isNo" [readonly]="duzenleme" />
+    @if (duzenleme) {
+      <mat-hint>İş numarası değiştirilemez</mat-hint>
+    }
+  </mat-form-field>
+
   <mat-form-field appearance="outline">
-    <mat-label class="bas">Başlık</mat-label>
+    <mat-label>Başlık</mat-label>
     <input matInput [(ngModel)]="baslik" />
   </mat-form-field>
 
@@ -15,9 +22,37 @@
     <mat-label>Son tarih</mat-label>
     <input matInput type="date" [(ngModel)]="tarih" />
   </mat-form-field>
+
+  <div class="efor-satiri">
+    <mat-form-field appearance="outline">
+      <mat-label>Adam</mat-label>
+      <input matInput type="number" [(ngModel)]="adam" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Gün</mat-label>
+      <input matInput type="number" [(ngModel)]="gun" />
+    </mat-form-field>
+
+      <mat-form-field appearance="outline">
+    <mat-label>Öncelik</mat-label>
+    <mat-select [(ngModel)]="oncelik">
+      <mat-option value="Dusuk">Düşük</mat-option>
+      <mat-option value="Normal">Normal</mat-option>
+      <mat-option value="Yuksek">Yüksek</mat-option>
+      <mat-option value="Acil">Acil</mat-option>
+    </mat-select>
+  </mat-form-field>
+  
+  </div>
+
+  
+  @if (adamGun) {
+    <p class="efor-ozet">Toplam efor: <strong>{{ adamGun }}</strong> adam-gün</p>
+  }
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
   <button matButton (click)="iptal()">İptal</button>
-  <button matButton="filled" (click)="kaydet()">Ekle</button>
+    <button matButton="filled" (click)="kaydet()">{{ duzenleme ? 'Kaydet' : 'Ekle' }}</button>
 </mat-dialog-actions>

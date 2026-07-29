@@ -12,6 +12,14 @@
     <option value="Iptal">İptal</option>
   </select>
 
+    <select class="filtre" [ngModel]="oncelikFiltre()" (ngModelChange)="oncelikFiltre.set($event)">
+    <option value="hepsi">Tüm öncelikler</option>
+    <option value="Acil">Acil</option>
+    <option value="Yuksek">Yüksek</option>
+    <option value="Normal">Normal</option>
+    <option value="Dusuk">Düşük</option>
+  </select>
+
   <div class="gorunum-secim">
     <button type="button" [class.aktif]="gorunum() === 'liste'" (click)="gorunum.set('liste')">Liste</button>
     <button type="button" [class.aktif]="gorunum() === 'pano'" (click)="gorunum.set('pano')">Pano</button>
@@ -23,10 +31,12 @@
 <div class="board-layout">
   @if (gorunum() === 'liste') {
     <div class="liste-alani">
-      <table class="is-tablo">
+        <table class="is-tablo">
         <thead>
           <tr>
+            <th class="t-no">İş No</th>
             <th>Başlık</th>
+            <th>Öncelik</th>
             <th>Durum</th>
             <th>Aşama</th>
             <th>Son Tarih</th>
@@ -35,13 +45,15 @@
         <tbody>
           @for (job of filtrelenmisIsler(); track job.id) {
             <tr [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
+              <td class="t-no">{{ job.id }}</td>
               <td class="t-baslik">{{ job.title }}</td>
-              <td><span class="rozet" [attr.data-durum]="job.status">{{ job.status }}</span></td>
+              <td><span class="rozet" [attr.data-durum]="job.status">{{ job.status }}</span>  </td>
+             <td><span class="oncelik" [attr.data-oncelik]="job.priority">{{ job.priority }}</span></td>
               <td>{{ job.stage ?? '—' }}</td>
-              <td>{{ job.deadline | date:'d MMM y' }}</td>
+              <td [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM y' }}</td>
             </tr>
           } @empty {
-            <tr><td colspan="4" class="bos">Eşleşen iş yok</td></tr>
+            <tr><td colspan="5" class="bos">Eşleşen iş yok</td></tr>
           }
         </tbody>
       </table>
@@ -55,7 +67,7 @@
           <div class="is-kart" [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
             <div class="kart-baslik">{{ job.title }}</div>
             <div class="kart-alt">
-              <span class="tarih">{{ job.deadline | date:'d MMM' }}</span>
+              <span class="tarih" [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM' }}</span>
             </div>
           </div>
         } @empty {
@@ -74,7 +86,7 @@
               <div class="is-kart" [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
                 <div class="kart-baslik">{{ job.title }}</div>
                 <div class="kart-alt">
-                  <span class="tarih">{{ job.deadline | date:'d MMM' }}</span>
+                  <span class="tarih"[attr.data-gecikme]="gecikmeDurumu(job)" >{{ job.deadline | date:'d MMM' }}</span>
                 </div>
               </div>
             }
@@ -92,7 +104,7 @@
           <div class="is-kart" [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
             <div class="kart-baslik">{{ job.title }}</div>
             <div class="kart-alt">
-              <span class="tarih">{{ job.deadline | date:'d MMM' }}</span>
+              <span class="tarih" [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM' }}</span>
             </div>
           </div>
         } @empty {
@@ -107,11 +119,15 @@
     @if (seciliDetay(); as s) {
       <div class="panel-icerik">
         <h2>{{ s.title }}</h2>
+        <span class="oncelik" [attr.data-oncelik]="s.priority">{{ s.priority }}</span>
         <span class="rozet" [attr.data-durum]="s.status">{{ s.status }}</span>
         <p class="aciklama">{{ s.description }}</p>
         <div class="meta">
           <span>Aşama: {{ s.stage ?? '—' }}</span>
-          <span>Son tarih: {{ s.deadline | date:'d MMMM y' }}</span>
+          <span [attr.data-gecikme]="gecikmeDurumu(s)">Son tarih: {{ s.deadline | date:'d MMMM y' }}</span>
+          @if (s.adam && s.gun) {
+            <span>Efor: {{ s.adam }} × {{ s.gun }} = {{ s.adam * s.gun }} adam-gün</span>
+          }
         </div>
 
         
@@ -147,6 +163,7 @@
         </mat-form-field>
 
         <button matButton="filled" (click)="durumDegistir()">Güncelle</button>
+        <button matButton (click)="duzenleAc(s)">Düzenle</button>
         <button matButton (click)="sil(s.id)">Bu işi sil</button>
       </div>
       <h3>Geçmiş</h3>

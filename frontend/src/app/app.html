@@ -1,8 +1,12 @@
 <mat-toolbar color="primary">
   <span>{{ title() }}</span>
   <span class="bosluk"></span>
-  <a routerLink="/dashboard">Özet</a>
-  <a routerLink="/jobs">İşler</a>
+
+  @if (auth.girisYapildi()) {
+    <a routerLink="/dashboard">Özet</a>
+    <a routerLink="/jobs">İşler</a>
+    <button matButton (click)="cikisYap()">Çıkış</button>
+  }
 </mat-toolbar>
 
 <main class="icerik">

@@ -25,7 +25,10 @@ namespace WebApplication1.Application.Services
                CreatedAt=j.CreatedAt,
                Deadline= j.Deadline,
                Status=j.Status,
-               Stage= j.Stage
+               Stage= j.Stage,
+               Priority = j.Priority,
+               Adam = j.Adam,
+               Gun= j.Gun
            }).ToListAsync();
 
         }
@@ -46,9 +49,12 @@ namespace WebApplication1.Application.Services
                 Description = job.Description,
                 Status = job.Status,
                 Stage = job.Stage,
+                Priority = job.Priority,
                 CreatedAt = job.CreatedAt,
                 Deadline = job.Deadline,
                 CompletedAt = job.CompletedAt,
+                Adam = job.Adam,
+                Gun = job.Gun,
                 History = job.History
                     .OrderBy(h => h.ChangedAt)
                     .Select(h => new JobHistoryDto
@@ -64,31 +70,55 @@ namespace WebApplication1.Application.Services
             };
         }
 
+        public async Task<bool> IdKullanimdaMi(int id)
+        {
+            return await _context.Jobs.AnyAsync(j => j.Id == id);
+        }
+
         public async Task<Job> CreateAsync(CreateJobDto dto)
         {
             var job = new Job
             {
+                Id = dto.Id,                     // numarayı kullanıcı belirliyor
                 Title = dto.Title,
                 Description = dto.Description,
                 Deadline = dto.Deadline,
+                Priority = dto.Priority,
+                Adam = dto.Adam,
+                Gun = dto.Gun,
                 Status = JobStatus.Beklemede,
                 CreatedAt = DateTime.UtcNow
             };
 
-            _context.Jobs.Add(job);
-            await _context.SaveChangesAsync();   // Id oluşsun diye önce kaydet
-
-            _context.JobHistories.Add(new JobHistory
+            // Id önceden belli olduğu için geçmiş kaydını aynı anda ekleyebiliyoruz
+            job.History.Add(new JobHistory
             {
-                JobId = job.Id,
                 OldStatus = null,                // ilk kayıt
                 NewStatus = JobStatus.Beklemede,
                 ChangedAt = DateTime.UtcNow,
                 Note = "İş oluşturuldu"
             });
+
+            _context.Jobs.Add(job);
             await _context.SaveChangesAsync();
 
             return job;
+        }
+
+        public async Task<bool> UpdateAsync(int id, UpdateJobDto dto)
+        {
+            var job = await _context.Jobs.FindAsync(id);
+            if (job is null) return false;
+
+            job.Title = dto.Title;
+            job.Description = dto.Description;
+            job.Deadline = dto.Deadline;
+            job.Priority = dto.Priority;
+            job.Adam = dto.Adam;
+            job.Gun = dto.Gun;
+
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<bool> ChangeStatusAsync(int jobId, ChangeStatusDto dto)

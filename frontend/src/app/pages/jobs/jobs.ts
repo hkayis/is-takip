@@ -8,16 +8,19 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { JobApi, Job, JobDetail } from '../../services/job-api';
 import { YeniIsDialog } from '../../dialogs/yeni-is-dialog/yeni-is-dialog';
 import {DatePipe} from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-jobs',
-  imports: [FormsModule,DatePipe , MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatDialogModule],
+  imports: [FormsModule,DatePipe ,MatSnackBarModule ,MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatDialogModule],
   templateUrl: './jobs.html',
   styleUrl: './jobs.scss',
 })
 export class Jobs implements OnInit {
+    private snackBar = inject(MatSnackBar);
   private jobApi = inject(JobApi);
   private dialog = inject(MatDialog);
-
+  private route = inject(ActivatedRoute);
   asamaSirasi: string[] = ['Plan', 'Design', 'Develop', 'Test', 'Deploy', 'Review'];
   jobs = signal<Job[]>([]);
 
@@ -33,14 +36,16 @@ export class Jobs implements OnInit {
   gorunum = signal<'liste' | 'pano'>('liste');
   arama = signal('');
   durumFiltre = signal('hepsi');
-
+  oncelikFiltre = signal('hepsi');
   filtrelenmisIsler = computed(() => {
     const metin = this.arama().toLowerCase().trim();
     const durum = this.durumFiltre();
+    const oncelik = this.oncelikFiltre();
     return this.jobs()
       .filter(j => durum === 'hepsi' || j.status === durum)
+      .filter(j => oncelik === 'hepsi' || j.priority === oncelik)
       .filter(j => j.title.toLowerCase().includes(metin))
-      .sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
   });
 
   yeniDurum = '';
@@ -48,6 +53,11 @@ export class Jobs implements OnInit {
   not = '';
 
   ngOnInit() {
+    const durum= this.route.snapshot.queryParamMap.get('durum');
+    if (durum){
+      this.durumFiltre.set(durum);
+    }
+
     this.yukle();
   }
   asamaninIsleri(asama: string){
@@ -67,7 +77,32 @@ export class Jobs implements OnInit {
       if (!sonuc) return;
       this.jobApi.create(sonuc).subscribe({
         next: () => this.yukle(),
-        error: (err) => console.error('İş oluşturulamadı:', err),
+                error: (err) => {
+          const mesaj = err.status === 409
+            ? err.error?.message ?? 'Bu iş numarası zaten kullanılıyor.'
+            : 'İş oluşturulamadı.';
+          this.snackBar.open(mesaj, 'Tamam', { duration: 4000 });
+        },
+      });
+    });
+  }
+    duzenleAc(job: JobDetail) {
+    const ref = this.dialog.open(YeniIsDialog, { width: '420px', data: job });
+    ref.afterClosed().subscribe((sonuc) => {
+      if (!sonuc) return;
+      this.jobApi.update(job.id, {
+        title: sonuc.title,
+        description: sonuc.description,
+        deadline: sonuc.deadline,
+        priority: sonuc.priority,
+        adam: sonuc.adam,
+        gun: sonuc.gun,
+      }).subscribe({
+        next: () => {
+          this.detayYukle(job.id);
+          this.yukle();
+        },
+        error: () => this.snackBar.open('İş güncellenemedi.', 'Tamam', { duration: 4000 }),
       });
     });
   }
@@ -123,5 +158,16 @@ export class Jobs implements OnInit {
       },
       error: (err) => console.error('İş silinemedi:', err),
     });
+  }
+  gecikmeDurumu(job: Job | JobDetail): string | null {
+    if(job.status === 'Tamamlandi' || job.status === 'Iptal') return null;
+    
+    const gunMs= 1000 * 60 * 60 * 24;
+
+    const kalanGun= Math.ceil((new Date(job.deadline).getTime() - Date.now())/gunMs);
+
+    if(kalanGun<0) return 'gecikti';
+    if (kalanGun <3) return 'yakin';
+    return null;
   }
 }

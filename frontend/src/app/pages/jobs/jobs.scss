@@ -315,3 +315,17 @@
   padding-top: 40px;
   font-size: 14px;
 }
+.is-tablo .t-no {
+  width: 90px;
+  font-variant-numeric: tabular-nums;
+  color: rgba(0, 0, 0, 0.6);
+}
+[data-gecikme="gecikti"] {
+  color: #c62828;
+  font-weight: 700;
+}
+
+[data-gecikme="yakin"] {
+  color: #e65100;
+  font-weight: 600;
+}

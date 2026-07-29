@@ -23,7 +23,7 @@ export class Login {
   girisYap() {
     this.auth.login(this.username, this.password).subscribe({
       next: (cevap) => {
-        localStorage.setItem('token', cevap.token);
+        this.auth.tokenKaydet(cevap.token);
         this.router.navigate(['/dashboard'])
         this.hata = '';
       },

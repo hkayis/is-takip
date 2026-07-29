@@ -9,3 +9,17 @@ mat-dialog-content.form {
 .form mat-form-field {
   width: 100%;
 }
+.efor-satiri {
+  display: flex;
+  gap: 12px;
+}
+
+.efor-satiri mat-form-field {
+  flex: 1;
+}
+
+.efor-ozet {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.65);
+}
