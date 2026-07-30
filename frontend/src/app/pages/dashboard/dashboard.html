@@ -6,6 +6,11 @@
     <span class="etiket">Toplam İş</span>
     <span class="ok">{{ dagilimAcik() ? '⌄' : '›' }}</span>
   </button>
+  <button type="button" class="toplam-kart geciken-kart" (click)="gecikenCevir()">
+  <span class="sayi">{{geciken().length}} </span>
+  <span class="etiket">Geciken İş</span>
+  <span class="ok">{{gecikenAcik() ? '⌄' : '›'}}</span>
+  </button>
 </div>
 @if (dagilimAcik()){
 <section class="kirilim">
@@ -63,4 +68,25 @@
     }
   </div>
 </section>
+}
+
+@if (gecikenAcik()){
+
+  <section class="geciken-liste">
+    <h2>Geciken İşler</h2>
+    <div class="scroll-kutu">
+      @for(job of gecikenler(); track job.id){
+        <button type="button" class="geciken-satiri" (click)="listeyeGit(job.status)">
+            <span class="oncelik" [attr.data-oncelik]="job.priority">{{job.priority}}
+
+            </span>
+            <span class="baslik">{{job.title}}</span>
+            <span class="gun">{{job.gecikmeGun}} gün</span>
+        </button>
+      }
+      @empty{
+        <p class="bos">Geciken iş yok</p>
+      }
+    </div>
+  </section>
 }

@@ -16,6 +16,10 @@ export class Dashboard implements OnInit {
   dagilimiCevir(){
     this.dagilimAcik.set(!this.dagilimAcik());
   }
+  gecikenAcik=signal(true);
+  gecikenCevir(){
+    this.gecikenAcik.set(!this.gecikenAcik());
+  }
   private router =inject(Router);
   asamaSirasi : string[] = ['Plan', 'Design', 'Test', 'Deploy', 'Review']
   seciliDurum= signal<string | null>(null);
@@ -76,9 +80,25 @@ export class Dashboard implements OnInit {
       j.status !== 'Tamamlandi' &&
       j.status !== 'Iptal' &&
       new Date(j.deadline) < simdi
-    ).length;
+    );
   });
 
+  gecikenler= computed(()=> {
+    const simdi = Date.now();
+    const gunMs= 1000 * 60 * 60 * 24;
+
+    return this.jobs()
+    .filter(j=>
+      j.status !== 'Tamamlandi' &&
+      j.status !== 'Iptal' &&
+      new Date(j.deadline).getTime()<simdi
+    )
+    .map(j=> ({
+      ...j,
+      gecikmeGun:Math.floor((simdi-new Date(j.deadline).getTime())/gunMs),
+    }))
+    .sort((a,b)=> b.gecikmeGun -a.gecikmeGun);
+  })
   ngOnInit() {
     this.jobApi.getAll().subscribe({
       next: (liste) => this.jobs.set(liste),
