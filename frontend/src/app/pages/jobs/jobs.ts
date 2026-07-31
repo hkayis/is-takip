@@ -52,10 +52,15 @@ export class Jobs implements OnInit {
   yeniAsama: string | null = null;
   not = '';
 
-  ngOnInit() {
-    const durum= this.route.snapshot.queryParamMap.get('durum');
-    if (durum){
+    ngOnInit() {
+    const durum = this.route.snapshot.queryParamMap.get('durum');
+    if (durum) {
       this.durumFiltre.set(durum);
+    }
+
+    const oncelik = this.route.snapshot.queryParamMap.get('oncelik');
+    if (oncelik) {
+      this.oncelikFiltre.set(oncelik);
     }
 
     this.yukle();

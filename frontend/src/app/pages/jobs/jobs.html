@@ -39,6 +39,7 @@
             <th>Öncelik</th>
             <th>Durum</th>
             <th>Aşama</th>
+            <th class="t-efor">Adam-Gün</th>
             <th>Son Tarih</th>
           </tr>
         </thead>
@@ -47,9 +48,10 @@
             <tr [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
               <td class="t-no">{{ job.id }}</td>
               <td class="t-baslik">{{ job.title }}</td>
-              <td><span class="rozet" [attr.data-durum]="job.status">{{ job.status }}</span>  </td>
              <td><span class="oncelik" [attr.data-oncelik]="job.priority">{{ job.priority }}</span></td>
+             <td><span class="rozet" [attr.data-durum]="job.status">{{ job.status }}</span>  </td>
               <td>{{ job.stage ?? '—' }}</td>
+              <td class="t-efor">{{ job.adam && job.gun ? job.adam * job.gun : '—' }}</td>
               <td [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM y' }}</td>
             </tr>
           } @empty {
