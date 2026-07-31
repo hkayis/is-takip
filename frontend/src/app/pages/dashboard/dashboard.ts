@@ -21,6 +21,12 @@ export class Dashboard implements OnInit {
   
   private router =inject(Router);
   asamaSirasi : string[] = ['Plan', 'Design','Develop' ,'Test', 'Deploy', 'Review']
+  oncelikPuani: Record <string, number> = {
+    Dusuk: 1,
+    Normal: 2,
+    Yuksek: 3,
+    Acil: 4,
+  };
   seciliDurum= signal<string | null>(null);
   secDurum(durum: string){
     this.seciliDurum.set(this.seciliDurum()===durum ? null : durum);
@@ -31,8 +37,8 @@ export class Dashboard implements OnInit {
     oncelikListesiniAc(oncelik: string) {
     this.router.navigate(['/jobs'], { queryParams: { oncelik } });
   }
-  tumIsler() {
-    this.router.navigate(['/jobs']);
+    isiAc(id: number) {
+    this.router.navigate(['/jobs'], { queryParams: { sec: id } });
   }
 
   seciliOzet = computed(()=> {
@@ -144,32 +150,36 @@ export class Dashboard implements OnInit {
     return ham.map(x => ({ ...x, yuzde: (x.sayi / enBuyuk) * 100 }));
   })
 
-  dikkatGerekenler= computed(()=> {
+    dikkatGerekenler = computed(() => {
     const simdi = Date.now();
-    const gunMs= 1000 * 60 * 60 *24;
-    const sinir= simdi + 7*gunMs;
+    const gunMs = 1000 * 60 * 60 * 24;
+    const sinir = simdi + 7 * gunMs;
 
     return this.jobs()
-      .filter(j=> {
-        if(j.status === 'Tamamlandi' || j.status === 'Iptal') return false;
-        return new Date(j.deadline).getTime() <=sinir;
+      .filter(j => {
+        if (j.status === 'Tamamlandi' || j.status === 'Iptal') return false;
+        return new Date(j.deadline).getTime() <= sinir;
       })
-      .map(j=> {
-        const fark = Math.ceil((new Date(j.deadline).getTime() - simdi)/gunMs);
-        return{
+      .map(j => {
+        const fark = Math.ceil((new Date(j.deadline).getTime() - simdi) / gunMs);
+        const aciliyet = 10 - fark;
+        const skor = (this.oncelikPuani[j.priority] ?? 1) * aciliyet;
+
+        return {
           ...j,
           fark,
+          skor,
           gecikti: fark < 0,
           etiket: fark < 0
-          ? `${Math.abs(fark)} gün gecikti`
-          : fark===0
-            ? 'bugün'
-            : `${fark} gün kaldı`,
+            ? `${Math.abs(fark)} gün gecikti`
+            : fark === 0
+              ? 'bugün'
+              : `${fark} gün kaldı`,
         };
       })
-      .sort((a,b) => a.fark - b.fark);
+      .sort((a, b) => b.skor - a.skor);
   });
-  ilkBes = computed(() => this.dikkatGerekenler().slice(0,5));
+ 
 
   asamaDagilimi = computed(()=> {
     const devam = this.jobs().filter(j=> j.status ==='DevamEdiyor');

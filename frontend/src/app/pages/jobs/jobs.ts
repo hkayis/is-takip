@@ -62,7 +62,10 @@ export class Jobs implements OnInit {
     if (oncelik) {
       this.oncelikFiltre.set(oncelik);
     }
-
+    const sec = this.route.snapshot.queryParamMap.get('sec');
+    if (sec) {
+      this.detayYukle(Number(sec));
+    }
     this.yukle();
   }
   asamaninIsleri(asama: string){

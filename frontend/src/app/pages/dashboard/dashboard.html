@@ -12,26 +12,22 @@
 <div class="izgara">
 
   <section class="kutu">
-    <div class="kutu-ust">
+        <div class="kutu-ust">
       <h2>Dikkat Gerekenler</h2>
       <span class="kutu-not">{{ dikkatGerekenler().length }} iş</span>
     </div>
 
-    @for (job of ilkBes(); track job.id) {
-      <button type="button" class="dikkat-satiri" (click)="listeyeGit(job.status)">
-        <span class="oncelik" [attr.data-oncelik]="job.priority">{{ job.priority }}</span>
-        <span class="baslik">{{ job.title }}</span>
-        <span class="sure" [class.gecikti]="job.gecikti">{{ job.etiket }}</span>
-      </button>
-    } @empty {
-      <p class="bos">Yakın vadede dikkat gerektiren iş yok</p>
-    }
-
-    @if (dikkatGerekenler().length > 5) {
-      <button type="button" class="tumu-link" (click)="tumIsler()">
-        tümünü gör ({{ dikkatGerekenler().length }}) ›
-      </button>
-    }
+    <div class="dikkat-kutu">
+      @for (job of dikkatGerekenler(); track job.id) {
+        <button type="button" class="dikkat-satiri" (click)="isiAc(job.id)">
+          <span class="oncelik" [attr.data-oncelik]="job.priority">{{ job.priority }}</span>
+          <span class="baslik">{{ job.title }}</span>
+          <span class="sure" [class.gecikti]="job.gecikti">{{ job.etiket }}</span>
+        </button>
+      } @empty {
+        <p class="bos">Yakın vadede dikkat gerektiren iş yok</p>
+      }
+    </div>
   </section>
 
   <section class="kutu">
