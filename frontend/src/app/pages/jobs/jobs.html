@@ -32,15 +32,15 @@
   @if (gorunum() === 'liste') {
     <div class="liste-alani">
         <table class="is-tablo">
-        <thead>
+          <thead>
           <tr>
-            <th class="t-no">İş No</th>
-            <th>Başlık</th>
-            <th>Öncelik</th>
-            <th>Durum</th>
-            <th>Aşama</th>
-            <th class="t-efor">Adam-Gün</th>
-            <th>Son Tarih</th>
+            <th class="t-no"><button type="button" (click)="siralamayiDegistir('id')">İş No <span class="ok">{{ siralamaOku('id') }}</span></button></th>
+            <th><button type="button" (click)="siralamayiDegistir('title')">Başlık <span class="ok">{{ siralamaOku('title') }}</span></button></th>
+            <th><button type="button" (click)="siralamayiDegistir('priority')">Öncelik <span class="ok">{{ siralamaOku('priority') }}</span></button></th>
+            <th><button type="button" (click)="siralamayiDegistir('status')">Durum <span class="ok">{{ siralamaOku('status') }}</span></button></th>
+            <th><button type="button" (click)="siralamayiDegistir('stage')">Aşama <span class="ok">{{ siralamaOku('stage') }}</span></button></th>
+            <th class="t-efor"><button type="button" (click)="siralamayiDegistir('efor')">Adam-Gün <span class="ok">{{ siralamaOku('efor') }}</span></button></th>
+            <th><button type="button" (click)="siralamayiDegistir('deadline')">Son Tarih <span class="ok">{{ siralamaOku('deadline') }}</span></button></th>
           </tr>
         </thead>
         <tbody>
@@ -48,14 +48,14 @@
             <tr [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
               <td class="t-no">{{ job.id }}</td>
               <td class="t-baslik">{{ job.title }}</td>
-             <td><span class="oncelik" [attr.data-oncelik]="job.priority">{{ job.priority }}</span></td>
-             <td><span class="rozet" [attr.data-durum]="job.status">{{ job.status }}</span>  </td>
+             <td><span class="oncelik" [attr.data-oncelik]="job.priority">{{ oncelikAdi(job.priority) }}</span></td>
+             <td><span class="rozet" [attr.data-durum]="job.status">{{ durumAdi(job.status) }}</span>  </td>
               <td>{{ job.stage ?? '—' }}</td>
               <td class="t-efor">{{ job.adam && job.gun ? job.adam * job.gun : '—' }}</td>
               <td [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM y' }}</td>
             </tr>
           } @empty {
-            <tr><td colspan="5" class="bos">Eşleşen iş yok</td></tr>
+            <tr><td colspan="7" class="bos">Eşleşen iş yok</td></tr>
           }
         </tbody>
       </table>
@@ -121,8 +121,8 @@
     @if (seciliDetay(); as s) {
       <div class="panel-icerik">
         <h2>{{ s.title }}</h2>
-        <span class="oncelik" [attr.data-oncelik]="s.priority">{{ s.priority }}</span>
-        <span class="rozet" [attr.data-durum]="s.status">{{ s.status }}</span>
+        <span class="oncelik" [attr.data-oncelik]="s.priority">{{ oncelikAdi(s.priority) }}</span>
+        <span class="rozet" [attr.data-durum]="s.status">{{ durumAdi(s.status) }}</span>
         <p class="aciklama">{{ s.description }}</p>
         <div class="meta">
           <span>Aşama: {{ s.stage ?? '—' }}</span>
@@ -172,8 +172,7 @@
         @for (h of s.history; track h.id) {
           <div class="gecmis-satiri">
             <span class="tarih">{{ h.changedAt | date:'d MMM y, HH:mm' }}</span>
-            <span>{{ h.oldStatus ?? 'yeni' }} → {{ h.newStatus }}</span>
-            @if (h.note) { <span class="not">({{ h.note }})</span> }
+            <span>{{ h.oldStatus ? durumAdi(h.oldStatus) : 'yeni' }} → {{ durumAdi(h.newStatus) }}</span>            @if (h.note) { <span class="not">({{ h.note }})</span> }
           </div>
         } @empty {
           <p class="bos">Geçmiş yok.</p>

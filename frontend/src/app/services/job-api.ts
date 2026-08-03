@@ -6,6 +6,7 @@ export interface Job{
     title: string;
     createdAt: string;
     deadline: string;
+    completedAt: string | null;
     status: string;
     stage: string | null;
     priority: string;

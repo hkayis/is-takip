@@ -339,3 +339,27 @@
   font-variant-numeric: tabular-nums;
   color: rgba(0, 0, 0, 0.7);
 }
+.is-tablo th { padding: 0; }
+
+.is-tablo th button {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: inherit;
+  font: inherit;
+  color: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.is-tablo th button:hover { background: rgba(0, 0, 0, 0.05); }
+
+.is-tablo th .ok {
+  font-size: 9px;
+  color: #1976d2;
+}

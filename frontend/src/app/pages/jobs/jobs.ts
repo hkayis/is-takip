@@ -10,6 +10,7 @@ import { YeniIsDialog } from '../../dialogs/yeni-is-dialog/yeni-is-dialog';
 import {DatePipe} from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { durumAdi, oncelikAdi, oncelikPuani } from '../../etiketler';
 @Component({
   selector: 'app-jobs',
   imports: [FormsModule,DatePipe ,MatSnackBarModule ,MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatDialogModule],
@@ -21,6 +22,8 @@ export class Jobs implements OnInit {
   private jobApi = inject(JobApi);
   private dialog = inject(MatDialog);
   private route = inject(ActivatedRoute);
+    protected durumAdi = durumAdi;
+  protected oncelikAdi = oncelikAdi;
   asamaSirasi: string[] = ['Plan', 'Design', 'Develop', 'Test', 'Deploy', 'Review'];
   jobs = signal<Job[]>([]);
 
@@ -37,17 +40,66 @@ export class Jobs implements OnInit {
   arama = signal('');
   durumFiltre = signal('hepsi');
   oncelikFiltre = signal('hepsi');
-  filtrelenmisIsler = computed(() => {
+  siralamaAlani =signal('varsayilan')
+  siralamaYonu= signal<'artan' | 'azalan'>('artan');
+     siralamayiDegistir(alan: string) {
+    if (this.siralamaAlani() !== alan) {
+      this.siralamaAlani.set(alan);
+      this.siralamaYonu.set('artan');
+    } else if (this.siralamaYonu() === 'artan') {
+      this.siralamaYonu.set('azalan');
+    } else {
+      this.siralamaAlani.set('varsayilan');   // 3. tık → varsayılana dön
+    }
+  }
+  siralamaOku(alan: string): string {
+    if (this.siralamaAlani() !== alan) return '';
+    return this.siralamaYonu() === 'artan' ? '▲' : '▼';
+  }
+
+  private siralamaDegeri(job: Job, alan: string): number | string {
+    switch (alan) {
+      case 'id':       return job.id;
+      case 'title':    return job.title.toLowerCase();
+      case 'priority': return oncelikPuani(job.priority);
+      case 'status':   return job.status;
+      case 'stage':    return job.stage ? this.asamaSirasi.indexOf(job.stage) : -1;
+      case 'efor':     return (job.adam ?? 0) * (job.gun ?? 0);
+      case 'deadline': return new Date(job.deadline).getTime();
+      default:         return 0;
+    }
+  }
+
+    filtrelenmisIsler = computed(() => {
     const metin = this.arama().toLowerCase().trim();
     const durum = this.durumFiltre();
     const oncelik = this.oncelikFiltre();
-    return this.jobs()
+    const alan = this.siralamaAlani();
+    const yon = this.siralamaYonu() === 'artan' ? 1 : -1;
+
+    const liste = this.jobs()
       .filter(j => durum === 'hepsi' || j.status === durum)
       .filter(j => oncelik === 'hepsi' || j.priority === oncelik)
-      .filter(j => j.title.toLowerCase().includes(metin))
-      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-  });
+      .filter(j => j.title.toLowerCase().includes(metin));
 
+    if (alan === 'varsayilan') {
+      return liste.sort((a, b) => {
+        const oncelikFarki = oncelikPuani(b.priority) - oncelikPuani(a.priority);
+        if (oncelikFarki !== 0) return oncelikFarki;
+        return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+      });
+    }
+
+    return liste.sort((a, b) => {
+      const av = this.siralamaDegeri(a, alan);
+      const bv = this.siralamaDegeri(b, alan);
+
+      if (typeof av === 'string' && typeof bv === 'string') {
+        return av.localeCompare(bv, 'tr') * yon;
+      }
+      return ((av as number) - (bv as number)) * yon;
+    });
+  });
   yeniDurum = '';
   yeniAsama: string | null = null;
   not = '';

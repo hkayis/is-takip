@@ -6,6 +6,7 @@ import { DatePipe } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { YeniIsDialog } from '../../dialogs/yeni-is-dialog/yeni-is-dialog';
+import { oncelikAdi } from '../../etiketler';
 @Component({
   selector: 'app-dashboard',
   imports: [MatCardModule, DatePipe, MatDialogModule, MatSnackBarModule],
@@ -13,6 +14,7 @@ import { YeniIsDialog } from '../../dialogs/yeni-is-dialog/yeni-is-dialog';
   styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit {
+  protected oncelikAdi = oncelikAdi;
   private jobApi = inject(JobApi);
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
@@ -65,6 +67,31 @@ export class Dashboard implements OnInit {
        asamalar,
     };
   })
+  buAyTamamlanan = computed (()=> {
+    const simdi= new Date();
+    const ay=simdi.getMonth();
+    const yil=simdi.getFullYear();
+
+    return this.jobs().filter(j=> {
+      if(!j.completedAt) return false;
+      const bitis = new Date(j.completedAt);
+      return bitis.getMonth() === ay && bitis.getFullYear()===yil;
+    }).length;
+  });
+  ortalamaSure = computed (()=>{
+    const gunMs = 1000 * 60 * 60 * 24;
+    const bitenler = this.jobs().filter(j=> j.completedAt !==null);
+
+    if(bitenler.length === 0) return 0;
+
+    const toplamGun = bitenler.reduce((toplam, j)=> {
+      const sure = new Date(j.completedAt!).getTime() - new Date(j.createdAt).getTime();
+      return toplam + sure /gunMs;
+    }, 0);
+
+    return Math.round(toplamGun/bitenler.length);
+  });
+
   toplam = computed(() => this.jobs().length);
   bekleyen = computed(() => this.jobs().filter(j => j.status === 'Beklemede').length);
   devamEden = computed(() => this.jobs().filter(j => j.status === 'DevamEdiyor').length);
@@ -191,6 +218,37 @@ export class Dashboard implements OnInit {
     return ham.map(x=>({...x, yuzde: (x.sayi/enBuyuk)*100}))
   });
 
+    aylikTrend = computed(() => {
+    const simdi = new Date();
+    const aylar = [];
+
+    for (let i = 5; i >= 0; i--) {
+      const tarih = new Date(simdi.getFullYear(), simdi.getMonth() - i, 1);
+      const ay = tarih.getMonth();
+      const yil = tarih.getFullYear();
+
+      const acilan = this.jobs().filter(j => {
+        const d = new Date(j.createdAt);
+        return d.getMonth() === ay && d.getFullYear() === yil;
+      }).length;
+
+      const kapanan = this.jobs().filter(j => {
+        if (!j.completedAt) return false;
+        const d = new Date(j.completedAt);
+        return d.getMonth() === ay && d.getFullYear() === yil;
+      }).length;
+
+      aylar.push({ anahtar: `${yil}-${ay}`, tarih, acilan, kapanan });
+    }
+
+    const enBuyuk = Math.max(...aylar.flatMap(a => [a.acilan, a.kapanan]), 1);
+
+    return aylar.map(a => ({
+      ...a,
+      acilanYuzde: (a.acilan / enBuyuk) * 100,
+      kapananYuzde: (a.kapanan / enBuyuk) * 100,
+    }));
+  });
     
     ngOnInit() {
     this.yukle();

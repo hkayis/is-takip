@@ -13,6 +13,7 @@ namespace WebApplication1.Application.DTOs
         
         public DateTime Deadline { get; set; }
 
+        public DateTime? CompletedAt { get; set; }
         public JobStatus Status { get; set; }
 
         public JobStage? Stage { get; set; }
