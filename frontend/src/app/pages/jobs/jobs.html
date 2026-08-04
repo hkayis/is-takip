@@ -27,7 +27,14 @@
 
   <button matButton="filled" (click)="yeniIsAc()">+ Yeni İş</button>
 </div>
-
+@if (jobs().length === 0) {
+  <div class="bos-durum">
+    <div class="bos-ikon">📋</div>
+    <h2>Henüz iş yok</h2>
+    <p>İlk işini oluşturarak başla. Numara, başlık, son tarih ve efor girmen yeterli.</p>
+    <button matButton="filled" (click)="yeniIsAc()">+ İlk işini oluştur</button>
+  </div>
+} @else {
 <div class="board-layout">
   @if (gorunum() === 'liste') {
     <div class="liste-alani">
@@ -49,7 +56,13 @@
               <td class="t-no">{{ job.id }}</td>
               <td class="t-baslik">{{ job.title }}</td>
              <td><span class="oncelik" [attr.data-oncelik]="job.priority">{{ oncelikAdi(job.priority) }}</span></td>
-             <td><span class="rozet" [attr.data-durum]="job.status">{{ durumAdi(job.status) }}</span>  </td>
+                           <td>
+                <button type="button" class="durum-btn"
+                        (click)="$event.stopPropagation(); durumDialogAc(job)">
+                  <span class="rozet" [attr.data-durum]="job.status">{{ durumAdi(job.status) }}</span>
+                  <span class="ok-kucuk">▾</span>
+                </button>
+              </td>
               <td>{{ job.stage ?? '—' }}</td>
               <td class="t-efor">{{ job.adam && job.gun ? job.adam * job.gun : '—' }}</td>
               <td [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM y' }}</td>
@@ -126,7 +139,7 @@
         <p class="aciklama">{{ s.description }}</p>
         <div class="meta">
           <span>Aşama: {{ s.stage ?? '—' }}</span>
-          <span [attr.data-gecikme]="gecikmeDurumu(s)">Son tarih: {{ s.deadline | date:'d MMMM y' }}</span>
+          <span > Son tarih:<span [attr.data-gecikme]="gecikmeDurumu(s)"> {{ s.deadline | date:'d MMMM y' }}</span></span>
           @if (s.adam && s.gun) {
             <span>Efor: {{ s.adam }} × {{ s.gun }} = {{ s.adam * s.gun }} adam-gün</span>
           }
@@ -134,39 +147,10 @@
 
         
 
-        <h3>Durum Değiştir</h3>
-        <mat-form-field appearance="outline">
-          <mat-label>Yeni durum</mat-label>
-          <mat-select [(ngModel)]="yeniDurum">
-            <mat-option value="Beklemede">Beklemede</mat-option>
-            <mat-option value="DevamEdiyor">Devam Ediyor</mat-option>
-            <mat-option value="Tamamlandi">Tamamlandı</mat-option>
-            <mat-option value="Iptal">İptal</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        @if (yeniDurum === 'DevamEdiyor') {
-          <mat-form-field appearance="outline">
-            <mat-label>Aşama</mat-label>
-            <mat-select [(ngModel)]="yeniAsama">
-              <mat-option value="Plan">Plan</mat-option>
-              <mat-option value="Design">Design</mat-option>
-              <mat-option value="Develop">Develop</mat-option>
-              <mat-option value="Test">Test</mat-option>
-              <mat-option value="Deploy">Deploy</mat-option>
-              <mat-option value="Review">Review</mat-option>
-            </mat-select>
-          </mat-form-field>
-        }
-
-        <mat-form-field appearance="outline">
-          <mat-label>Not</mat-label>
-          <input matInput [(ngModel)]="not" />
-        </mat-form-field>
-
-        <button matButton="filled" (click)="durumDegistir()">Güncelle</button>
+        
+        
         <button matButton (click)="duzenleAc(s)">Düzenle</button>
-        <button matButton (click)="sil(s.id)">Bu işi sil</button>
+        <button matButton (click)="sil(s)">Bu işi sil</button>
       </div>
       <h3>Geçmiş</h3>
         @for (h of s.history; track h.id) {
@@ -182,3 +166,4 @@
     }
   </aside>
 </div>
+}

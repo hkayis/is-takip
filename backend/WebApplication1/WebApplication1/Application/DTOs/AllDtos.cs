@@ -64,11 +64,11 @@ namespace WebApplication1.Application.DTOs
         [EnumDataType(typeof(JobPriority))]
         public JobPriority Priority { get; set; } = JobPriority.Normal;
 
-        [Range(1, 1000)]
-        public int? Adam { get; set; }
+        [Range(1, 1000, ErrorMessage = "Adam sayısı en az 1 olmalı.")]
+        public int Adam { get; set; }
 
-        [Range(1, 10000)]
-        public int? Gun { get; set; }
+        [Range(1, 10000, ErrorMessage = "Gün sayısı en az 1 olmalı.")]
+        public int Gun { get; set; }
     }
     // Düzenleme: Id ve Status burada yok — Id değiştirilemez,
     // durum değişikliği geçmiş kaydı tutan kendi ucundan yapılır.

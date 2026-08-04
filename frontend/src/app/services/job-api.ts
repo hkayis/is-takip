@@ -50,10 +50,10 @@ export class JobApi {
     getAll(){
         return this.http.get<Job[]>(`${this.apiUrl}/jobs`);
     }
-    create(dto: { id: number; title: string; description: string; deadline: string;priority: string; adam: number | null; gun: number | null }) {
+    create(dto: { id: number; title: string; description: string; deadline: string;priority: string; adam: number; gun: number}) {
         return this.http.post(`${this.apiUrl}/jobs`, dto);
     }
-    update(id: number, dto: {title: string; description: string; deadline:string;priority: string; adam: number |null; gun: number| null;}){
+    update(id: number, dto: {title: string; description: string; deadline:string;priority: string; adam: number; gun: number;}){
         return this.http.put(`${this.apiUrl}/jobs/${id}`, dto);
     }
     delete(id: number){

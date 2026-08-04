@@ -1,3 +1,11 @@
+@if (jobs().length === 0) {
+  <div class="bos-durum">
+    <div class="bos-ikon">📊</div>
+    <h2>Gösterilecek veri yok</h2>
+    <p>İş eklemeye başladığında burada özet, dağılım ve eğilim grafiklerini göreceksin.</p>
+    <button matButton="filled" (click)="yeniIsAc()">+ İlk işini oluştur</button>
+  </div>
+} @else {
 <div class="ozet-serit">
   <strong>{{ toplam() }} iş</strong>
   <span class="ayrac">·</span>
@@ -128,9 +136,9 @@
   </section>
 
     <section class="kutu tam-genislik">
-    <div class="kutu-ust">
-      <h2>Açılan / Tamamlanan</h2>
-      <span class="kutu-not">son 6 ay</span>
+      <div class="kutu-ust">
+      <h2>Açılan / Tamamlanan Efor</h2>
+      <span class="kutu-not">son 6 ay · adam-gün</span>
     </div>
 
     <div class="trend">
@@ -152,3 +160,4 @@
     </div>
   </section>
 </div>
+}

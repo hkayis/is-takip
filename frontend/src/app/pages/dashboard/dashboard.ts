@@ -7,9 +7,10 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { YeniIsDialog } from '../../dialogs/yeni-is-dialog/yeni-is-dialog';
 import { oncelikAdi } from '../../etiketler';
+import { MatButtonModule } from '@angular/material/button';
 @Component({
   selector: 'app-dashboard',
-  imports: [MatCardModule, DatePipe, MatDialogModule, MatSnackBarModule],
+  imports: [MatCardModule, DatePipe, MatDialogModule, MatSnackBarModule,MatButtonModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -129,40 +130,9 @@ export class Dashboard implements OnInit {
     );
   });
 
-  gecikenler= computed(()=> {
-    const simdi = Date.now();
-    const gunMs= 1000 * 60 * 60 * 24;
 
-    return this.jobs()
-    .filter(j=>
-      j.status !== 'Tamamlandi' &&
-      j.status !== 'Iptal' &&
-      new Date(j.deadline).getTime()<simdi
-    )
-    .map(j=> ({
-      ...j,
-      gecikmeGun:Math.floor((simdi-new Date(j.deadline).getTime())/gunMs),
-    }))
-    .sort((a,b)=> b.gecikmeGun -a.gecikmeGun);
-  })
 
-    yaklasanlar = computed(() => {
-    const simdi = Date.now();
-    const gunMs = 1000 * 60 * 60 * 24;
-    const sinir = simdi + 7 * gunMs;
-
-    return this.jobs()
-      .filter(j => {
-        if (j.status === 'Tamamlandi' || j.status === 'Iptal') return false;
-        const son = new Date(j.deadline).getTime();
-        return son >= simdi && son <= sinir;
-      })
-      .map(j => ({
-        ...j,
-        kalanGun: Math.ceil((new Date(j.deadline).getTime() - simdi) / gunMs),
-      }))
-      .sort((a, b) => a.kalanGun - b.kalanGun);
-  });
+ 
 
   oncelikDagilimi= computed(()=> {
     const say= (p:string) =>  this.jobs().filter(j=> j.priority===p && (j.status==='Beklemede' || j.status === 'DevamEdiyor')).length
@@ -218,25 +188,31 @@ export class Dashboard implements OnInit {
     return ham.map(x=>({...x, yuzde: (x.sayi/enBuyuk)*100}))
   });
 
-    aylikTrend = computed(() => {
+      aylikTrend = computed(() => {
     const simdi = new Date();
     const aylar = [];
+
+    const efor = (j: Job) => (j.adam ?? 0) * (j.gun ?? 0);
 
     for (let i = 5; i >= 0; i--) {
       const tarih = new Date(simdi.getFullYear(), simdi.getMonth() - i, 1);
       const ay = tarih.getMonth();
       const yil = tarih.getFullYear();
 
-      const acilan = this.jobs().filter(j => {
-        const d = new Date(j.createdAt);
-        return d.getMonth() === ay && d.getFullYear() === yil;
-      }).length;
+      const acilan = this.jobs()
+        .filter(j => {
+          const d = new Date(j.createdAt);
+          return d.getMonth() === ay && d.getFullYear() === yil;
+        })
+        .reduce((t, j) => t + efor(j), 0);
 
-      const kapanan = this.jobs().filter(j => {
-        if (!j.completedAt) return false;
-        const d = new Date(j.completedAt);
-        return d.getMonth() === ay && d.getFullYear() === yil;
-      }).length;
+      const kapanan = this.jobs()
+        .filter(j => {
+          if (!j.completedAt) return false;
+          const d = new Date(j.completedAt);
+          return d.getMonth() === ay && d.getFullYear() === yil;
+        })
+        .reduce((t, j) => t + efor(j), 0);
 
       aylar.push({ anahtar: `${yil}-${ay}`, tarih, acilan, kapanan });
     }

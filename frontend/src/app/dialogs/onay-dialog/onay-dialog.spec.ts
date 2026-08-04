@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Detail } from './detail';
+import { OnayDialog } from './onay-dialog';
 
-describe('Detail', () => {
-  let component: Detail;
-  let fixture: ComponentFixture<Detail>;
+describe('OnayDialog', () => {
+  let component: OnayDialog;
+  let fixture: ComponentFixture<OnayDialog>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Detail],
+      imports: [OnayDialog],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Detail);
+    fixture = TestBed.createComponent(OnayDialog);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

@@ -11,6 +11,8 @@ import {DatePipe} from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { durumAdi, oncelikAdi, oncelikPuani } from '../../etiketler';
+import { DurumDialog } from '../../dialogs/durum-dialog/durum-dialog';
+import { OnayDialog } from '../../dialogs/onay-dialog/onay-dialog';
 @Component({
   selector: 'app-jobs',
   imports: [FormsModule,DatePipe ,MatSnackBarModule ,MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatDialogModule],
@@ -100,9 +102,7 @@ export class Jobs implements OnInit {
       return ((av as number) - (bv as number)) * yon;
     });
   });
-  yeniDurum = '';
-  yeniAsama: string | null = null;
-  not = '';
+  
 
     ngOnInit() {
     const durum = this.route.snapshot.queryParamMap.get('durum');
@@ -175,9 +175,7 @@ export class Jobs implements OnInit {
     this.jobApi.getById(id).subscribe({
       next: (veri) => {
         this.seciliDetay.set(veri);
-        this.yeniDurum = '';
-        this.yeniAsama = null;
-        this.not = '';
+        
       },
       error: (err) => console.error('Detay alınamadı:', err),
     });
@@ -185,40 +183,52 @@ export class Jobs implements OnInit {
 
   kapat() {
     this.seciliDetay.set(null);
-    this.yeniDurum = '';
-    this.yeniAsama = null;
-    this.not = '';
+    
   }
 
-  durumDegistir() {
-    const mevcut = this.seciliDetay();
-    if (!mevcut) return;
+    durumDialogAc(job: Job | JobDetail) {
+    const ref = this.dialog.open(DurumDialog, {
+      width: '420px',
+      data: { title: job.title, status: job.status, stage: job.stage },
+    });
 
-    this.jobApi.changeStatus(mevcut.id, {
-      newStatus: this.yeniDurum,
-      newStage: this.yeniDurum === 'DevamEdiyor' ? this.yeniAsama : null,
-      note: this.not || null,
-    }).subscribe({
-      next: () => {
-        this.not = '';
-        this.detayYukle(mevcut.id);
-        this.yukle();
-      },
-      error: (err) => console.error('Durum değiştirilemedi:', err),
+    ref.afterClosed().subscribe((sonuc) => {
+      if (!sonuc) return;
+      this.jobApi.changeStatus(job.id, sonuc).subscribe({
+        next: () => {
+          if (this.seciliDetay()?.id === job.id) {
+            this.detayYukle(job.id);
+          }
+          this.yukle();
+        },
+        error: () => this.snackBar.open('Durum değiştirilemedi.', 'Tamam', { duration: 4000 }),
+      });
     });
   }
 
-  sil(id: number) {
-    this.jobApi.delete(id).subscribe({
-      next: () => {
-        if (this.seciliDetay()?.id === id) {
-          this.kapat();
-        }
-        this.yukle();
+  sil(job: JobDetail){
+    const ref = this.dialog.open(OnayDialog, {
+      data:{
+        baslik:'İşi sil',
+        mesaj: `"${job.title}" kalıcı olarak silinecek. Geçmiş kayıtları da gidecek. Bu işlem geri alınamaz.`,
+        onayMetni: 'Sil',
       },
-      error: (err) => console.error('İş silinemedi:', err),
+    });
+
+    ref.afterClosed().subscribe((onay)=>{
+      if(!onay) return
+      this.jobApi.delete(job.id).subscribe({
+        next: ()=>{
+          if(this. seciliDetay()?.id===job.id){
+            this.kapat();
+          }
+          this.yukle();
+        },
+        error: ()=> this.snackBar.open('İş silinemedi.', 'Tamam', {duration: 4000}),
+      });
     });
   }
+
   gecikmeDurumu(job: Job | JobDetail): string | null {
     if(job.status === 'Tamamlandi' || job.status === 'Iptal') return null;
     
@@ -227,7 +237,7 @@ export class Jobs implements OnInit {
     const kalanGun= Math.ceil((new Date(job.deadline).getTime() - Date.now())/gunMs);
 
     if(kalanGun<0) return 'gecikti';
-    if (kalanGun <3) return 'yakin';
+    if (kalanGun <7) return 'yakin';
     return null;
   }
 }

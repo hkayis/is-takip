@@ -1,0 +1,40 @@
+<h2 mat-dialog-title>Durum Değiştir</h2>
+
+<mat-dialog-content class="form">
+  <p class="is-adi">{{ data.title }}</p>
+  <p class="mevcut">Şu anki durum: <strong>{{ durumAdi(data.status) }}</strong></p>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Yeni durum</mat-label>
+    <mat-select [(ngModel)]="yeniDurum">
+      <mat-option value="Beklemede">Beklemede</mat-option>
+      <mat-option value="DevamEdiyor">Devam Ediyor</mat-option>
+      <mat-option value="Tamamlandi">Tamamlandı</mat-option>
+      <mat-option value="Iptal">İptal</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  @if (yeniDurum === 'DevamEdiyor') {
+    <mat-form-field appearance="outline">
+      <mat-label>Aşama</mat-label>
+      <mat-select [(ngModel)]="yeniAsama">
+        <mat-option value="Plan">Plan</mat-option>
+        <mat-option value="Design">Design</mat-option>
+        <mat-option value="Develop">Develop</mat-option>
+        <mat-option value="Test">Test</mat-option>
+        <mat-option value="Deploy">Deploy</mat-option>
+        <mat-option value="Review">Review</mat-option>
+      </mat-select>
+    </mat-form-field>
+  }
+
+  <mat-form-field appearance="outline">
+    <mat-label>Not (isteğe bağlı)</mat-label>
+    <input matInput [(ngModel)]="not" />
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton (click)="iptal()">İptal</button>
+  <button matButton="filled" [disabled]="!degistiMi" (click)="kaydet()">Güncelle</button>
+</mat-dialog-actions>

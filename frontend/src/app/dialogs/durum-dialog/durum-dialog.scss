@@ -1,0 +1,21 @@
+mat-dialog-content.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 340px;
+  padding-top: 16px !important;
+}
+
+.form mat-form-field { width: 100%; }
+
+.is-adi {
+  margin: 0;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.mevcut {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+}

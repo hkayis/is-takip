@@ -25,17 +25,28 @@ export class YeniIsDialog {
   adam: number | null = this.data?.adam ?? null;
   gun: number | null = this.data?.gun ?? null;
   oncelik=this.data?.priority ?? "Normal";
+  hata='';
   get adamGun(): number | null {
     return this.adam && this.gun ? this.adam * this.gun : null;
   }
 
-  kaydet() {
+    kaydet() {
+    if (!this.isNo || !this.baslik.trim() || !this.tarih) {
+      this.hata = 'İş numarası, başlık ve son tarih zorunludur.';
+      return;
+    }
+
+    if (!this.adam || !this.gun) {
+      this.hata = 'Adam ve gün alanları zorunludur.';
+      return;
+    }
+
     this.dialogRef.close({
       id: this.isNo,
       title: this.baslik,
       description: this.aciklama,
       deadline: this.tarih,
-      priority:this.oncelik,
+      priority: this.oncelik,
       adam: this.adam,
       gun: this.gun,
     });
