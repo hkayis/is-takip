@@ -13,9 +13,10 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { durumAdi, oncelikAdi, oncelikPuani } from '../../etiketler';
 import { DurumDialog } from '../../dialogs/durum-dialog/durum-dialog';
 import { OnayDialog } from '../../dialogs/onay-dialog/onay-dialog';
+import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-jobs',
-  imports: [FormsModule,DatePipe ,MatSnackBarModule ,MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatDialogModule],
+  imports: [FormsModule,DatePipe,MatIconModule ,MatSnackBarModule ,MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatDialogModule],
   templateUrl: './jobs.html',
   styleUrl: './jobs.scss',
 })
@@ -146,7 +147,7 @@ export class Jobs implements OnInit {
       });
     });
   }
-    duzenleAc(job: JobDetail) {
+    duzenleAc(job: Job) {
     const ref = this.dialog.open(YeniIsDialog, { width: '420px', data: job });
     ref.afterClosed().subscribe((sonuc) => {
       if (!sonuc) return;
@@ -206,7 +207,7 @@ export class Jobs implements OnInit {
     });
   }
 
-  sil(job: JobDetail){
+  sil(job: Job){
     const ref = this.dialog.open(OnayDialog, {
       data:{
         baslik:'İşi sil',

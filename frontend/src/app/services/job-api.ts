@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 export interface Job{
     id: number;
     title: string;
+    description:string;
     createdAt: string;
     deadline: string;
     completedAt: string | null;

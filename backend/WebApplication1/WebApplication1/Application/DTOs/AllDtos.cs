@@ -8,6 +8,8 @@ namespace WebApplication1.Application.DTOs
         public int Id { get; set; }
         public string Title { get; set; }
 
+        public string Description { get; set; }
+
         public DateTime CreatedAt { get; set; }
         
         
@@ -46,7 +48,7 @@ namespace WebApplication1.Application.DTOs
 
     public class CreateJobDto
     {
-        // İş numarası kullanıcı tarafından belirlenir, sonradan değiştirilemez
+        
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "İş numarası 1'den büyük olmalı.")]
         public int Id { get; set; }
@@ -70,8 +72,6 @@ namespace WebApplication1.Application.DTOs
         [Range(1, 10000, ErrorMessage = "Gün sayısı en az 1 olmalı.")]
         public int Gun { get; set; }
     }
-    // Düzenleme: Id ve Status burada yok — Id değiştirilemez,
-    // durum değişikliği geçmiş kaydı tutan kendi ucundan yapılır.
     public class UpdateJobDto
     {
         [Required]
@@ -121,4 +121,6 @@ namespace WebApplication1.Application.DTOs
         public string Username { get; set; } = null!;
         public DateTime ExpiresAt { get; set; }
     }
+
+    
 }

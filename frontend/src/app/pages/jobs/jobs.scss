@@ -405,3 +405,29 @@
   font-size: 14px;
   line-height: 1.5;
 }
+
+.ikon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.5);
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.ikon-btn:hover {
+  background: rgba(0, 0, 0, 0.07);
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.ikon-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}

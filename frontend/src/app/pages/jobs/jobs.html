@@ -54,7 +54,15 @@
           @for (job of filtrelenmisIsler(); track job.id) {
             <tr [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
               <td class="t-no">{{ job.id }}</td>
-              <td class="t-baslik">{{ job.title }}</td>
+              
+              <td class="t-baslik">{{ job.title }}
+                <button type="button" class="ikon-btn" title="Düzenle" (click)="$event.stopPropagation(); duzenleAc(job)">
+                  <mat-icon>edit</mat-icon></button>
+
+                <button type="button" class="ikon-btn" title="Sil"   (click)="$event.stopPropagation(); sil(job)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
              <td><span class="oncelik" [attr.data-oncelik]="job.priority">{{ oncelikAdi(job.priority) }}</span></td>
                            <td>
                 <button type="button" class="durum-btn"
@@ -62,6 +70,8 @@
                   <span class="rozet" [attr.data-durum]="job.status">{{ durumAdi(job.status) }}</span>
                   <span class="ok-kucuk">▾</span>
                 </button>
+
+
               </td>
               <td>{{ job.stage ?? '—' }}</td>
               <td class="t-efor">{{ job.adam && job.gun ? job.adam * job.gun : '—' }}</td>
@@ -148,7 +158,7 @@
         
 
         
-        
+        <button matButton (click)="durumDialogAc(s)">Durum Değiştir</button>
         <button matButton (click)="duzenleAc(s)">Düzenle</button>
         <button matButton (click)="sil(s)">Bu işi sil</button>
       </div>

@@ -22,6 +22,7 @@ namespace WebApplication1.Application.Services
            return await _context.Jobs.OrderByDescending(j => j.CreatedAt).Select(j => new JobListDto { 
                Title = j.Title,
                Id= j.Id,
+               Description=j.Description,
                CreatedAt=j.CreatedAt,
                Deadline= j.Deadline,
                CompletedAt = j.CompletedAt,
