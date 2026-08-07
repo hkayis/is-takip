@@ -10,12 +10,10 @@
 
     public enum JobStage
     {
-        Plan = 0,
-        Design = 1,
-        Develop = 2,
-        Test = 3,
-        Deploy = 4,
-        Review = 5
+        Analiz = 0,
+        Gelistirme = 1,
+        Test = 2,
+        Tasima = 3,
     }
 
     public enum JobPriority
@@ -25,6 +23,15 @@
         Normal=1,
         Yuksek=2,
         Acil=3
+    }
+    public enum JobSize
+    {
+        FastTrack = 0,
+        XS = 1,
+        S = 2,
+        M= 3,
+        L= 4,
+        XL= 5,
     }
     public class Job
     {
@@ -44,6 +51,8 @@
         public int? Adam { get; set; }
         public int? Gun { get; set; }
 
+        public JobSize Buyukluk { get; set; }
+        public string? Not { get; set; }
         public List<JobHistory> History { get; set; } = new List<JobHistory>();
     }
 }

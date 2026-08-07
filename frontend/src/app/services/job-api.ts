@@ -13,6 +13,8 @@ export interface Job{
     priority: string;
     adam: number | null;
     gun: number | null;
+    buyukluk: string;
+    
 }
 
 export interface JobHistory{
@@ -40,6 +42,8 @@ export interface JobDetail {
     history: JobHistory[];
     adam: number | null;
     gun: number | null;
+    buyukluk: string;
+    not: string | null;
 }
 
 @Service()
@@ -51,10 +55,13 @@ export class JobApi {
     getAll(){
         return this.http.get<Job[]>(`${this.apiUrl}/jobs`);
     }
-    create(dto: { id: number; title: string; description: string; deadline: string;priority: string; adam: number; gun: number}) {
+    create(dto: { id: number; title: string; description: string; deadline: string;
+        priority: string; adam: number; gun: number; buyukluk:string | null;
+    }) {
         return this.http.post(`${this.apiUrl}/jobs`, dto);
     }
-    update(id: number, dto: {title: string; description: string; deadline:string;priority: string; adam: number; gun: number;}){
+    update(id: number, dto: {title: string; description: string; deadline:string;
+        priority: string; adam: number; gun: number; buyukluk: string|null;not: string|null;}){
         return this.http.put(`${this.apiUrl}/jobs/${id}`, dto);
     }
     delete(id: number){

@@ -48,6 +48,8 @@ namespace WebApplication1.Data
                     .HasConversion<string>()
                     .HasMaxLength (30);
 
+
+
                 entity.Property(j => j.CreatedAt).HasConversion(utcConverter);
                 entity.Property(j => j.Deadline).HasConversion(utcConverter);
                 entity.Property(j => j.CompletedAt).HasConversion(utcNullableConverter);

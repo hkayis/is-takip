@@ -15,6 +15,7 @@
 
         public DateTime ChangedAt { get; set; } = DateTime.UtcNow;
 
+
         public string? Note { get; set; }          // opsiyonel açıklama
     }
 }

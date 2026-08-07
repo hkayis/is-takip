@@ -62,3 +62,19 @@ body {
 .oncelik[data-oncelik="Normal"] { background: #e3f2fd; color: #1565c0; }
 .oncelik[data-oncelik="Yuksek"] { background: #fff3e0; color: #e65100; }
 .oncelik[data-oncelik="Acil"]   { background: #ffebee; color: #c62828; }
+
+.buyukluk {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.buyukluk[data-buyukluk="FastTrack"] { background: #e0f2f1; color: #00695c; }
+.buyukluk[data-buyukluk="XS"]        { background: #e8f5e9; color: #2e7d32; }
+.buyukluk[data-buyukluk="S"]         { background: #f1f8e9; color: #558b2f; }
+.buyukluk[data-buyukluk="M"]         { background: #fffde7; color: #f9a825; }
+.buyukluk[data-buyukluk="L"]         { background: #fff3e0; color: #ef6c00; }
+.buyukluk[data-buyukluk="XL"]        { background: #ffebee; color: #c62828; }

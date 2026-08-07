@@ -23,6 +23,8 @@ namespace WebApplication1.Application.DTOs
         public JobPriority Priority { get; set; }
         public int? Adam { get; set; }
         public int? Gun { get; set; }
+        
+        public JobSize Buyukluk { get; set; }
     }
 
     public class JobDetailDto : JobListDto
@@ -33,6 +35,7 @@ namespace WebApplication1.Application.DTOs
 
         public string Description { get; set; }
 
+        public string? Not { get; set; }
 
     }
     public class JobHistoryDto
@@ -71,6 +74,8 @@ namespace WebApplication1.Application.DTOs
 
         [Range(1, 10000, ErrorMessage = "Gün sayısı en az 1 olmalı.")]
         public int Gun { get; set; }
+
+        public JobSize Buyukluk { get; set; }
     }
     public class UpdateJobDto
     {
@@ -92,6 +97,9 @@ namespace WebApplication1.Application.DTOs
 
         [Range(1, 10000)]
         public int? Gun { get; set; }
+        public JobSize Buyukluk { get; set; }
+
+        public string? Not { get; set; }
     }
 
     public class ChangeStatusDto

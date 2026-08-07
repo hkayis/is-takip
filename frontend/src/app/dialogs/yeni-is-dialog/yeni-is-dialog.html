@@ -26,12 +26,12 @@
   <div class="efor-satiri">
     <mat-form-field appearance="outline">
       <mat-label>Adam</mat-label>
-      <input matInput type="number" [(ngModel)]="adam" />
+      <input matInput type="number" [ngModel]="adam" (ngModelChange)="adam = $event; eforDegisti()" />
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Gün</mat-label>
-      <input matInput type="number" [(ngModel)]="gun" />
+      <input matInput type="number" [ngModel]="gun" (ngModelChange)="gun = $event; eforDegisti()" />
     </mat-form-field>
 
       <mat-form-field appearance="outline">
@@ -44,11 +44,26 @@
     </mat-select>
   </mat-form-field>
   
+    <mat-form-field appearance="outline">
+    <mat-label>Büyüklük</mat-label>
+    <mat-select [ngModel]="buyukluk" (ngModelChange)="buyukluk = $event; buyuklukElleSecildi = true">
+      <mat-option value="FastTrack">Fast Track</mat-option>
+      <mat-option value="XS">XS</mat-option>
+      <mat-option value="S">S</mat-option>
+      <mat-option value="M">M</mat-option>
+      <mat-option value="L">L</mat-option>
+      <mat-option value="XL">XL</mat-option>
+    </mat-select>
+  </mat-form-field>
   </div>
 
   
   @if (adamGun) {
     <p class="efor-ozet">Toplam efor: <strong>{{ adamGun }}</strong> adam-gün</p>
+  }
+
+  @if (onerilenBuyukluk) {
+    <p class="oneri-uyari">Adam-güne göre önerilen büyüklük: <strong>{{ onerilenBuyukluk }}</strong></p>
   }
     @if (hata) {
     <p class="dialog-hata">{{ hata }}</p>

@@ -23,7 +23,7 @@ export class Dashboard implements OnInit {
  
   
   private router =inject(Router);
-  asamaSirasi : string[] = ['Plan', 'Design','Develop' ,'Test', 'Deploy', 'Review']
+  asamaSirasi : string[] = ['Analiz', 'Gelistirme','Test' ,'Tasima']
   oncelikPuani: Record <string, number> = {
     Dusuk: 1,
     Normal: 2,
@@ -101,7 +101,7 @@ export class Dashboard implements OnInit {
 
   aktifEfor= computed(()=> 
     this.jobs()
-      .filter(j=> j.status === 'Beklemede' || j.status === 'DevamEdiyor')
+      .filter(j=>j.status === 'DevamEdiyor')
       .reduce((toplam, j) => toplam + (j.adam ?? 0) * (j.gun ?? 0), 0)
   );
   
@@ -135,7 +135,7 @@ export class Dashboard implements OnInit {
  
 
   oncelikDagilimi= computed(()=> {
-    const say= (p:string) =>  this.jobs().filter(j=> j.priority===p && (j.status==='Beklemede' || j.status === 'DevamEdiyor')).length
+    const say= (p:string) =>  this.jobs().filter(j=> j.priority===p && (j.status === 'DevamEdiyor')).length
 
     const ham=[
       {oncelik: 'Dusuk', etiket: 'Düşük', sayi: say('Dusuk')},

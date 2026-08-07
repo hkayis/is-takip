@@ -129,7 +129,7 @@ using (var scope = app.Services.CreateScope())
         db.Jobs.AddRange(
             // --- geciken işler ---
             Olustur(1001, "Q3 finansal rapor", "Üçüncü çeyrek gelir-gider raporunun hazırlanması ve yönetime sunulması.",
-                    -5, JobStatus.DevamEdiyor, JobPriority.Acil, JobStage.Review, 2, 3, 20),
+                    -5, JobStatus.DevamEdiyor, JobPriority.Acil, JobStage.Tasima, 2, 3, 20),
             Olustur(1002, "Tedarikçi sözleşme yenileme", "Lojistik tedarikçisiyle yıllık sözleşmenin gözden geçirilmesi.",
                     -12, JobStatus.Beklemede, JobPriority.Yuksek, null, 1, 5, 30),
             Olustur(1003, "Sunucu güvenlik yaması", "Kritik güvenlik güncellemelerinin üretim ortamına uygulanması.",
@@ -137,15 +137,15 @@ using (var scope = app.Services.CreateScope())
 
             // --- bugün / yaklaşan ---
             Olustur(1004, "Ekip performans değerlendirmesi", "Çeyrek dönem performans görüşmelerinin planlanması.",
-                    0, JobStatus.DevamEdiyor, JobPriority.Normal, JobStage.Plan, 1, 4, 14),
+                    0, JobStatus.DevamEdiyor, JobPriority.Normal, JobStage.Analiz, 1, 4, 14),
             Olustur(1005, "Müşteri demo hazırlığı", "Yeni modülün müşteriye sunulacak demo ortamının hazırlanması.",
-                    2, JobStatus.DevamEdiyor, JobPriority.Yuksek, JobStage.Develop, 2, 4, 8),
+                    2, JobStatus.DevamEdiyor, JobPriority.Yuksek, JobStage.Gelistirme, 2, 4, 8),
             Olustur(1006, "Bütçe revizyonu", "Yılsonu bütçesinin güncel harcamalara göre revize edilmesi.",
                     5, JobStatus.Beklemede, JobPriority.Normal, null, 1, 3, 6),
 
             // --- ileri tarihli ---
             Olustur(1007, "Yeni CRM entegrasyonu", "Satış ekibinin kullandığı CRM ile sistemin entegre edilmesi.",
-                    30, JobStatus.DevamEdiyor, JobPriority.Yuksek, JobStage.Design, 2, 15, 12),
+                    30, JobStatus.DevamEdiyor, JobPriority.Yuksek, JobStage.Analiz, 2, 15, 12),
             Olustur(1008, "Ofis taşınma planı", "Yeni ofise taşınma sürecinin planlanması ve koordinasyonu.",
                     40, JobStatus.Beklemede, JobPriority.Normal, null, 3, 6, 5),
             Olustur(1009, "Yıllık strateji dokümanı", "Gelecek yıl hedeflerinin dokümante edilmesi.",

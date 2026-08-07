@@ -18,6 +18,6 @@ export class OnayDialog {
   }
 
   hayir(){
-    this.dialogRef.close(false)
+    this.dialogRef.close(false);
   }
 }

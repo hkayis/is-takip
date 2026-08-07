@@ -30,7 +30,8 @@ namespace WebApplication1.Application.Services
                Stage= j.Stage,
                Priority = j.Priority,
                Adam = j.Adam,
-               Gun= j.Gun
+               Gun= j.Gun,
+               Buyukluk = j.Buyukluk,
            }).ToListAsync();
 
         }
@@ -57,6 +58,8 @@ namespace WebApplication1.Application.Services
                 CompletedAt = job.CompletedAt,
                 Adam = job.Adam,
                 Gun = job.Gun,
+                Buyukluk = job.Buyukluk,
+                Not = job.Not,
                 History = job.History
                     .OrderBy(h => h.ChangedAt)
                     .Select(h => new JobHistoryDto
@@ -88,6 +91,7 @@ namespace WebApplication1.Application.Services
                 Priority = dto.Priority,
                 Adam = dto.Adam,
                 Gun = dto.Gun,
+                Buyukluk = dto.Buyukluk,
                 Status = JobStatus.Beklemede,
                 CreatedAt = DateTime.UtcNow
             };
@@ -118,7 +122,8 @@ namespace WebApplication1.Application.Services
             job.Priority = dto.Priority;
             job.Adam = dto.Adam;
             job.Gun = dto.Gun;
-
+            job.Buyukluk = dto.Buyukluk;
+            job.Not = dto.Not;
             await _context.SaveChangesAsync();
             return true;
         }

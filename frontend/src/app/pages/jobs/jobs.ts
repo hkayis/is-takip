@@ -10,13 +10,15 @@ import { YeniIsDialog } from '../../dialogs/yeni-is-dialog/yeni-is-dialog';
 import {DatePipe} from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { durumAdi, oncelikAdi, oncelikPuani } from '../../etiketler';
+import { durumAdi, oncelikAdi, oncelikPuani, buyuklukAdi,asamaAdi } from '../../etiketler';
 import { DurumDialog } from '../../dialogs/durum-dialog/durum-dialog';
 import { OnayDialog } from '../../dialogs/onay-dialog/onay-dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-jobs',
-  imports: [FormsModule,DatePipe,MatIconModule ,MatSnackBarModule ,MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatDialogModule],
+  imports: [FormsModule,DatePipe,MatIconModule,MatTooltip ,MatSnackBarModule ,MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatDialogModule],
   templateUrl: './jobs.html',
   styleUrl: './jobs.scss',
 })
@@ -25,9 +27,13 @@ export class Jobs implements OnInit {
   private jobApi = inject(JobApi);
   private dialog = inject(MatDialog);
   private route = inject(ActivatedRoute);
-    protected durumAdi = durumAdi;
+  protected durumAdi = durumAdi;
   protected oncelikAdi = oncelikAdi;
-  asamaSirasi: string[] = ['Plan', 'Design', 'Develop', 'Test', 'Deploy', 'Review'];
+  protected buyuklukAdi = buyuklukAdi;
+  protected asamaAdi=asamaAdi;
+  protected notMetni =''
+ 
+  asamaSirasi: string[] = ['Analiz', 'Gelistirme', 'Test', 'Tasima'];
   jobs = signal<Job[]>([]);
 
   bekleyenler = computed(() => this.jobs().filter(j => j.status === 'Beklemede'));
@@ -104,6 +110,20 @@ export class Jobs implements OnInit {
     });
   });
   
+    exportExcel(){
+      const data= this.filtrelenmisIsler();
+
+      const worksheet = XLSX.utils.json_to_sheet(data);
+
+      const workbook=XLSX.utils.book_new();
+
+      XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        'İşler'
+      );
+      XLSX.writeFile(workbook,'isler.xlsx');
+    }
 
     ngOnInit() {
     const durum = this.route.snapshot.queryParamMap.get('durum');
@@ -147,7 +167,7 @@ export class Jobs implements OnInit {
       });
     });
   }
-    duzenleAc(job: Job) {
+    duzenleAc(job: JobDetail) {
     const ref = this.dialog.open(YeniIsDialog, { width: '420px', data: job });
     ref.afterClosed().subscribe((sonuc) => {
       if (!sonuc) return;
@@ -158,6 +178,8 @@ export class Jobs implements OnInit {
         priority: sonuc.priority,
         adam: sonuc.adam,
         gun: sonuc.gun,
+        buyukluk: sonuc.buyukluk,
+        not:sonuc.not
       }).subscribe({
         next: () => {
           this.detayYukle(job.id);
@@ -176,12 +198,29 @@ export class Jobs implements OnInit {
     this.jobApi.getById(id).subscribe({
       next: (veri) => {
         this.seciliDetay.set(veri);
-        
+        this.notMetni=veri.not ?? '';
       },
       error: (err) => console.error('Detay alınamadı:', err),
     });
   }
-
+  notKaydet(){
+    const s= this.seciliDetay();
+    if(!s) return console.log(500);
+    this.jobApi.update(s.id, { title: s.title,
+      description: s.description,
+      deadline: s.deadline,
+      priority: s.priority,
+      adam: s.adam!,
+      gun: s.gun!,
+      buyukluk: s.buyukluk,
+      not: this.notMetni}).subscribe({
+        next:()=>{
+          this.detayYukle(s.id);
+          this.snackBar.open('Not kaydedildi.', 'Tamam', { duration: 2000 });
+        },
+        error:()=>  this.snackBar.open('Not kaydedilemedi.', 'Tamam', { duration: 4000 })
+      });
+  }
   kapat() {
     this.seciliDetay.set(null);
     

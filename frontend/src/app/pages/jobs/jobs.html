@@ -20,10 +20,16 @@
     <option value="Dusuk">Düşük</option>
   </select>
 
+  <button matButton (click)="exportExcel()" >
+    Excel İndir
+</button>
+
   <div class="gorunum-secim">
     <button type="button" [class.aktif]="gorunum() === 'liste'" (click)="gorunum.set('liste')">Liste</button>
     <button type="button" [class.aktif]="gorunum() === 'pano'" (click)="gorunum.set('pano')">Pano</button>
   </div>
+
+  
 
   <button matButton="filled" (click)="yeniIsAc()">+ Yeni İş</button>
 </div>
@@ -56,12 +62,6 @@
               <td class="t-no">{{ job.id }}</td>
               
               <td class="t-baslik">{{ job.title }}
-                <button type="button" class="ikon-btn" title="Düzenle" (click)="$event.stopPropagation(); duzenleAc(job)">
-                  <mat-icon>edit</mat-icon></button>
-
-                <button type="button" class="ikon-btn" title="Sil"   (click)="$event.stopPropagation(); sil(job)">
-                  <mat-icon>delete</mat-icon>
-                </button>
               </td>
              <td><span class="oncelik" [attr.data-oncelik]="job.priority">{{ oncelikAdi(job.priority) }}</span></td>
                            <td>
@@ -74,7 +74,10 @@
 
               </td>
               <td>{{ job.stage ?? '—' }}</td>
-              <td class="t-efor">{{ job.adam && job.gun ? job.adam * job.gun : '—' }}</td>
+                 <td class="t-efor">
+                {{ job.adam && job.gun ? job.adam * job.gun : '—' }}
+                <span class="buyukluk" [attr.data-buyukluk]="job.buyukluk">{{ buyuklukAdi(job.buyukluk) }}</span>
+              </td>
               <td [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM y' }}</td>
             </tr>
           } @empty {
@@ -141,39 +144,79 @@
   }
 
   <aside class="yan-panel">
-    @if (seciliDetay(); as s) {
-      <div class="panel-icerik">
-        <h2>{{ s.title }}</h2>
-        <span class="oncelik" [attr.data-oncelik]="s.priority">{{ oncelikAdi(s.priority) }}</span>
-        <span class="rozet" [attr.data-durum]="s.status">{{ durumAdi(s.status) }}</span>
-        <p class="aciklama">{{ s.description }}</p>
-        <div class="meta">
-          <span>Aşama: {{ s.stage ?? '—' }}</span>
-          <span > Son tarih:<span [attr.data-gecikme]="gecikmeDurumu(s)"> {{ s.deadline | date:'d MMMM y' }}</span></span>
-          @if (s.adam && s.gun) {
-            <span>Efor: {{ s.adam }} × {{ s.gun }} = {{ s.adam * s.gun }} adam-gün</span>
-          }
+@if (seciliDetay(); as s) {
+  <div class="panel-icerik">
+
+    <header class="panel-baslik">
+      <div class="baslik-ust">
+        <span class="is-no">#{{ s.id }}</span>
+        <div class="aksiyonlar">
+          <button matIconButton matTooltip="Durum değiştir" aria-label="Durum değiştir"
+                  (click)="durumDialogAc(s)">
+            <mat-icon>swap_horiz</mat-icon>
+          </button>
+          <button matIconButton matTooltip="Düzenle" aria-label="Düzenle"
+                  (click)="duzenleAc(s)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <span class="ayrac"></span>
+          <button matIconButton class="sil-btn" matTooltip="Sil" aria-label="İşi sil"
+                  (click)="sil(s)">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
         </div>
-
-        
-
-        
-        <button matButton (click)="durumDialogAc(s)">Durum Değiştir</button>
-        <button matButton (click)="duzenleAc(s)">Düzenle</button>
-        <button matButton (click)="sil(s)">Bu işi sil</button>
       </div>
+
+      <h2>{{ s.title }}</h2>
+
+      <div class="rozetler">
+        <span class="rozet" [attr.data-durum]="s.status">{{ durumAdi(s.status) }}</span>
+        <span class="oncelik-rozet" [attr.data-oncelik]="s.priority">{{ oncelikAdi(s.priority) }}</span>
+      </div>
+
+      @if (s.description) { <p class="aciklama">{{ s.description }}</p> }
+    </header>
+
+    
+
+    <section class="panel-bolum">
+      <h3>Not</h3>
+      <mat-form-field appearance="outline">
+        <mat-label>Not</mat-label>
+        <textarea matInput rows="3" [(ngModel)]="notMetni"></textarea>
+      </mat-form-field>
+      <div class="not-kaydet">
+        <button matButton="filled" (click)="notKaydet()">Kaydet</button>
+      </div>
+    </section>
+
+    <section class="panel-bolum">
       <h3>Geçmiş</h3>
+      <ol class="zaman-cizgisi">
         @for (h of s.history; track h.id) {
-          <div class="gecmis-satiri">
-            <span class="tarih">{{ h.changedAt | date:'d MMM y, HH:mm' }}</span>
-            <span>{{ h.oldStatus ? durumAdi(h.oldStatus) : 'yeni' }} → {{ durumAdi(h.newStatus) }}</span>            @if (h.note) { <span class="not">({{ h.note }})</span> }
-          </div>
+          <li>
+            <div class="gecis">
+              <span class="eski">{{ h.oldStatus ? durumAdi(h.oldStatus) : 'Yeni' }} - 
+                ({{h.oldStage ? asamaAdi(h.oldStage): ' '}})</span>
+              <mat-icon class="ok-ikon">arrow_forward</mat-icon>
+              <span class="yeni">{{ durumAdi(h.newStatus) }} - ({{h.newStage ? asamaAdi(h.newStage): ' '}})</span>
+              
+            </div>
+            <div class="tarih">{{ h.changedAt | date:'d MMM y, HH:mm' }}</div>
+            @if (h.note) { <div class="not">{{ h.note }}</div> }
+          </li>
         } @empty {
           <p class="bos">Geçmiş yok.</p>
         }
-    } @else {
-      <div class="panel-bos">Bir iş seçin</div>
-    }
-  </aside>
+      </ol>
+    </section>
+  </div>
+} @else {
+  <div class="panel-bos">
+    <mat-icon>touch_app</mat-icon>
+    <p>Detayları görmek için bir iş seçin</p>
+  </div>
+}
+</aside>
 </div>
 }
