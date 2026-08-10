@@ -27,7 +27,6 @@ export class YeniIsDialog {
   gun: number | null = this.data?.gun ?? null;
   buyukluk = this.data?.buyukluk ?? hesaplananBuyukluk(this.adam ?? 0, this.gun ?? 0);
   oncelik=this.data?.priority ?? "Normal";
-  not: string|null =this.data?.not ?? null;
   hata='';
 
   /** Kullanıcı büyüklüğü elle seçtiyse artık otomatik önerme. */
@@ -70,7 +69,8 @@ export class YeniIsDialog {
       priority: this.oncelik,
       adam: this.adam,
       gun: this.gun,
-      buyukluk: this.buyukluk
+      buyukluk: this.buyukluk,
+      
     });
   }
 

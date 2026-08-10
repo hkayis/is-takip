@@ -70,7 +70,8 @@ namespace WebApplication1.Application.Services
                         OldStage = h.OldStage,
                         NewStage = h.NewStage,
                         ChangedAt = h.ChangedAt,
-                        Note = h.Note
+                        Note = h.Note,
+                        Changes=h.Changes
                     }).ToList()
             };
         }
@@ -116,6 +117,18 @@ namespace WebApplication1.Application.Services
             var job = await _context.Jobs.FindAsync(id);
             if (job is null) return false;
 
+            // 1) EZMEDEN ÖNCE farkları topla (job.X = eski, dto.X = yeni)
+            var degisiklikler = new List<string>();
+            if (job.Title != dto.Title) degisiklikler.Add("Başlık güncellendi");
+            if (job.Description != dto.Description) degisiklikler.Add("Açıklama güncellendi");
+            if (job.Deadline != dto.Deadline) degisiklikler.Add($"Termin: {job.Deadline:dd.MM.yyyy} → {dto.Deadline:dd.MM.yyyy}");
+            if (job.Priority != dto.Priority) degisiklikler.Add($"Öncelik: {job.Priority} → {dto.Priority}");
+            if (job.Buyukluk != dto.Buyukluk) degisiklikler.Add($"Büyüklük: {job.Buyukluk} → {dto.Buyukluk}");
+            if (job.Adam != dto.Adam || job.Gun != dto.Gun)
+                degisiklikler.Add($"Efor: {job.Adam}×{job.Gun} → {dto.Adam}×{dto.Gun}");
+            if (job.Not != dto.Not) degisiklikler.Add("Not güncellendi");
+
+            // 2) Alanları uygula
             job.Title = dto.Title;
             job.Description = dto.Description;
             job.Deadline = dto.Deadline;
@@ -124,6 +137,20 @@ namespace WebApplication1.Application.Services
             job.Gun = dto.Gun;
             job.Buyukluk = dto.Buyukluk;
             job.Not = dto.Not;
+
+            // 3) Gerçekten bir şey değiştiyse geçmişe "düzenleme" satırı ekle
+            if (degisiklikler.Count > 0)
+            {
+                _context.JobHistories.Add(new JobHistory
+                {
+                    JobId = job.Id,
+                    OldStatus = job.Status,   // durum değişmiyor; kolon boş kalmasın diye mevcut durum
+                    NewStatus = job.Status,
+                    ChangedAt = DateTime.UtcNow,
+                    Changes = string.Join(", ", degisiklikler)
+                });
+            }
+
             await _context.SaveChangesAsync();
             return true;
         }

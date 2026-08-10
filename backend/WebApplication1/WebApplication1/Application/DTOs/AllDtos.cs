@@ -47,6 +47,7 @@ namespace WebApplication1.Application.DTOs
         public JobStage? NewStage { get; set; }
         public DateTime ChangedAt { get; set; }
         public string? Note { get; set; }
+        public string? Changes { get; set; }
     }
 
     public class CreateJobDto

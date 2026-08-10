@@ -25,7 +25,7 @@ export interface JobHistory{
     newStage: string | null;
     changedAt: string;
     note: string | null;
-
+    changes: string | null;
 
 }
 

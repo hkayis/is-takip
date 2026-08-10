@@ -1,8 +1,7 @@
 <div class="ust-bar">
   <h1>İşler</h1>
 
-  <input class="arama" type="text" placeholder="Ara…"
-         [ngModel]="arama()" (ngModelChange)="arama.set($event)" />
+  <input class="arama" type="text" placeholder="Ara…" [ngModel]="arama()" (ngModelChange)="arama.set($event)" />
 
   <select class="filtre" [ngModel]="durumFiltre()" (ngModelChange)="durumFiltre.set($event)">
     <option value="hepsi">Tüm durumlar</option>
@@ -12,7 +11,7 @@
     <option value="Iptal">İptal</option>
   </select>
 
-    <select class="filtre" [ngModel]="oncelikFiltre()" (ngModelChange)="oncelikFiltre.set($event)">
+  <select class="filtre" [ngModel]="oncelikFiltre()" (ngModelChange)="oncelikFiltre.set($event)">
     <option value="hepsi">Tüm öncelikler</option>
     <option value="Acil">Acil</option>
     <option value="Yuksek">Yüksek</option>
@@ -20,86 +19,94 @@
     <option value="Dusuk">Düşük</option>
   </select>
 
-  <button matButton (click)="exportExcel()" >
+  <button matButton (click)="exportExcel()">
     Excel İndir
-</button>
+  </button>
 
   <div class="gorunum-secim">
     <button type="button" [class.aktif]="gorunum() === 'liste'" (click)="gorunum.set('liste')">Liste</button>
     <button type="button" [class.aktif]="gorunum() === 'pano'" (click)="gorunum.set('pano')">Pano</button>
   </div>
 
-  
+
 
   <button matButton="filled" (click)="yeniIsAc()">+ Yeni İş</button>
 </div>
 @if (jobs().length === 0) {
-  <div class="bos-durum">
-    <div class="bos-ikon">📋</div>
-    <h2>Henüz iş yok</h2>
-    <p>İlk işini oluşturarak başla. Numara, başlık, son tarih ve efor girmen yeterli.</p>
-    <button matButton="filled" (click)="yeniIsAc()">+ İlk işini oluştur</button>
-  </div>
+<div class="bos-durum">
+  <div class="bos-ikon">📋</div>
+  <h2>Henüz iş yok</h2>
+  <p>İlk işini oluşturarak başla. Numara, başlık, son tarih ve efor girmen yeterli.</p>
+  <button matButton="filled" (click)="yeniIsAc()">+ İlk işini oluştur</button>
+</div>
 } @else {
 <div class="board-layout">
   @if (gorunum() === 'liste') {
-    <div class="liste-alani">
-        <table class="is-tablo">
-          <thead>
-          <tr>
-            <th class="t-no"><button type="button" (click)="siralamayiDegistir('id')">İş No <span class="ok">{{ siralamaOku('id') }}</span></button></th>
-            <th><button type="button" (click)="siralamayiDegistir('title')">Başlık <span class="ok">{{ siralamaOku('title') }}</span></button></th>
-            <th><button type="button" (click)="siralamayiDegistir('priority')">Öncelik <span class="ok">{{ siralamaOku('priority') }}</span></button></th>
-            <th><button type="button" (click)="siralamayiDegistir('status')">Durum <span class="ok">{{ siralamaOku('status') }}</span></button></th>
-            <th><button type="button" (click)="siralamayiDegistir('stage')">Aşama <span class="ok">{{ siralamaOku('stage') }}</span></button></th>
-            <th class="t-efor"><button type="button" (click)="siralamayiDegistir('efor')">Adam-Gün <span class="ok">{{ siralamaOku('efor') }}</span></button></th>
-            <th><button type="button" (click)="siralamayiDegistir('deadline')">Son Tarih <span class="ok">{{ siralamaOku('deadline') }}</span></button></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (job of filtrelenmisIsler(); track job.id) {
-            <tr [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
-              <td class="t-no">{{ job.id }}</td>
-              
-              <td class="t-baslik">{{ job.title }}
-              </td>
-             <td><span class="oncelik" [attr.data-oncelik]="job.priority">{{ oncelikAdi(job.priority) }}</span></td>
-                           <td>
-                <button type="button" class="durum-btn"
-                        (click)="$event.stopPropagation(); durumDialogAc(job)">
-                  <span class="rozet" [attr.data-durum]="job.status">{{ durumAdi(job.status) }}</span>
-                  <span class="ok-kucuk">▾</span>
-                </button>
+  <div class="liste-alani">
+    <table class="is-tablo">
+      <thead>
+        <tr>
+          <th class="t-no"><button type="button" (click)="siralamayiDegistir('id')">İş No <span class="ok">{{
+                siralamaOku('id') }}</span></button></th>
+          <th><button type="button" (click)="siralamayiDegistir('title')">Başlık <span class="ok">{{
+                siralamaOku('title') }}</span></button></th>
+          <th><button type="button" (click)="siralamayiDegistir('priority')">Öncelik <span class="ok">{{
+                siralamaOku('priority') }}</span></button></th>
+          <th><button type="button" (click)="siralamayiDegistir('status')">Durum <span class="ok">{{
+                siralamaOku('status') }}</span></button></th>
+          <th><button type="button" (click)="siralamayiDegistir('stage')">Aşama <span class="ok">{{ siralamaOku('stage')
+                }}</span></button></th>
+          <th class="t-efor"><button type="button" (click)="siralamayiDegistir('efor')">Adam-Gün <span class="ok">{{
+                siralamaOku('efor') }}</span></button></th>
+          <th><button type="button" (click)="siralamayiDegistir('deadline')">Son Tarih <span class="ok">{{
+                siralamaOku('deadline') }}</span></button></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (job of filtrelenmisIsler(); track job.id) {
+        <tr [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
+          <td class="t-no">{{ job.id }}</td>
+
+          <td class="t-baslik">{{ job.title }}
+          </td>
+          <td><span class="oncelik" [attr.data-oncelik]="job.priority">{{ oncelikAdi(job.priority) }}</span></td>
+          <td>
+            <button type="button" class="durum-btn" (click)="$event.stopPropagation(); durumDialogAc(job)">
+              <span class="rozet" [attr.data-durum]="job.status">{{ durumAdi(job.status) }}</span>
+              <span class="ok-kucuk">▾</span>
+            </button>
 
 
-              </td>
-              <td>{{ job.stage ?? '—' }}</td>
-                 <td class="t-efor">
-                {{ job.adam && job.gun ? job.adam * job.gun : '—' }}
-                <span class="buyukluk" [attr.data-buyukluk]="job.buyukluk">{{ buyuklukAdi(job.buyukluk) }}</span>
-              </td>
-              <td [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM y' }}</td>
-            </tr>
-          } @empty {
-            <tr><td colspan="7" class="bos">Eşleşen iş yok</td></tr>
-          }
-        </tbody>
-      </table>
-    </div>
+          </td>
+          <td>{{ job.stage ?? '—' }}</td>
+          <td class="t-efor">
+            {{ job.adam && job.gun ? job.adam * job.gun : '—' }}
+            <span class="buyukluk" [attr.data-buyukluk]="job.buyukluk">{{ buyuklukAdi(job.buyukluk) }}</span>
+          </td>
+          <td [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM y' }}</td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="7" class="bos">Eşleşen iş yok</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
   } @else {
   <div class="pano">
     <div class="sutun">
       <h2>Bekleyen <span class="sayi">{{ bekleyenler().length }}</span></h2>
       <div class="kartlar">
         @for (job of bekleyenler(); track job.id) {
-          <div class="is-kart" [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
-            <div class="kart-baslik">{{ job.title }}</div>
-            <div class="kart-alt">
-              <span class="tarih" [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM' }}</span>
-            </div>
+        <div class="is-kart" [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
+          <div class="kart-baslik">{{ job.title }}</div>
+          <div class="kart-alt">
+            <span class="tarih" [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM' }}</span>
           </div>
+        </div>
         } @empty {
-          <p class="bos">İş yok</p>
+        <p class="bos">İş yok</p>
         }
       </div>
     </div>
@@ -108,19 +115,19 @@
       <h2>Devam Eden <span class="sayi">{{ devamEdenler().length }}</span></h2>
       <div class="alt-sutunlar">
         @for (asama of doluAsamalar(); track asama) {
-          <div class="alt-sutun">
-            <div class="alt-baslik">{{ asama }}</div>
-            @for (job of asamaninIsleri(asama); track job.id) {
-              <div class="is-kart" [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
-                <div class="kart-baslik">{{ job.title }}</div>
-                <div class="kart-alt">
-                  <span class="tarih"[attr.data-gecikme]="gecikmeDurumu(job)" >{{ job.deadline | date:'d MMM' }}</span>
-                </div>
-              </div>
-            }
+        <div class="alt-sutun">
+          <div class="alt-baslik">{{ asama }}</div>
+          @for (job of asamaninIsleri(asama); track job.id) {
+          <div class="is-kart" [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
+            <div class="kart-baslik">{{ job.title }}</div>
+            <div class="kart-alt">
+              <span class="tarih" [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM' }}</span>
+            </div>
           </div>
+          }
+        </div>
         } @empty {
-          <p class="bos">İş yok</p>
+        <p class="bos">İş yok</p>
         }
       </div>
     </div>
@@ -129,14 +136,14 @@
       <h2>Tamamlanan <span class="sayi">{{ tamamlananlar().length }}</span></h2>
       <div class="kartlar">
         @for (job of tamamlananlar(); track job.id) {
-          <div class="is-kart" [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
-            <div class="kart-baslik">{{ job.title }}</div>
-            <div class="kart-alt">
-              <span class="tarih" [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM' }}</span>
-            </div>
+        <div class="is-kart" [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
+          <div class="kart-baslik">{{ job.title }}</div>
+          <div class="kart-alt">
+            <span class="tarih" [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM' }}</span>
           </div>
+        </div>
         } @empty {
-          <p class="bos">İş yok</p>
+        <p class="bos">İş yok</p>
         }
       </div>
     </div>
@@ -144,79 +151,82 @@
   }
 
   <aside class="yan-panel">
-@if (seciliDetay(); as s) {
-  <div class="panel-icerik">
+    @if (seciliDetay(); as s) {
+    <div class="panel-icerik">
 
-    <header class="panel-baslik">
-      <div class="baslik-ust">
-        <span class="is-no">#{{ s.id }}</span>
-        <div class="aksiyonlar">
-          <button matIconButton matTooltip="Durum değiştir" aria-label="Durum değiştir"
-                  (click)="durumDialogAc(s)">
-            <mat-icon>swap_horiz</mat-icon>
-          </button>
-          <button matIconButton matTooltip="Düzenle" aria-label="Düzenle"
-                  (click)="duzenleAc(s)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <span class="ayrac"></span>
-          <button matIconButton class="sil-btn" matTooltip="Sil" aria-label="İşi sil"
-                  (click)="sil(s)">
-            <mat-icon>delete_outline</mat-icon>
-          </button>
+      <header class="panel-baslik">
+        <div class="baslik-ust">
+          <span class="is-no">#{{ s.id }}</span>
+          <div class="aksiyonlar">
+            <button matIconButton matTooltip="Durum değiştir" aria-label="Durum değiştir" (click)="durumDialogAc(s)">
+              <mat-icon>swap_horiz</mat-icon>
+            </button>
+            <button matIconButton matTooltip="Düzenle" aria-label="Düzenle" (click)="duzenleAc(s)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <span class="ayrac"></span>
+            <button matIconButton class="sil-btn" matTooltip="Sil" aria-label="İşi sil" (click)="sil(s)">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
         </div>
-      </div>
 
-      <h2>{{ s.title }}</h2>
+        <h2>{{ s.title }}</h2>
 
-      <div class="rozetler">
-        <span class="rozet" [attr.data-durum]="s.status">{{ durumAdi(s.status) }}</span>
-        <span class="oncelik-rozet" [attr.data-oncelik]="s.priority">{{ oncelikAdi(s.priority) }}</span>
-      </div>
+        <div class="rozetler">
+          <span class="rozet" [attr.data-durum]="s.status">{{ durumAdi(s.status) }}</span>
+          <span class="oncelik-rozet" [attr.data-oncelik]="s.priority">{{ oncelikAdi(s.priority) }}</span>
+        </div>
 
-      @if (s.description) { <p class="aciklama">{{ s.description }}</p> }
-    </header>
+        @if (s.description) { <p class="aciklama">{{ s.description }}</p> }
+      </header>
 
-    
 
-    <section class="panel-bolum">
-      <h3>Not</h3>
-      <mat-form-field appearance="outline">
-        <mat-label>Not</mat-label>
-        <textarea matInput rows="3" [(ngModel)]="notMetni"></textarea>
-      </mat-form-field>
-      <div class="not-kaydet">
-        <button matButton="filled" (click)="notKaydet()">Kaydet</button>
-      </div>
-    </section>
 
-    <section class="panel-bolum">
-      <h3>Geçmiş</h3>
-      <ol class="zaman-cizgisi">
-        @for (h of s.history; track h.id) {
+      <section class="panel-bolum">
+        <h3>Not</h3>
+        <mat-form-field appearance="outline">
+          <mat-label>Not</mat-label>
+          <textarea matInput rows="3" [(ngModel)]="notMetni"></textarea>
+        </mat-form-field>
+        <div class="not-kaydet">
+          <button matButton="filled" (click)="notKaydet()">Kaydet</button>
+        </div>
+      </section>
+
+      <section class="panel-bolum">
+        <h3>Geçmiş</h3>
+        <ol class="zaman-cizgisi">
+          @for (h of s.history; track h.id) {
           <li>
+            @if (h.changes) {
+            <div class="duzenleme">
+              <mat-icon class="kalem-ikon">edit</mat-icon>
+              <span>{{ h.changes }}</span>
+            </div>
+            } @else {
             <div class="gecis">
-              <span class="eski">{{ h.oldStatus ? durumAdi(h.oldStatus) : 'Yeni' }} - 
+              <span class="eski">{{ h.oldStatus ? durumAdi(h.oldStatus) : 'Yeni' }} -
                 ({{h.oldStage ? asamaAdi(h.oldStage): ' '}})</span>
               <mat-icon class="ok-ikon">arrow_forward</mat-icon>
               <span class="yeni">{{ durumAdi(h.newStatus) }} - ({{h.newStage ? asamaAdi(h.newStage): ' '}})</span>
-              
             </div>
+            }
             <div class="tarih">{{ h.changedAt | date:'d MMM y, HH:mm' }}</div>
             @if (h.note) { <div class="not">{{ h.note }}</div> }
           </li>
-        } @empty {
+          } @empty {
           <p class="bos">Geçmiş yok.</p>
-        }
-      </ol>
-    </section>
-  </div>
-} @else {
-  <div class="panel-bos">
-    <mat-icon>touch_app</mat-icon>
-    <p>Detayları görmek için bir iş seçin</p>
-  </div>
-}
-</aside>
+          }
+        </ol>
+      </section>
+    </div>
+    } @else {
+    <div class="panel-bos">
+      <mat-icon>touch_app</mat-icon>
+      <p>Detayları görmek için bir iş seçin</p>
+    </div>
+    }
+  </aside>
 </div>
 }

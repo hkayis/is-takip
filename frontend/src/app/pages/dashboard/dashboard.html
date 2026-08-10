@@ -6,9 +6,9 @@
     <button matButton="filled" (click)="yeniIsAc()">+ İlk işini oluştur</button>
   </div>
 } @else {
+  
 <div class="ozet-serit">
-  <strong>{{ toplam() }} iş</strong>
-  <span class="ayrac">·</span>
+  
   <span>{{ aktifEfor() }} adam-gün aktif</span>
   @if (geciken().length > 0) {
     <span class="ayrac">·</span>
@@ -25,6 +25,32 @@
     <span>ortalama {{ ortalamaSure() }} gün</span>
   }
     <button type="button" class="yeni-is-btn" (click)="yeniIsAc()">+ Yeni İş</button>
+</div>
+
+<div class="durum-kutulari">
+  <div class="durum-kutu toplam">
+  <div class="kutu-ust-satir">
+    <span class="sayi">{{ toplam() }}</span>
+    <span class="ag">
+      <span class="ag-sayi">{{ toplamEfor() }}</span>
+      <span class="ag-etiket">AG</span>
+    </span>
+  </div>
+  <span class="etiket">Toplam</span>
+</div>
+  @for (d of durumDagilimi(); track d.durum) {
+    <button type="button" class="durum-kutu" [attr.data-durum]="d.durum"
+        (click)="listeyeGit(d.durum)">
+  <div class="kutu-ust-satir">
+    <span class="sayi">{{ d.sayi }}</span>
+    <span class="ag">
+      <span class="ag-sayi">{{ d.efor }}</span>
+      <span class="ag-etiket">AG</span>
+    </span>
+  </div>
+  <span class="etiket">{{ d.etiket }}</span>
+</button>
+  }
 </div>
 
 <div class="izgara">
@@ -48,54 +74,7 @@
     </div>
   </section>
 
-  <section class="kutu">
-    <div class="kutu-ust">
-      <h2>Durum Dağılımı</h2>
-    </div>
-
-    <div class="cubuk">
-      @for (d of durumDagilimi(); track d.durum) {
-        <div class="parca" [attr.data-durum]="d.durum" [style.width.%]="d.yuzde"></div>
-      }
-    </div>
-
-    <div class="dagilim-listesi">
-      @for (d of durumDagilimi(); track d.durum) {
-        <button type="button" class="dagilim-satiri"
-                [class.secili]="seciliDurum() === d.durum"
-                (click)="secDurum(d.durum)">
-          <span class="nokta" [attr.data-durum]="d.durum"></span>
-          <span class="etiket">{{ d.etiket }}</span>
-          <span class="sayi">{{ d.sayi }}</span>
-          <span class="ok">{{ seciliDurum() === d.durum ? '⌄' : '›' }}</span>
-        </button>
-
-        @if (seciliDurum() === d.durum && seciliOzet(); as o) {
-          <div class="ozet">
-            <div class="ozet-satir">
-              <span>Toplam içindeki payı</span>
-              <strong>%{{ o.yuzde }}</strong>
-            </div>
-            @if (o.geciken > 0) {
-              <div class="ozet-satir uyari">
-                <span>Geciken</span>
-                <strong>{{ o.geciken }}</strong>
-              </div>
-            }
-            @if (o.efor > 0) {
-              <div class="ozet-satir">
-                <span>Toplam efor</span>
-                <strong>{{ o.efor }} adam-gün</strong>
-              </div>
-            }
-            <button type="button" class="listeye-git" (click)="listeyeGit(d.durum)">
-              İşleri listede gör ›
-            </button>
-          </div>
-        }
-      }
-    </div>
-  </section>
+  
 
   <section class="kutu">
     <div class="kutu-ust">
@@ -118,6 +97,30 @@
     </div>
   </section>
 
+    <section class="kutu">
+  <div class="kutu-ust">
+    <h2>Büyüklük Dağılımı</h2>
+    <div class="kapsam-secim">
+      <button type="button"
+              [class.aktif]="buyuklukKapsam() === 'DevamEdiyor'"
+              (click)="buyuklukKapsamSec('DevamEdiyor')">Devam Edenler</button>
+      <button type="button"
+              [class.aktif]="buyuklukKapsam() === 'Beklemede'"
+              (click)="buyuklukKapsamSec('Beklemede')">Beklemede</button>
+    </div>
+  </div>
+
+  @for (b of buyuklukDagilimi(); track b.kod) {
+    <div class="asama-satiri">
+      <span class="asama-ad">{{ b.etiket }}</span>
+      <div class="asama-yol">
+        <div class="asama-cubuk" [style.width.%]="b.yuzde"></div>
+      </div>
+      <span class="asama-sayi">{{ b.sayi }}</span>
+    </div>
+  }
+</section>
+
   <section class="kutu">
     <div class="kutu-ust">
       <h2>Aşama Dağılımı</h2>
@@ -133,31 +136,6 @@
         <span class="asama-sayi">{{ a.sayi }}</span>
       </div>
     }
-  </section>
-
-    <section class="kutu tam-genislik">
-      <div class="kutu-ust">
-      <h2>Açılan / Tamamlanan Efor</h2>
-      <span class="kutu-not">son 6 ay · adam-gün</span>
-    </div>
-
-    <div class="trend">
-      @for (a of aylikTrend(); track a.anahtar) {
-        <div class="trend-ay">
-          <div class="trend-alan">
-            <div class="trend-cubuk acilan" [style.height.%]="a.acilanYuzde"></div>
-            <div class="trend-cubuk kapanan" [style.height.%]="a.kapananYuzde"></div>
-          </div>
-          <span class="trend-etiket">{{ a.tarih | date:'MMM' }}</span>
-          <span class="trend-sayi">{{ a.acilan }} / {{ a.kapanan }}</span>
-        </div>
-      }
-    </div>
-
-    <div class="trend-efsane">
-      <span><i class="kutucuk acilan"></i> Açılan</span>
-      <span><i class="kutucuk kapanan"></i> Tamamlanan</span>
-    </div>
   </section>
 </div>
 }

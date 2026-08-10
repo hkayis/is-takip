@@ -6,8 +6,9 @@ import { DatePipe } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { YeniIsDialog } from '../../dialogs/yeni-is-dialog/yeni-is-dialog';
-import { oncelikAdi } from '../../etiketler';
+import { oncelikAdi, buyuklukAdi } from '../../etiketler';
 import { MatButtonModule } from '@angular/material/button';
+
 @Component({
   selector: 'app-dashboard',
   imports: [MatCardModule, DatePipe, MatDialogModule, MatSnackBarModule,MatButtonModule],
@@ -24,16 +25,35 @@ export class Dashboard implements OnInit {
   
   private router =inject(Router);
   asamaSirasi : string[] = ['Analiz', 'Gelistirme','Test' ,'Tasima']
+  buyuklukSirasi: string[] = ['FastTrack', 'XS', 'S', 'M', 'L', 'XL'];
+
+// UI durumu: hangi kapsamı görüyoruz?
+buyuklukKapsam = signal<'Beklemede' | 'DevamEdiyor'>('DevamEdiyor');
+buyuklukKapsamSec(kapsam: 'Beklemede' | 'DevamEdiyor') {
+  this.buyuklukKapsam.set(kapsam);
+}
+
+buyuklukDagilimi = computed(() => {
+  const kapsam = this.buyuklukKapsam();                         // ← signal'ı oku (bağımlılık)
+  const isler = this.jobs().filter(j => j.status === kapsam);
+
+  const ham = this.buyuklukSirasi.map(b => ({
+    kod: b,
+    etiket: buyuklukAdi(b),
+    sayi: isler.filter(j => j.buyukluk === b).length,
+  }));
+
+  const enBuyuk = Math.max(...ham.map(x => x.sayi), 1);
+  return ham.map(x => ({ ...x, yuzde: (x.sayi / enBuyuk) * 100 }));
+});
   oncelikPuani: Record <string, number> = {
     Dusuk: 1,
     Normal: 2,
     Yuksek: 3,
     Acil: 4,
   };
-  seciliDurum= signal<string | null>(null);
-  secDurum(durum: string){
-    this.seciliDurum.set(this.seciliDurum()===durum ? null : durum);
-  }
+  
+  
   listeyeGit(durum:string){
     this.router.navigate(['/jobs'], {queryParams: {durum}});
   }
@@ -44,30 +64,7 @@ export class Dashboard implements OnInit {
     this.router.navigate(['/jobs'], { queryParams: { sec: id } });
   }
 
-  seciliOzet = computed(()=> {
-    const durum = this.seciliDurum();
-    if (!durum) return null;
-    
-    const isler = this.jobs().filter(j=> j.status === durum);
-    const toplam = this.toplam();
-    const simdi = new Date();
-
-    const asamalar = durum === 'DevamEdiyor'
-      ? this.asamaSirasi
-        .map(a=> ({asama : a, sayi: isler.filter(j=> j.stage===a).length}))
-        .filter( x=> x.sayi > 0)
-      : [];
-    
-    return{
-      sayi: isler.length,
-      yuzde: toplam ? Math.round((isler.length / toplam )* 100): 0,
-      efor: isler.reduce((t, j) => t + (j.adam ?? 0) * (j.gun ?? 0), 0),
-      geciken: (durum === 'Tamamlandi' || durum ==='Iptal')
-       ? 0
-       : isler.filter(j=> new Date(j.deadline)<simdi).length,
-       asamalar,
-    };
-  })
+  
   buAyTamamlanan = computed (()=> {
     const simdi= new Date();
     const ay=simdi.getMonth();
@@ -106,20 +103,25 @@ export class Dashboard implements OnInit {
   );
   
   durumDagilimi = computed(() => {
-    const toplam = this.toplam();
+  const toplam = this.toplam();
+  const efor = (durum: string) =>
+    this.jobs()
+      .filter(j => j.status === durum)
+      .reduce((t, j) => t + (j.adam ?? 0) * (j.gun ?? 0), 0);
 
-    const ham = [
-      { durum: 'Beklemede',   etiket: 'Bekleyen',   sayi: this.bekleyen() },
-      { durum: 'DevamEdiyor', etiket: 'Devam Eden', sayi: this.devamEden() },
-      { durum: 'Tamamlandi',  etiket: 'Tamamlanan', sayi: this.tamamlanan() },
-      { durum: 'Iptal',       etiket: 'İptal',      sayi: this.iptal() },
-    ];
+  const ham = [
+    { durum: 'Beklemede',   etiket: 'Bekleyen',   sayi: this.bekleyen(),   efor: efor('Beklemede') },
+    { durum: 'DevamEdiyor', etiket: 'Devam Eden', sayi: this.devamEden(),  efor: efor('DevamEdiyor') },
+    { durum: 'Tamamlandi',  etiket: 'Tamamlanan', sayi: this.tamamlanan(), efor: efor('Tamamlandi') },
+    { durum: 'Iptal',       etiket: 'İptal',      sayi: this.iptal(),      efor: efor('Iptal') },
+  ];
 
-    return ham.map(x => ({
-      ...x,
-      yuzde: toplam ? (x.sayi / toplam) * 100 : 0,
-    }));
-  });
+  return ham.map(x => ({ ...x, yuzde: toplam ? (x.sayi / toplam) * 100 : 0 }));
+});
+
+toplamEfor = computed(() =>
+  this.jobs().reduce((t, j) => t + (j.adam ?? 0) * (j.gun ?? 0), 0)
+);
 
   geciken = computed(() => {
     const simdi = new Date();
@@ -188,43 +190,7 @@ export class Dashboard implements OnInit {
     return ham.map(x=>({...x, yuzde: (x.sayi/enBuyuk)*100}))
   });
 
-      aylikTrend = computed(() => {
-    const simdi = new Date();
-    const aylar = [];
-
-    const efor = (j: Job) => (j.adam ?? 0) * (j.gun ?? 0);
-
-    for (let i = 5; i >= 0; i--) {
-      const tarih = new Date(simdi.getFullYear(), simdi.getMonth() - i, 1);
-      const ay = tarih.getMonth();
-      const yil = tarih.getFullYear();
-
-      const acilan = this.jobs()
-        .filter(j => {
-          const d = new Date(j.createdAt);
-          return d.getMonth() === ay && d.getFullYear() === yil;
-        })
-        .reduce((t, j) => t + efor(j), 0);
-
-      const kapanan = this.jobs()
-        .filter(j => {
-          if (!j.completedAt) return false;
-          const d = new Date(j.completedAt);
-          return d.getMonth() === ay && d.getFullYear() === yil;
-        })
-        .reduce((t, j) => t + efor(j), 0);
-
-      aylar.push({ anahtar: `${yil}-${ay}`, tarih, acilan, kapanan });
-    }
-
-    const enBuyuk = Math.max(...aylar.flatMap(a => [a.acilan, a.kapanan]), 1);
-
-    return aylar.map(a => ({
-      ...a,
-      acilanYuzde: (a.acilan / enBuyuk) * 100,
-      kapananYuzde: (a.kapanan / enBuyuk) * 100,
-    }));
-  });
+     
     
     ngOnInit() {
     this.yukle();

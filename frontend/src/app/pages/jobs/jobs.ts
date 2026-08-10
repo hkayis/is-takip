@@ -179,7 +179,7 @@ export class Jobs implements OnInit {
         adam: sonuc.adam,
         gun: sonuc.gun,
         buyukluk: sonuc.buyukluk,
-        not:sonuc.not
+        not:this.notMetni
       }).subscribe({
         next: () => {
           this.detayYukle(job.id);

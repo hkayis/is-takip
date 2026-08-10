@@ -14,8 +14,8 @@
         public JobStage? NewStage { get; set; }    // yeni aşama (varsa)
 
         public DateTime ChangedAt { get; set; } = DateTime.UtcNow;
-
-
         public string? Note { get; set; }          // opsiyonel açıklama
+        public string? Changes { get; set; }
+
     }
 }

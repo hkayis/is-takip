@@ -387,3 +387,67 @@
   font-size: 14px;
   line-height: 1.5;
 }
+.kapsam-secim {
+  display: inline-flex;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  padding: 3px;
+}
+.kapsam-secim button {
+  border: none;
+  background: transparent;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.6);
+}
+.kapsam-secim button.aktif {
+  background: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.durum-kutulari {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.durum-kutu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 14px 16px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-left: 4px solid rgba(0, 0, 0, 0.3);   /* durum rengiyle ezilecek */
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+}
+.durum-kutu .sayi   { font-size: 26px; font-weight: 700; line-height: 1; }
+.durum-kutu .etiket { font-size: 12px; color: rgba(0, 0, 0, 0.55); }
+
+.durum-kutu[data-durum="Beklemede"]   { border-left-color: #f57c00; }
+.durum-kutu[data-durum="DevamEdiyor"] { border-left-color: #1976d2; }
+.durum-kutu[data-durum="Tamamlandi"]  { border-left-color: #388e3c; }
+.durum-kutu[data-durum="Iptal"]       { border-left-color: #9e9e9e; }
+
+.durum-kutu.toplam { cursor: default; }   /* Toplam kutusu tıklanmaz */
+.durum-kutu .kutu-ust-satir {
+  display: flex;
+  justify-content: space-between;   /* sayı solda, AG sağda */
+  align-items: flex-start;          /* AG üste hizalansın */
+  width: 100%;
+}
+.durum-kutu .ag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;              /* sayı ve "AG" alt alta ortalı */
+  line-height: 1;
+}
+.durum-kutu .ag-sayi   { font-size: 13px; font-weight: 600; color: rgba(0, 0, 0, 0.55); }
+.durum-kutu .ag-etiket { font-size: 9px; letter-spacing: 0.5px; color: rgba(0, 0, 0, 0.4); }
