@@ -1,0 +1,74 @@
+<div class="rapor">
+  <h1>Rapor</h1>
+
+  <div class="metrik-satiri">
+    <div class="metrik-kart">
+      <span class="deger">{{ tamamlananSayi() }}</span>
+      <span class="etiket">Tamamlanan iş</span>
+    </div>
+    <div class="metrik-kart">
+      <span class="deger">{{ ortalamaDonguSuresi() }} <small>gün</small></span>
+      <span class="etiket">Ortalama döngü süresi</span>
+    </div>
+    <div class="metrik-kart">
+      <span class="deger">%{{ zamanindaTeslimOrani() }}</span>
+      <span class="etiket">Zamanında teslim oranı</span>
+    </div>
+  </div>
+  <h2>Teslim Geçmişi</h2>
+<div class="tablo-sar">
+  <table class="rapor-tablo">
+    <thead>
+      <tr>
+        <th>İş No</th>
+        <th>Başlık</th>
+        <th>Büyüklük</th>
+        <th>Açılma</th>
+        <th>Tamamlanma</th>
+        <th>Döngü</th>
+        <th>Zamanında</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (j of teslimGecmisi(); track j.id) {
+        <tr>
+          <td>{{ j.id }}</td>
+          <td>{{ j.title }}</td>
+          <td>{{ buyuklukAdi(j.buyukluk) }}</td>
+          <td>{{ j.createdAt | date:'d MMM y' }}</td>
+          <td>{{ j.completedAt | date:'d MMM y' }}</td>
+          <td>{{ j.dongu }} gün</td>
+          <td>
+            <span class="rozet" [class.gec]="!j.zamaninda">
+              {{ j.zamaninda ? 'Evet' : 'Hayır' }}
+            </span>
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="7" class="bos">Henüz tamamlanan iş yok.</td></tr>
+      }
+    </tbody>
+  </table>
+</div>
+  <h2>Büyüklük Başına Ortalama Süre</h2>
+<table class="rapor-tablo">
+  <thead>
+    <tr>
+      <th>Büyüklük</th>
+      <th>Tamamlanan</th>
+      <th>Ort. süre</th>
+      <th>Hedef</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (b of buyuklukSureleri(); track b.kod) {
+      <tr>
+        <td>{{ b.etiket }}</td>
+        <td>{{ b.adet }}</td>
+        <td [class.gecikme]="b.gecikme">{{ b.adet > 0 ? b.ortalama + ' gün' : '—' }}</td>
+        <td>{{ b.hedef }} gün</td>
+      </tr>
+    }
+  </tbody>
+</table>
+</div>

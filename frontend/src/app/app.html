@@ -1,11 +1,18 @@
-<mat-toolbar color="primary">
-  <span>{{ title() }}</span>
+<mat-toolbar color="primary" class="ust-bar">
+  <a routerLink="/dashboard" class="marka">
+    <span class="marka-ikon">🗂️</span>
+    <span class="marka-ad">{{ title() }}</span>
+  </a>
+
   <span class="bosluk"></span>
 
   @if (auth.girisYapildi()) {
-    <a routerLink="/dashboard">Özet</a>
-    <a routerLink="/jobs">İşler</a>
-    <button matButton (click)="cikisYap()">Çıkış</button>
+    <nav class="menu">
+      <a routerLink="/dashboard" routerLinkActive="aktif">Özet</a>
+      <a routerLink="/jobs" routerLinkActive="aktif">İşler</a>
+      <a routerLink="/rapor" routerLinkActive="aktif">Rapor</a>
+    </nav>
+    <button matButton class="cikis-btn" (click)="cikisYap()">Çıkış</button>
   }
 </mat-toolbar>
 
