@@ -1,31 +1,42 @@
-.rapor h2 { margin: 32px 0 12px; font-size: 16px; }
-
-.rapor-tablo {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-  overflow: hidden;
-}
-.rapor-tablo th, .rapor-tablo td {
-  padding: 10px 14px;
-  text-align: left;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-  font-size: 14px;
-}
-.rapor-tablo th {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: rgba(0, 0, 0, 0.5);
-}
-.rapor-tablo tbody tr:last-child td { border-bottom: none; }
-.rapor-tablo td.gecikme { color: #c62828; font-weight: 600; }
-
 .rapor { padding: 24px; }
 .rapor h1 { margin: 0 0 20px; font-size: 22px; }
 
+/* Bölüm başlığı (kutu içinde ve dışında aynı görünüm) */
+.bolum-ust,
+.kutu-ust {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.bolum-ust h2,
+.kutu-ust h2 {
+  margin: 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: rgba(0, 0, 0, 0.55);
+}
+.kutu-not { font-size: 12px; color: rgba(0, 0, 0, 0.4); }
+
+/* Kutu — dashboard ile aynı desen */
+.kutu {
+  padding: 18px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+}
+
+.rapor-izgara {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+  align-items: start;
+  margin-top: 24px;
+}
+.tam-genislik { grid-column: 1 / -1; }
+
+/* Özet kartları */
 .metrik-satiri {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -36,28 +47,45 @@
   flex-direction: column;
   gap: 6px;
   padding: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
   background: #fff;
 }
 .metrik-kart .deger { font-size: 32px; font-weight: 700; line-height: 1; }
 .metrik-kart .deger small { font-size: 14px; font-weight: 500; color: rgba(0, 0, 0, 0.5); }
 .metrik-kart .etiket { font-size: 13px; color: rgba(0, 0, 0, 0.55); }
-.rapor h2 { margin: 32px 0 12px; font-size: 16px; }
 
-.tablo-sar { overflow-x: auto; 
-max-height: 400px;}   /* dar ekranda tablo yatay kaysın, sayfa taşmasın */
-
-.rapor-tablo {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
+/* Aşama süresi çubukları */
+.asama-grafik { display: flex; flex-direction: column; gap: 10px; }
+.asama-satir {
+  display: grid;
+  grid-template-columns: 90px 1fr 70px;
+  align-items: center;
+  gap: 12px;
+}
+.asama-satir .ad { font-size: 13px; color: rgba(0, 0, 0, 0.7); }
+.asama-satir .yol {
+  height: 22px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
   overflow: hidden;
 }
+.asama-satir .cubuk {
+  height: 100%;
+  background: #1976d2;
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+.asama-satir .cubuk.darbogaz { background: #c62828; }
+.asama-satir .deger { font-size: 13px; font-weight: 600; text-align: right; }
+
+/* Tablolar */
+.tablo-sar { overflow-x: auto; }
+.tablo-sar.uzun { max-height: 400px; overflow-y: auto; }
+
+.rapor-tablo { width: 100%; border-collapse: collapse; }
 .rapor-tablo th, .rapor-tablo td {
-  padding: 10px 14px;
+  padding: 10px 12px;
   text-align: left;
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
   font-size: 14px;
@@ -69,14 +97,21 @@ max-height: 400px;}   /* dar ekranda tablo yatay kaysın, sayfa taşmasın */
   letter-spacing: 0.5px;
   color: rgba(0, 0, 0, 0.5);
 }
-.rapor-tablo tbody tr:last-child td { border-bottom: none; }
-.rapor-tablo td.bos { text-align: center; color: rgba(0, 0, 0, 0.45); padding: 20px; white-space: normal; }
 .rapor-tablo thead th {
   position: sticky;
   top: 0;
   background: #fff;
   z-index: 1;
 }
+.rapor-tablo tbody tr:last-child td { border-bottom: none; }
+.rapor-tablo td.gecikme { color: #c62828; font-weight: 600; }
+.rapor-tablo td.bos {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.45);
+  padding: 20px;
+  white-space: normal;
+}
+
 .rozet {
   display: inline-block;
   padding: 2px 10px;
@@ -87,3 +122,5 @@ max-height: 400px;}   /* dar ekranda tablo yatay kaysın, sayfa taşmasın */
   color: #2e7d32;
 }
 .rozet.gec { background: #ffebee; color: #c62828; }
+
+.bos-metin { color: rgba(0, 0, 0, 0.5); }

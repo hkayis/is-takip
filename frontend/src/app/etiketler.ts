@@ -54,14 +54,18 @@ export function buyuklukAdi(kod: string): string {
 }
 
 /** Adam-günden önerilen büyüklük kodu (backend JobSize enum adlarıyla aynı). */
-export function hesaplananBuyukluk(adam: number, gun: number): string {
+export function hesaplananBuyukluk(
+  adam: number,
+  gun: number,
+  esikler: Record<string, number> = BUYUKLUK_ESIKLERI
+): string {
   const efor = adam * gun;
 
-  if (efor <= BUYUKLUK_ESIKLERI.FastTrack) return 'FastTrack';
-  if (efor <= BUYUKLUK_ESIKLERI.XS) return 'XS';
-  if (efor <= BUYUKLUK_ESIKLERI.S) return 'S';
-  if (efor <= BUYUKLUK_ESIKLERI.M) return 'M';
-  if (efor <= BUYUKLUK_ESIKLERI.L) return 'L';
+  if (efor <= esikler['FastTrack']) return 'FastTrack';
+  if (efor <= esikler['XS']) return 'XS';
+  if (efor <= esikler['S']) return 'S';
+  if (efor <= esikler['M']) return 'M';
+  if (efor <= esikler['L']) return 'L';
   return 'XL';
 }
 

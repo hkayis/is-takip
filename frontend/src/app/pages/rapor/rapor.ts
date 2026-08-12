@@ -1,8 +1,10 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
-import { JobApi, Job } from '../../services/job-api';
+import { JobApi, Job, AsamaSuresi } from '../../services/job-api';
 import { buyuklukAdi } from '../../etiketler';
-import { HEDEF_SURE_GUN } from '../../sabitler';
+
 import { DatePipe } from '@angular/common';
+import { AyarService } from '../../services/ayar';
+
 @Component({
   selector: 'app-rapor',
   imports: [DatePipe],
@@ -12,6 +14,7 @@ import { DatePipe } from '@angular/common';
 export class Rapor implements OnInit {
   private jobApi = inject(JobApi);
   jobs = signal<Job[]>([]);
+  private ayar = inject(AyarService);
 
   private gunMs = 1000 * 60 * 60 * 24;
 
@@ -41,23 +44,22 @@ export class Rapor implements OnInit {
     ).length;
     return Math.round((zamaninda / bitenler.length) * 100);
   });
+  protected buyuklukAdi = buyuklukAdi;
 
-protected buyuklukAdi = buyuklukAdi;
-
-teslimGecmisi = computed(() =>
-  [...this.tamamlananlar()]                       // KOPYA — signal dizisini yerinde sıralama!
-    .filter(j => j.completedAt)
-    .sort((a, b) =>
-      new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime()  // yeniden → eskiye
-    )
-    .map(j => {
-      const dongu = Math.round(
-        (new Date(j.completedAt!).getTime() - new Date(j.createdAt).getTime()) / this.gunMs
-      );
-      const zamaninda = new Date(j.completedAt!).getTime() <= new Date(j.deadline).getTime();
-      return { ...j, dongu, zamaninda };
-    })
-);
+  teslimGecmisi = computed(() =>
+    [...this.tamamlananlar()]                       // KOPYA — signal dizisini yerinde sıralama!
+      .filter(j => j.completedAt)
+      .sort((a, b) =>
+        new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime()  // yeniden → eskiye
+      )
+      .map(j => {
+        const dongu = Math.round(
+          (new Date(j.completedAt!).getTime() - new Date(j.createdAt).getTime()) / this.gunMs
+        );
+        const zamaninda = new Date(j.completedAt!).getTime() <= new Date(j.deadline).getTime();
+        return { ...j, dongu, zamaninda };
+      })
+  );
   buyuklukSirasi = ['FastTrack', 'XS', 'S', 'M', 'L', 'XL'];
 
   buyuklukSureleri = computed(() =>
@@ -69,7 +71,7 @@ teslimGecmisi = computed(() =>
           t + (new Date(j.completedAt!).getTime() - new Date(j.createdAt).getTime()) / this.gunMs, 0
         ) / adet
       );
-      const hedef = HEDEF_SURE_GUN[kod] ?? 0;
+      const hedef = this.ayar.hedefSureler()[kod] ?? 0;
       return {
         kod,
         etiket: buyuklukAdi(kod),
@@ -81,6 +83,17 @@ teslimGecmisi = computed(() =>
     })
   );
 
+  asamaSureleri = signal<AsamaSuresi[]>([]);
+
+  asamaCubuklari = computed(() => {
+    const veri = this.asamaSureleri();
+    const enBuyuk = Math.max(...veri.map(a => a.ortalamaGun), 1);   // en uzun çubuk = %100
+    return veri.map(a => ({
+      ...a,
+      yuzde: (a.ortalamaGun / enBuyuk) * 100,
+      darbogaz: a.ortalamaGun === enBuyuk && a.ortalamaGun > 0,      // en yavaş aşama
+    }));
+  });
 
   ngOnInit() {
     this.yukle();
@@ -90,6 +103,10 @@ teslimGecmisi = computed(() =>
     this.jobApi.getAll().subscribe({
       next: (liste) => this.jobs.set(liste),
       error: (err) => console.error('İşler alınamadı:', err),
+    });
+    this.jobApi.getAsamaSureleri().subscribe({
+      next: (veri) => this.asamaSureleri.set(veri),
+      error: (err) => console.error('Aşama süreleri alınamadı:', err),
     });
   }
 }

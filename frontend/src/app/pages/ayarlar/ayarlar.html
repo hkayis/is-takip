@@ -1,0 +1,62 @@
+<div class="ayarlar">
+  <h1>Ayarlar</h1>
+
+  <section class="kutu">
+    <div class="kutu-ust">
+      <h2>Büyüklük Eşikleri</h2>
+      <span class="kutu-not">adam-gün üst sınırı</span>
+    </div>
+    <p class="aciklama">
+      Bir işin adam-günü bu değere kadarsa o büyüklük önerilir. Değerler artan sırada olmalı.
+    </p>
+    <div class="alan-izgara">
+      @for (kod of buyuklukSirasi; track kod) {
+        <mat-form-field appearance="outline">
+          <mat-label>{{ buyuklukAdi(kod) }}</mat-label>
+          <input matInput type="number" [(ngModel)]="esikler[kod]" />
+        </mat-form-field>
+      }
+    </div>
+  </section>
+
+  <section class="kutu">
+    <div class="kutu-ust">
+      <h2>Hedef Süreler</h2>
+      <span class="kutu-not">takvim günü</span>
+    </div>
+    <p class="aciklama">
+      Raporda büyüklük başına ortalama süre bu hedeflerle kıyaslanır; hedefi aşan satır kırmızı gösterilir.
+    </p>
+    <div class="alan-izgara">
+      @for (kod of buyuklukSirasi; track kod) {
+        <mat-form-field appearance="outline">
+          <mat-label>{{ buyuklukAdi(kod) }}</mat-label>
+          <input matInput type="number" [(ngModel)]="hedefler[kod]" />
+        </mat-form-field>
+      }
+    </div>
+  </section>
+
+  <section class="kutu">
+    <div class="kutu-ust">
+      <h2>Dikkat Penceresi</h2>
+      <span class="kutu-not">gün</span>
+    </div>
+    <p class="aciklama">
+      Dashboard'daki "Dikkat Gerekenler" listesi kaç gün ileriye baksın.
+    </p>
+    <mat-form-field appearance="outline" class="dar">
+      <mat-label>Gün</mat-label>
+      <input matInput type="number" [(ngModel)]="dikkatGun" />
+    </mat-form-field>
+  </section>
+
+  @if (hata) {
+    <p class="hata">{{ hata }}</p>
+  }
+
+  <div class="aksiyonlar">
+    <button matButton (click)="sifirla()">Varsayılanlara dön</button>
+    <button matButton="filled" (click)="kaydet()">Kaydet</button>
+  </div>
+</div>

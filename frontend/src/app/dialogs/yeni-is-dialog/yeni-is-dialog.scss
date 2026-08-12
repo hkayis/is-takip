@@ -1,21 +1,23 @@
 mat-dialog-content.form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;              /* 12 → 10, biraz daha sıkı */
   min-width: 320px;
+  max-height: 78vh;       /* varsayılan 65vh'yi ez */
   padding-top: 16px !important;
 }
 
 .form mat-form-field {
   width: 100%;
 }
-.efor-satiri {
+.ikili {
   display: flex;
   gap: 12px;
 }
 
-.efor-satiri mat-form-field {
+.ikili mat-form-field {
   flex: 1;
+  min-width: 0;   /* flex öğesi etiketten dolayı taşmasın */
 }
 
 .efor-ozet {

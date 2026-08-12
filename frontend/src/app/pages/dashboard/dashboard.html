@@ -1,80 +1,82 @@
 @if (jobs().length === 0) {
-  <div class="bos-durum">
-    <div class="bos-ikon">📊</div>
-    <h2>Gösterilecek veri yok</h2>
-    <p>İş eklemeye başladığında burada özet, dağılım ve eğilim grafiklerini göreceksin.</p>
-    <button matButton="filled" (click)="yeniIsAc()">+ İlk işini oluştur</button>
-  </div>
+<div class="bos-durum">
+  <div class="bos-ikon">📊</div>
+  <h2>Gösterilecek veri yok</h2>
+  <p>İş eklemeye başladığında burada özet, dağılım ve eğilim grafiklerini göreceksin.</p>
+  <button matButton="filled" (click)="yeniIsAc()">+ İlk işini oluştur</button>
+</div>
 } @else {
-  
+<div class="yazdir-baslik">
+  İş Akışı — Özet Rapor · {{ bugun | date:'d MMMM y' }}
+</div>
 <div class="ozet-serit">
-  
+
   <span>{{ aktifEfor() }} adam-gün aktif</span>
   @if (geciken().length > 0) {
-    <span class="ayrac">·</span>
-    <span class="uyari">{{ geciken().length }} geciken</span>
-      
+  <span class="ayrac">·</span>
+  <span class="uyari">{{ geciken().length }} geciken</span>
+
   }
   @if (buAyTamamlanan() > 0) {
-    <span class="ayrac">·</span>
-    <span class="basari">bu ay {{ buAyTamamlanan() }} tamamlandı</span>
+  <span class="ayrac">·</span>
+  <span class="basari">bu ay {{ buAyTamamlanan() }} tamamlandı</span>
   }
 
   @if (ortalamaSure() > 0) {
-    <span class="ayrac">·</span>
-    <span>ortalama {{ ortalamaSure() }} gün</span>
+  <span class="ayrac">·</span>
+  <span>ortalama {{ ortalamaSure() }} gün</span>
   }
-    <button type="button" class="yeni-is-btn" (click)="yeniIsAc()">+ Yeni İş</button>
+  <button type="button" class="yeni-is-btn" (click)="yeniIsAc()">+ Yeni İş</button>
+  <button type="button" class="yazdir-btn" (click)="yazdir()">PDF olarak indir</button>
 </div>
 
 <div class="durum-kutulari">
-  <div class="durum-kutu toplam">
-  <div class="kutu-ust-satir">
-    <span class="sayi">{{ toplam() }}</span>
-    <span class="ag">
-      <span class="ag-sayi">{{ toplamEfor() }}</span>
-      <span class="ag-etiket">AG</span>
-    </span>
-  </div>
-  <span class="etiket">Toplam</span>
-</div>
+  <button type="button" class="durum-kutu toplam" (click)="listeyeGit()">
+    <div class="kutu-ust-satir">
+      <span class="sayi">{{ toplam() }}</span>
+      <span class="ag">
+        <span class="ag-sayi">{{ toplamEfor() }}</span>
+        <span class="ag-etiket">AG</span>
+      </span>
+    </div>
+    <span class="etiket">Toplam</span>
+  </button>
   @for (d of durumDagilimi(); track d.durum) {
-    <button type="button" class="durum-kutu" [attr.data-durum]="d.durum"
-        (click)="listeyeGit(d.durum)">
-  <div class="kutu-ust-satir">
-    <span class="sayi">{{ d.sayi }}</span>
-    <span class="ag">
-      <span class="ag-sayi">{{ d.efor }}</span>
-      <span class="ag-etiket">AG</span>
-    </span>
-  </div>
-  <span class="etiket">{{ d.etiket }}</span>
-</button>
+  <button type="button" class="durum-kutu" [attr.data-durum]="d.durum" (click)="listeyeGit(d.durum)">
+    <div class="kutu-ust-satir">
+      <span class="sayi">{{ d.sayi }}</span>
+      <span class="ag">
+        <span class="ag-sayi">{{ d.efor }}</span>
+        <span class="ag-etiket">AG</span>
+      </span>
+    </div>
+    <span class="etiket">{{ d.etiket }}</span>
+  </button>
   }
 </div>
 
 <div class="izgara">
 
-  <section class="kutu">
-        <div class="kutu-ust">
+  <section class="kutu dikkat-bolum">
+    <div class="kutu-ust">
       <h2>Dikkat Gerekenler</h2>
       <span class="kutu-not">{{ dikkatGerekenler().length }} iş</span>
     </div>
 
     <div class="dikkat-kutu">
       @for (job of dikkatGerekenler(); track job.id) {
-        <button type="button" class="dikkat-satiri" (click)="isiAc(job.id)">
-          <span class="oncelik" [attr.data-oncelik]="job.priority">{{ oncelikAdi(job.priority) }}</span>
-          <span class="baslik">{{ job.title }}</span>
-          <span class="sure" [class.gecikti]="job.gecikti">{{ job.etiket }}</span>
-        </button>
+      <button type="button" class="dikkat-satiri" (click)="isiAc(job.id)">
+        <span class="oncelik" [attr.data-oncelik]="job.priority">{{ oncelikAdi(job.priority) }}</span>
+        <span class="baslik">{{ job.title }}</span>
+        <span class="sure" [class.gecikti]="job.gecikti">{{ job.etiket }}</span>
+      </button>
       } @empty {
-        <p class="bos">Yakın vadede dikkat gerektiren iş yok</p>
+      <p class="bos">Yakın vadede dikkat gerektiren iş yok</p>
       }
     </div>
   </section>
 
-  
+
 
   <section class="kutu">
     <div class="kutu-ust">
@@ -84,42 +86,58 @@
 
     <div class="sutunlar">
       @for (o of oncelikDagilimi(); track o.oncelik) {
-          <button type="button" class="sutun-kutu"
-                [disabled]="o.sayi === 0"
-                (click)="oncelikListesiniAc(o.oncelik)">
-          <span class="deger">{{ o.sayi }}</span>
-          <div class="sutun-alan">
-            <div class="dikey-cubuk" [attr.data-oncelik]="o.oncelik" [style.height.%]="o.yuzde"></div>
-          </div>
-          <span class="etiket">{{ o.etiket }}</span>
-        </button>
+      <button type="button" class="sutun-kutu" [disabled]="o.sayi === 0" (click)="oncelikListesiniAc(o.oncelik)">
+        <span class="deger">{{ o.sayi }}</span>
+        <div class="sutun-alan">
+          <div class="dikey-cubuk" [attr.data-oncelik]="o.oncelik" [style.height.%]="o.yuzde"></div>
+        </div>
+        <span class="etiket">{{ o.etiket }}</span>
+      </button>
       }
     </div>
   </section>
 
-    <section class="kutu">
-  <div class="kutu-ust">
-    <h2>Büyüklük Dağılımı</h2>
-    <div class="kapsam-secim">
-      <button type="button"
-              [class.aktif]="buyuklukKapsam() === 'DevamEdiyor'"
-              (click)="buyuklukKapsamSec('DevamEdiyor')">Devam Edenler</button>
-      <button type="button"
-              [class.aktif]="buyuklukKapsam() === 'Beklemede'"
-              (click)="buyuklukKapsamSec('Beklemede')">Beklemede</button>
-    </div>
-  </div>
-
-  @for (b of buyuklukDagilimi(); track b.kod) {
-    <div class="asama-satiri">
-      <span class="asama-ad">{{ b.etiket }}</span>
-      <div class="asama-yol">
-        <div class="asama-cubuk" [style.width.%]="b.yuzde"></div>
+  <section class="kutu">
+    <div class="kutu-ust">
+      <h2>Büyüklük Dağılımı</h2>
+      <div class="kapsam-secim">
+        <button type="button" [class.aktif]="buyuklukKapsam() === 'DevamEdiyor'"
+          (click)="buyuklukKapsamSec('DevamEdiyor')">Devam Edenler</button>
+        <button type="button" [class.aktif]="buyuklukKapsam() === 'Beklemede'"
+          (click)="buyuklukKapsamSec('Beklemede')">Beklemede</button>
       </div>
-      <span class="asama-sayi">{{ b.sayi }}</span>
+      <span class="kapsam-yazdir">devam edenler + beklemede</span>
     </div>
-  }
-</section>
+
+    <!-- Ekran: seçili kapsam -->
+    <div class="ekran-gorunum">
+      @for (b of buyuklukDagilimi(); track b.kod) {
+      <div class="asama-satiri">
+        <span class="asama-ad">{{ b.etiket }}</span>
+        <div class="asama-yol">
+          <div class="asama-cubuk" [style.width.%]="b.yuzde"></div>
+        </div>
+        <span class="asama-sayi">{{ b.sayi }}</span>
+      </div>
+      }
+    </div>
+
+    <!-- Yazdırma: iki grup birden -->
+    <div class="yazdir-gorunum">
+      @for (g of buyuklukIkisi(); track g.baslik) {
+      <h3 class="grup-baslik">{{ g.baslik }}</h3>
+      @for (b of g.satirlar; track b.kod) {
+      <div class="asama-satiri">
+        <span class="asama-ad">{{ b.etiket }}</span>
+        <div class="asama-yol">
+          <div class="asama-cubuk" [style.width.%]="b.yuzde"></div>
+        </div>
+        <span class="asama-sayi">{{ b.sayi }}</span>
+      </div>
+      }
+      }
+    </div>
+  </section>
 
   <section class="kutu">
     <div class="kutu-ust">
@@ -128,13 +146,13 @@
     </div>
 
     @for (a of asamaDagilimi(); track a.asama) {
-      <div class="asama-satiri">
-        <span class="asama-ad">{{ a.asama }}</span>
-        <div class="asama-yol">
-          <div class="asama-cubuk" [style.width.%]="a.yuzde"></div>
-        </div>
-        <span class="asama-sayi">{{ a.sayi }}</span>
+    <div class="asama-satiri">
+      <span class="asama-ad">{{ a.asama }}</span>
+      <div class="asama-yol">
+        <div class="asama-cubuk" [style.width.%]="a.yuzde"></div>
       </div>
+      <span class="asama-sayi">{{ a.sayi }}</span>
+    </div>
     }
   </section>
 </div>

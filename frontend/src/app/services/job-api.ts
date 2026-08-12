@@ -46,6 +46,13 @@ export interface JobDetail {
     not: string | null;
 }
 
+export interface AsamaSuresi {
+  asama: string;
+  ortalamaGun: number;
+  toplamGun: number;
+  isSayisi: number;
+}
+
 @Service()
 
 export class JobApi {
@@ -55,6 +62,9 @@ export class JobApi {
     getAll(){
         return this.http.get<Job[]>(`${this.apiUrl}/jobs`);
     }
+    getAsamaSureleri() {
+  return this.http.get<AsamaSuresi[]>(`${this.apiUrl}/reports/asama-sureleri`);
+}
     create(dto: { id: number; title: string; description: string; deadline: string;
         priority: string; adam: number; gun: number; buyukluk:string | null;
     }) {

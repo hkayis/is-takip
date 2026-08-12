@@ -264,7 +264,7 @@
 .yan-panel {
   position: fixed;
   right: 0;
-  top: 0;              // toolbar varsa 64px
+  top: var(--mat-toolbar-standard-height, 64px);   /* toolbar'ın altından başla */
   bottom: 0;
   width: 360px;
   overflow-y: auto;
@@ -272,6 +272,11 @@
   border-left: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: -6px 0 24px rgba(0, 0, 0, 0.06);
   z-index: 5;
+}
+
+/* Material toolbar dar ekranda 56px'e düşer */
+@media (max-width: 599px) {
+  .yan-panel { top: var(--mat-toolbar-mobile-height, 56px); }
 }
 
 .panel-icerik { display: flex; flex-direction: column; }

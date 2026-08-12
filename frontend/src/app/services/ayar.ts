@@ -1,0 +1,50 @@
+import { Injectable, signal, computed } from '@angular/core';
+
+export interface Ayarlar {
+  buyuklukEsikleri: Record<string, number>;   // adam-gün eşikleri
+  hedefSureler: Record<string, number>;        // büyüklük başına hedef takvim günü
+  dikkatPenceresiGun: number;                  // "dikkat gerekenler" kaç gün ileriye baksın
+}
+
+const VARSAYILAN: Ayarlar = {
+  buyuklukEsikleri: { FastTrack: 5, XS: 10, S: 25, M: 50, L: 100, XL: 300 },
+  hedefSureler:     { FastTrack: 10, XS: 20, S: 40, M: 70, L: 120, XL: 200 },
+  dikkatPenceresiGun: 7,
+};
+@Injectable({ providedIn: 'root' })
+export class AyarService {
+
+    private readonly ANAHTAR= 'is-akisi-ayarlar';
+
+    private _ayarlar=signal<Ayarlar>(this.oku());
+    ayarlar=this._ayarlar.asReadonly();
+
+    buyuklukEsikleri = computed(()=>
+    this._ayarlar().buyuklukEsikleri);
+
+    hedefSureler = computed(()=>
+    this._ayarlar().hedefSureler);
+
+    dikkatPenceresiGun = computed(()=>
+    this._ayarlar().dikkatPenceresiGun);
+
+    kaydet(yeni: Ayarlar){
+        this._ayarlar.set(yeni);
+        localStorage.setItem(this.ANAHTAR, JSON.stringify(yeni));
+    }
+
+    sifirla(){
+        this.kaydet(VARSAYILAN);
+    }
+
+    private oku() : Ayarlar{
+        const ham = localStorage.getItem(this.ANAHTAR);
+        if(!ham) return VARSAYILAN;
+        try{
+            return{...VARSAYILAN, ...JSON.parse(ham)};
+        } catch{
+            return VARSAYILAN;
+        }
+    }
+
+}

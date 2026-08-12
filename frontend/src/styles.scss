@@ -78,3 +78,33 @@ body {
 .buyukluk[data-buyukluk="M"]         { background: #fffde7; color: #f9a825; }
 .buyukluk[data-buyukluk="L"]         { background: #fff3e0; color: #ef6c00; }
 .buyukluk[data-buyukluk="XL"]        { background: #ffebee; color: #c62828; }
+@media print {
+  /* Ekrana ait, kâğıda gitmemesi gereken parçalar */
+  mat-toolbar,
+  .yeni-is-btn,
+  .yazdir-btn { display: none !important; }
+
+  /* Yazdırma başlığını göster */
+  .yazdir-baslik {
+    display: block !important;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  /* Tarayıcı varsayılan olarak arka plan renklerini basmaz — çubuklar boş çıkar */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body { background: #fff !important; }
+  .icerik { padding: 0 !important; }
+
+  /* Kutular sayfa ortasından ikiye bölünmesin */
+  .kutu,
+  .metrik-kart,
+  .durum-kutu { break-inside: avoid; }
+
+  @page { size: A4; margin: 12mm; }
+}
