@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using WebApplication1.Application.Services;
 using WebApplication1.Data;
 using WebApplication1.Domain.Entities;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,52 @@ builder.Services.AddScoped<ReportService>();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = async (context, token) =>
+    {
+        var saniye =
+        context.Lease.TryGetMetadata(MetadataName.RetryAfter, out
+        var sure)
+            ? (int)sure.TotalSeconds
+            : 300;
+        var dakika = Math.Max(1, (int)Math.Ceiling(saniye / 60.0));
 
+        context.HttpContext.Response.StatusCode =
+    StatusCodes.Status429TooManyRequests;
+        context.HttpContext.Response.Headers.RetryAfter =
+    saniye.ToString();
+
+        await
+    context.HttpContext.Response.WriteAsJsonAsync(new
+    {
+        message = $"Çok fazla deneme yapıldı. Lütfen {dakika} dakika sonra tekrar deneyin"
+
+    }, cancellationToken: token);
+    };
+    // Giriş denemeleri: IP başına 5 dakikada 5 deneme
+    options.AddPolicy("giris", http =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: http.Connection.RemoteIpAddress?.ToString() ?? "bilinmeyen",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromMinutes(5),
+                QueueLimit = 0,
+            }));
+
+    // Genel emniyet supabı: IP başına dakikada 100 istek
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(http =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            http.Connection.RemoteIpAddress?.ToString() ?? "bilinmeyen",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 100,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0,
+            }));
+});
 // JWT doğrulama
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -292,6 +338,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AngularApp");
+app.UseRateLimiter();
 app.UseAuthentication();   // önce authentication
 app.UseAuthorization();    // sonra authorization
 app.MapControllers();

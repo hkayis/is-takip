@@ -26,6 +26,13 @@ export const hataInterceptor: HttpInterceptorFn = (req, next) => {
           duration:4000
         });
       }
+      else if(err.status ===429){
+        snackBar.open(
+          err.error?.message ?? 'Çok fazla istek gönderildi Lütfen biraz bekleyin',
+          'Tamam',
+          {duration:6000}
+        );
+      }
       return throwError(()=>err);
     })
   )

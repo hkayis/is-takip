@@ -10,13 +10,16 @@ import { hesaplananBuyukluk } from '../../etiketler';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { AyarService } from '../../services/ayar';
+import { DateAdapter } from '@angular/material/core';
+import { TrDateAdapter } from '../../tr-date-adapter';
 @Component({
   selector: 'app-yeni-is-dialog',
   imports: [FormsModule, MatSelectModule, MatDialogModule, MatFormFieldModule,
     MatInputModule, MatButtonModule, MatDatepickerModule],
   providers: [
     provideNativeDateAdapter(),
-    { provide: MAT_DATE_LOCALE, useValue: 'tr-TR' },   // takvim Türkçe, gg.aa.yyyy
+    { provide: MAT_DATE_LOCALE, useValue: 'tr-TR' },
+    { provide: DateAdapter, useClass: TrDateAdapter },   // takvim Türkçe, gg.aa.yyyy
   ],
   templateUrl: './yeni-is-dialog.html',
   styleUrl: './yeni-is-dialog.scss',
@@ -26,10 +29,11 @@ export class YeniIsDialog {
   private data = inject<JobDetail | null>(MAT_DIALOG_DATA);
   private ayar = inject(AyarService);
 
-  
+
   duzenleme = this.data !== null;
 
   isNo: number | null = this.data?.id ?? null;
+  protected readonly enBuyukIsNo = 214783647;
   baslik = this.data?.title ?? '';
   aciklama = this.data?.description ?? '';
   tarih: Date | null = this.data ? new Date(this.data.deadline) : null;
@@ -52,7 +56,7 @@ export class YeniIsDialog {
   /** Seçili büyüklük, adam-günden önerilenden farklıysa öneriyi döndürür. */
   get onerilenBuyukluk(): string | null {
     if (!this.adam || !this.gun) return null;
-    const oneri =hesaplananBuyukluk(this.adam, this.gun, this.ayar.buyuklukEsikleri());
+    const oneri = hesaplananBuyukluk(this.adam, this.gun, this.ayar.buyuklukEsikleri());
     return oneri !== this.buyukluk ? oneri : null;
   }
 
@@ -70,7 +74,10 @@ export class YeniIsDialog {
       this.hata = 'İş numarası, başlık ve son tarih zorunludur.';
       return;
     }
-
+    if (!Number.isInteger(this.isNo) || this.isNo < 1 || this.isNo > this.enBuyukIsNo) {
+      this.hata = `İş numarası 1 ile ${this.enBuyukIsNo.toLocaleString('tr-TR')} arasında bir tam sayı olmalı.`;
+      return;
+    }
     if (!this.adam || !this.gun) {
       this.hata = 'Adam ve gün alanları zorunludur.';
       return;

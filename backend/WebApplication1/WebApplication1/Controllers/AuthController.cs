@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using WebApplication1.Application.Services;
 using WebApplication1.Application.DTOs;
+using Microsoft.AspNetCore.RateLimiting;
 namespace WebApplication1.Controllers
 {
     [ApiController]
@@ -16,6 +17,7 @@ namespace WebApplication1.Controllers
         }
 
         [AllowAnonymous]
+        [EnableRateLimiting("giris")]
         [HttpPost("login")]
         public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginDto dto)
         {
