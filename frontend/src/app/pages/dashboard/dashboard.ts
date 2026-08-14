@@ -9,6 +9,7 @@ import { YeniIsDialog } from '../../dialogs/yeni-is-dialog/yeni-is-dialog';
 import { oncelikAdi, buyuklukAdi } from '../../etiketler';
 import { MatButtonModule } from '@angular/material/button';
 import { AyarService } from '../../services/ayar';
+import { JobStore } from '../../services/job-store';
 @Component({
   selector: 'app-dashboard',
   imports: [MatCardModule, DatePipe, MatDialogModule, MatSnackBarModule, MatButtonModule],
@@ -17,11 +18,12 @@ import { AyarService } from '../../services/ayar';
 })
 export class Dashboard implements OnInit {
   protected oncelikAdi = oncelikAdi;
+  private store = inject(JobStore);
   private jobApi = inject(JobApi);
   private dialog = inject(MatDialog);
   private ayar = inject(AyarService);
   private snackBar = inject(MatSnackBar);
-  jobs = signal<Job[]>([]);
+  jobs = this.store.isler;
 
 
   private router = inject(Router);
@@ -229,18 +231,15 @@ export class Dashboard implements OnInit {
   }
 
   yukle() {
-    this.jobApi.getAll().subscribe({
-      next: (liste) => this.jobs.set(liste),
-      error: (err) => console.error('İşler alınamadı:', err),
-    });
+    this.store.yukle()
   }
 
   yeniIsAc() {
     const ref = this.dialog.open(YeniIsDialog, { width: '420px' });
     ref.afterClosed().subscribe((sonuc) => {
       if (!sonuc) return;
-      this.jobApi.create(sonuc).subscribe({
-        next: () => this.yukle(),
+      this.store.olustur(sonuc).subscribe({
+        
         error: (err) => {
           const mesaj = err.status === 409
             ? err.error?.message ?? 'Bu iş numarası zaten kullanılıyor.'

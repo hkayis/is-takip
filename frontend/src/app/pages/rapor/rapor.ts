@@ -4,7 +4,7 @@ import { buyuklukAdi } from '../../etiketler';
 
 import { DatePipe } from '@angular/common';
 import { AyarService } from '../../services/ayar';
-
+import { JobStore } from '../../services/job-store';
 @Component({
   selector: 'app-rapor',
   imports: [DatePipe],
@@ -12,8 +12,9 @@ import { AyarService } from '../../services/ayar';
   styleUrl: './rapor.scss',
 })
 export class Rapor implements OnInit {
+  private store = inject(JobStore);
   private jobApi = inject(JobApi);
-  jobs = signal<Job[]>([]);
+  jobs = this.store.isler;
   private ayar = inject(AyarService);
 
   private gunMs = 1000 * 60 * 60 * 24;
@@ -100,10 +101,7 @@ export class Rapor implements OnInit {
   }
 
   yukle() {
-    this.jobApi.getAll().subscribe({
-      next: (liste) => this.jobs.set(liste),
-      error: (err) => console.error('İşler alınamadı:', err),
-    });
+    this.store.yukle();
     this.jobApi.getAsamaSureleri().subscribe({
       next: (veri) => this.asamaSureleri.set(veri),
       error: (err) => console.error('Aşama süreleri alınamadı:', err),

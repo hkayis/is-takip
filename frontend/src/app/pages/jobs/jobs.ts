@@ -7,34 +7,36 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { JobApi, Job, JobDetail } from '../../services/job-api';
 import { YeniIsDialog } from '../../dialogs/yeni-is-dialog/yeni-is-dialog';
-import {DatePipe} from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { durumAdi, oncelikAdi, oncelikPuani, buyuklukAdi,asamaAdi } from '../../etiketler';
+import { durumAdi, oncelikAdi, oncelikPuani, buyuklukAdi, asamaAdi } from '../../etiketler';
 import { DurumDialog } from '../../dialogs/durum-dialog/durum-dialog';
 import { OnayDialog } from '../../dialogs/onay-dialog/onay-dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
+import { JobStore } from '../../services/job-store';
 import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-jobs',
-  imports: [FormsModule,DatePipe,MatIconModule,MatTooltip ,MatSnackBarModule ,MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatDialogModule],
+  imports: [FormsModule, DatePipe, MatIconModule, MatTooltip, MatSnackBarModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatDialogModule],
   templateUrl: './jobs.html',
   styleUrl: './jobs.scss',
 })
 export class Jobs implements OnInit {
-    private snackBar = inject(MatSnackBar);
+  private store = inject(JobStore);
+  private snackBar = inject(MatSnackBar);
   private jobApi = inject(JobApi);
   private dialog = inject(MatDialog);
   private route = inject(ActivatedRoute);
   protected durumAdi = durumAdi;
   protected oncelikAdi = oncelikAdi;
   protected buyuklukAdi = buyuklukAdi;
-  protected asamaAdi=asamaAdi;
-  protected notMetni =''
- 
+  protected asamaAdi = asamaAdi;
+  protected notMetni = ''
+
   asamaSirasi: string[] = ['Analiz', 'Gelistirme', 'Test', 'Tasima'];
-  jobs = signal<Job[]>([]);
+  jobs = this.store.isler;
 
   bekleyenler = computed(() => this.jobs().filter(j => j.status === 'Beklemede'));
   devamEdenler = computed(() => this.jobs().filter(j => j.status === 'DevamEdiyor'));
@@ -49,9 +51,9 @@ export class Jobs implements OnInit {
   arama = signal('');
   durumFiltre = signal('hepsi');
   oncelikFiltre = signal('hepsi');
-  siralamaAlani =signal('varsayilan')
-  siralamaYonu= signal<'artan' | 'azalan'>('artan');
-     siralamayiDegistir(alan: string) {
+  siralamaAlani = signal('varsayilan')
+  siralamaYonu = signal<'artan' | 'azalan'>('artan');
+  siralamayiDegistir(alan: string) {
     if (this.siralamaAlani() !== alan) {
       this.siralamaAlani.set(alan);
       this.siralamaYonu.set('artan');
@@ -68,18 +70,18 @@ export class Jobs implements OnInit {
 
   private siralamaDegeri(job: Job, alan: string): number | string {
     switch (alan) {
-      case 'id':       return job.id;
-      case 'title':    return job.title.toLowerCase();
+      case 'id': return job.id;
+      case 'title': return job.title.toLowerCase();
       case 'priority': return oncelikPuani(job.priority);
-      case 'status':   return job.status;
-      case 'stage':    return job.stage ? this.asamaSirasi.indexOf(job.stage) : -1;
-      case 'efor':     return (job.adam ?? 0) * (job.gun ?? 0);
+      case 'status': return job.status;
+      case 'stage': return job.stage ? this.asamaSirasi.indexOf(job.stage) : -1;
+      case 'efor': return (job.adam ?? 0) * (job.gun ?? 0);
       case 'deadline': return new Date(job.deadline).getTime();
-      default:         return 0;
+      default: return 0;
     }
   }
 
-    filtrelenmisIsler = computed(() => {
+  filtrelenmisIsler = computed(() => {
     const metin = this.arama().toLowerCase().trim();
     const durum = this.durumFiltre();
     const oncelik = this.oncelikFiltre();
@@ -109,23 +111,23 @@ export class Jobs implements OnInit {
       return ((av as number) - (bv as number)) * yon;
     });
   });
-  
-    exportExcel(){
-      const data= this.filtrelenmisIsler();
 
-      const worksheet = XLSX.utils.json_to_sheet(data);
+  exportExcel() {
+    const data = this.filtrelenmisIsler();
 
-      const workbook=XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(data);
 
-      XLSX.utils.book_append_sheet(
-        workbook,
-        worksheet,
-        'İşler'
-      );
-      XLSX.writeFile(workbook,'isler.xlsx');
-    }
+    const workbook = XLSX.utils.book_new();
 
-    ngOnInit() {
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      'İşler'
+    );
+    XLSX.writeFile(workbook, 'isler.xlsx');
+  }
+
+  ngOnInit() {
     const durum = this.route.snapshot.queryParamMap.get('durum');
     if (durum) {
       this.durumFiltre.set(durum);
@@ -141,24 +143,21 @@ export class Jobs implements OnInit {
     }
     this.yukle();
   }
-  asamaninIsleri(asama: string){
-    return this.devamEdenler().filter(x=> x.stage==asama);
+  asamaninIsleri(asama: string) {
+    return this.devamEdenler().filter(x => x.stage == asama);
   }
 
   yukle() {
-    this.jobApi.getAll().subscribe({
-      next: (liste) => this.jobs.set(liste),
-      error: (err) => console.error('İşler alınamadı:', err),
-    });
+    this.store.yukle();
   }
 
   yeniIsAc() {
     const ref = this.dialog.open(YeniIsDialog, { width: '420px' });
     ref.afterClosed().subscribe((sonuc) => {
       if (!sonuc) return;
-      this.jobApi.create(sonuc).subscribe({
-        next: () => this.yukle(),
-                error: (err) => {
+      this.store.olustur(sonuc).subscribe({
+         
+        error: (err) => {
           const mesaj = err.status === 409
             ? err.error?.message ?? 'Bu iş numarası zaten kullanılıyor.'
             : 'İş oluşturulamadı.';
@@ -167,11 +166,11 @@ export class Jobs implements OnInit {
       });
     });
   }
-    duzenleAc(job: JobDetail) {
+  duzenleAc(job: JobDetail) {
     const ref = this.dialog.open(YeniIsDialog, { width: '420px', data: job });
     ref.afterClosed().subscribe((sonuc) => {
       if (!sonuc) return;
-      this.jobApi.update(job.id, {
+      this.store.guncelle(job.id, {
         title: sonuc.title,
         description: sonuc.description,
         deadline: sonuc.deadline,
@@ -179,11 +178,11 @@ export class Jobs implements OnInit {
         adam: sonuc.adam,
         gun: sonuc.gun,
         buyukluk: sonuc.buyukluk,
-        not:this.notMetni
+        not: this.notMetni
       }).subscribe({
         next: () => {
           this.detayYukle(job.id);
-          this.yukle();
+         
         },
         error: () => this.snackBar.open('İş güncellenemedi.', 'Tamam', { duration: 4000 }),
       });
@@ -198,35 +197,37 @@ export class Jobs implements OnInit {
     this.jobApi.getById(id).subscribe({
       next: (veri) => {
         this.seciliDetay.set(veri);
-        this.notMetni=veri.not ?? '';
+        this.notMetni = veri.not ?? '';
       },
       error: (err) => console.error('Detay alınamadı:', err),
     });
   }
-  notKaydet(){
-    const s= this.seciliDetay();
-    if(!s) return console.log(500);
-    this.jobApi.update(s.id, { title: s.title,
+  notKaydet() {
+    const s = this.seciliDetay();
+    if (!s) return console.log(500);
+    this.store.guncelle(s.id, {
+      title: s.title,
       description: s.description,
       deadline: s.deadline,
       priority: s.priority,
       adam: s.adam!,
       gun: s.gun!,
       buyukluk: s.buyukluk,
-      not: this.notMetni}).subscribe({
-        next:()=>{
-          this.detayYukle(s.id);
-          this.snackBar.open('Not kaydedildi.', 'Tamam', { duration: 2000 });
-        },
-        error:()=>  this.snackBar.open('Not kaydedilemedi.', 'Tamam', { duration: 4000 })
-      });
+      not: this.notMetni
+    }).subscribe({
+      next: () => {
+        this.detayYukle(s.id);
+        this.snackBar.open('Not kaydedildi.', 'Tamam', { duration: 2000 });
+      },
+      error: () => this.snackBar.open('Not kaydedilemedi.', 'Tamam', { duration: 4000 })
+    });
   }
   kapat() {
     this.seciliDetay.set(null);
-    
+
   }
 
-    durumDialogAc(job: Job | JobDetail) {
+  durumDialogAc(job: Job | JobDetail) {
     const ref = this.dialog.open(DurumDialog, {
       width: '420px',
       data: { title: job.title, status: job.status, stage: job.stage },
@@ -234,50 +235,50 @@ export class Jobs implements OnInit {
 
     ref.afterClosed().subscribe((sonuc) => {
       if (!sonuc) return;
-      this.jobApi.changeStatus(job.id, sonuc).subscribe({
+      this.store.durumDegistir(job.id, sonuc).subscribe({
         next: () => {
           if (this.seciliDetay()?.id === job.id) {
             this.detayYukle(job.id);
           }
-          this.yukle();
+         
         },
         error: () => this.snackBar.open('Durum değiştirilemedi.', 'Tamam', { duration: 4000 }),
       });
     });
   }
 
-  sil(job: Job){
+  sil(job: Job) {
     const ref = this.dialog.open(OnayDialog, {
-      data:{
-        baslik:'İşi sil',
+      data: {
+        baslik: 'İşi sil',
         mesaj: `"${job.title}" kalıcı olarak silinecek. Geçmiş kayıtları da gidecek. Bu işlem geri alınamaz.`,
         onayMetni: 'Sil',
       },
     });
 
-    ref.afterClosed().subscribe((onay)=>{
-      if(!onay) return
-      this.jobApi.delete(job.id).subscribe({
-        next: ()=>{
-          if(this. seciliDetay()?.id===job.id){
+    ref.afterClosed().subscribe((onay) => {
+      if (!onay) return
+      this.store.sil(job.id).subscribe({
+        next: () => {
+          if (this.seciliDetay()?.id === job.id) {
             this.kapat();
           }
-          this.yukle();
+          
         },
-        error: ()=> this.snackBar.open('İş silinemedi.', 'Tamam', {duration: 4000}),
+        error: () => this.snackBar.open('İş silinemedi.', 'Tamam', { duration: 4000 }),
       });
     });
   }
 
   gecikmeDurumu(job: Job | JobDetail): string | null {
-    if(job.status === 'Tamamlandi' || job.status === 'Iptal') return null;
-    
-    const gunMs= 1000 * 60 * 60 * 24;
+    if (job.status === 'Tamamlandi' || job.status === 'Iptal') return null;
 
-    const kalanGun= Math.ceil((new Date(job.deadline).getTime() - Date.now())/gunMs);
+    const gunMs = 1000 * 60 * 60 * 24;
 
-    if(kalanGun<0) return 'gecikti';
-    if (kalanGun <7) return 'yakin';
+    const kalanGun = Math.ceil((new Date(job.deadline).getTime() - Date.now()) / gunMs);
+
+    if (kalanGun < 0) return 'gecikti';
+    if (kalanGun < 7) return 'yakin';
     return null;
   }
 }
