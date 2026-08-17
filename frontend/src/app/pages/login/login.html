@@ -1,20 +1,37 @@
 <div class="login-page">
-  <mat-card class="login-card">
-    <h1>Giriş Yap</h1>
+  <form class="login-card" (ngSubmit)="girisYap()">
+
+    <div class="marka">
+      <span class="marka-ikon">🗂️</span>
+      <h1>İş Akışı</h1>
+      <p class="alt-baslik">İş takip ve raporlama</p>
+    </div>
 
     <mat-form-field appearance="outline">
       <mat-label>Kullanıcı adı</mat-label>
-      <input matInput [(ngModel)]="username" />
+      <input matInput name="username" autocomplete="username" autofocus
+             [(ngModel)]="username" />
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Şifre</mat-label>
-      <input matInput type="password" [(ngModel)]="password" />
+      <input matInput name="password" autocomplete="current-password"
+             [type]="sifreGorunur ? 'text' : 'password'"
+             [(ngModel)]="password" />
+      <button matIconButton matSuffix type="button"
+              [attr.aria-label]="sifreGorunur ? 'Şifreyi gizle' : 'Şifreyi göster'"
+              (click)="sifreGorunur = !sifreGorunur">
+        <mat-icon>{{ sifreGorunur ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
     </mat-form-field>
 
-    <button matButton="filled" (click)="girisYap()">Giriş Yap</button>
-        @if (hata) {
+    @if (hata) {
       <p class="hata">{{ hata }}</p>
     }
-  </mat-card>
+
+    <button matButton="filled" type="submit" class="giris-btn" [disabled]="yukleniyor">
+      {{ yukleniyor ? 'Giriş yapılıyor…' : 'Giriş Yap' }}
+    </button>
+
+  </form>
 </div>

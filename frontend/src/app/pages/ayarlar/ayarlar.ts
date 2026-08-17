@@ -4,19 +4,19 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { AyarService } from '../../services/ayar';
+import { AyarService, Tema } from '../../services/ayar';
 import { buyuklukAdi } from '../../etiketler';
-
+import { MatSelectModule } from '@angular/material/select';
 @Component({
   selector: 'app-ayarlar',
-  imports: [FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSnackBarModule],
+  imports: [FormsModule, MatSelectModule,MatFormFieldModule, MatInputModule, MatButtonModule, MatSnackBarModule],
   templateUrl: './ayarlar.html',
   styleUrl: './ayarlar.scss',
 })
 export class Ayarlar {
   private ayar = inject(AyarService);
   private snackBar = inject(MatSnackBar);
-
+  tema: Tema;
   protected buyuklukAdi = buyuklukAdi;
   buyuklukSirasi = ['FastTrack', 'XS', 'S', 'M', 'L', 'XL'];
 
@@ -30,6 +30,7 @@ export class Ayarlar {
     this.esikler = { ...this.ayar.buyuklukEsikleri() };   // KOPYA (bkz. not)
     this.hedefler = { ...this.ayar.hedefSureler() };
     this.dikkatGun = this.ayar.dikkatPenceresiGun();
+    this.tema=this.ayar.tema();
   }
 
   kaydet() {
@@ -54,6 +55,7 @@ export class Ayarlar {
       buyuklukEsikleri: this.esikler,
       hedefSureler: this.hedefler,
       dikkatPenceresiGun: this.dikkatGun,
+      tema: this.tema,
     });
     this.snackBar.open('Ayarlar kaydedildi.', 'Tamam', { duration: 3000 });
   }
@@ -63,7 +65,9 @@ export class Ayarlar {
     this.esikler = { ...this.ayar.buyuklukEsikleri() };
     this.hedefler = { ...this.ayar.hedefSureler() };
     this.dikkatGun = this.ayar.dikkatPenceresiGun();
+    this.tema = this.ayar.tema();
     this.hata = '';
+    
     this.snackBar.open('Varsayılanlara dönüldü.', 'Tamam', { duration: 3000 });
   }
 }

@@ -51,6 +51,23 @@
     </mat-form-field>
   </section>
 
+  <section class="kutu">
+  <div class="kutu-ust">
+    <h2>Görünüm</h2>
+  </div>
+  <p class="aciklama">
+    "Sistem" seçilirse işletim sisteminin açık/koyu tercihini izler.
+  </p>
+  <mat-form-field appearance="outline" class="dar">
+    <mat-label>Tema</mat-label>
+    <mat-select [(ngModel)]="tema">
+      <mat-option value="sistem">Sistem</mat-option>
+      <mat-option value="acik">Açık</mat-option>
+      <mat-option value="koyu">Koyu</mat-option>
+    </mat-select>
+  </mat-form-field>
+</section>
+
   @if (hata) {
     <p class="hata">{{ hata }}</p>
   }

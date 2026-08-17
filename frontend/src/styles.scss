@@ -19,11 +19,22 @@ html {
   );
 }
 
+:root {
+  --yuzey:       var(--mat-sys-surface);                   // sayfa zemini
+  --kart:        var(--mat-sys-surface-container-low);     // kart, kutu, panel zemini
+  --kart-alt:    var(--mat-sys-surface-container);         // ikincil zemin (sütun başlığı vb.)
+  --dolgu:       var(--mat-sys-surface-container-high);    // çubuk yatağı, hover zemini
+  --metin:       var(--mat-sys-on-surface);                // ana metin
+  --metin-soluk: var(--mat-sys-on-surface-variant);        // ikincil metin
+  --metin-silik: var(--mat-sys-outline);                   // en soluk metin, ikonlar
+  --cizgi:       var(--mat-sys-outline-variant);           // kenarlık, ayırıcı
+}
+
 body {
   // Default the application to a light color theme. This can be changed to
   // `dark` to enable the dark color theme, or to `light dark` to defer to the
   // user's system settings.
-  color-scheme: light;
+  
 
   // Set a default background, font and text colors for the application using
   // Angular Material's system-level CSS variables. Learn more about these
@@ -58,10 +69,24 @@ body {
   font-size: 11px;
   font-weight: 700;
 }
-.oncelik[data-oncelik="Dusuk"]  { background: #eceff1; color: #546e7a; }
-.oncelik[data-oncelik="Normal"] { background: #e3f2fd; color: #1565c0; }
-.oncelik[data-oncelik="Yuksek"] { background: #fff3e0; color: #e65100; }
-.oncelik[data-oncelik="Acil"]   { background: #ffebee; color: #c62828; }
+/* light-dark(): ilk değer açık temada, ikincisi koyu temada geçerli.
+   Hangisinin uygulanacağına <html> üzerindeki color-scheme karar verir. */
+.oncelik[data-oncelik="Dusuk"] {
+  background: light-dark(#eceff1, #2a3238);
+  color:      light-dark(#546e7a, #b0bec5);
+}
+.oncelik[data-oncelik="Normal"] {
+  background: light-dark(#e3f2fd, #17293d);
+  color:      light-dark(#1565c0, #90caf9);
+}
+.oncelik[data-oncelik="Yuksek"] {
+  background: light-dark(#fff3e0, #3a2a15);
+  color:      light-dark(#e65100, #ffb74d);
+}
+.oncelik[data-oncelik="Acil"] {
+  background: light-dark(#ffebee, #3a1e20);
+  color:      light-dark(#c62828, #ef9a9a);
+}
 
 .buyukluk {
   display: inline-block;
@@ -72,13 +97,34 @@ body {
   font-weight: 700;
   white-space: nowrap;
 }
-.buyukluk[data-buyukluk="FastTrack"] { background: #e0f2f1; color: #00695c; }
-.buyukluk[data-buyukluk="XS"]        { background: #e8f5e9; color: #2e7d32; }
-.buyukluk[data-buyukluk="S"]         { background: #f1f8e9; color: #558b2f; }
-.buyukluk[data-buyukluk="M"]         { background: #fffde7; color: #f9a825; }
-.buyukluk[data-buyukluk="L"]         { background: #fff3e0; color: #ef6c00; }
-.buyukluk[data-buyukluk="XL"]        { background: #ffebee; color: #c62828; }
+.buyukluk[data-buyukluk="FastTrack"] {
+  background: light-dark(#e0f2f1, #12302c);
+  color:      light-dark(#00695c, #80cbc4);
+}
+.buyukluk[data-buyukluk="XS"] {
+  background: light-dark(#e8f5e9, #17301a);
+  color:      light-dark(#2e7d32, #a5d6a7);
+}
+.buyukluk[data-buyukluk="S"] {
+  background: light-dark(#f1f8e9, #22301a);
+  color:      light-dark(#558b2f, #c5e1a5);
+}
+.buyukluk[data-buyukluk="M"] {
+  background: light-dark(#fffde7, #332f14);
+  color:      light-dark(#f9a825, #ffe082);
+}
+.buyukluk[data-buyukluk="L"] {
+  background: light-dark(#fff3e0, #3a2a15);
+  color:      light-dark(#ef6c00, #ffcc80);
+}
+.buyukluk[data-buyukluk="XL"] {
+  background: light-dark(#ffebee, #3a1e20);
+  color:      light-dark(#c62828, #ef9a9a);
+}
 @media print {
+  /* Koyu tema seçili olsa bile kâğıda her zaman açık palet bassın */
+  :root { color-scheme: light !important; }
+
   /* Ekrana ait, kâğıda gitmemesi gereken parçalar */
   mat-toolbar,
   .yeni-is-btn,

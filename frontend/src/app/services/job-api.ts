@@ -1,6 +1,7 @@
 import { Service, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+
 export interface Job{
     id: number;
     title: string;

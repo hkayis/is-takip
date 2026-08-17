@@ -1,48 +1,42 @@
-﻿using Microsoft.AspNetCore.Mvc.ActionConstraints;
-using Microsoft.EntityFrameworkCore;
-using WebApplication1.Application.DTOs;
-using WebApplication1.Data;
+﻿using WebApplication1.Application.DTOs;
+using WebApplication1.Application.Interfaces;
 using WebApplication1.Domain.Entities;
 
 namespace WebApplication1.Application.Services
 {
     public class JobService
     {
+        private readonly IJobRepository _repo;
 
-        private readonly AppDbContext _context;
-
-        public JobService (AppDbContext context)
+        public JobService(IJobRepository repo)
         {
-            _context = context;
-
+            _repo = repo;
         }
 
         public async Task<List<JobListDto>> GetAllAsync()
         {
-           return await _context.Jobs.OrderByDescending(j => j.CreatedAt).Select(j => new JobListDto { 
-               Title = j.Title,
-               Id= j.Id,
-               Description=j.Description,
-               CreatedAt=j.CreatedAt,
-               Deadline= j.Deadline,
-               CompletedAt = j.CompletedAt,
-               Status =j.Status,
-               Stage= j.Stage,
-               Priority = j.Priority,
-               Adam = j.Adam,
-               Gun= j.Gun,
-               Buyukluk = j.Buyukluk,
-           }).ToListAsync();
+            var isler = await _repo.TumunuGetirAsync();
 
+            return isler.Select(j => new JobListDto
+            {
+                Id = j.Id,
+                Title = j.Title,
+                Description = j.Description,
+                CreatedAt = j.CreatedAt,
+                Deadline = j.Deadline,
+                CompletedAt = j.CompletedAt,
+                Status = j.Status,
+                Stage = j.Stage,
+                Priority = j.Priority,
+                Adam = j.Adam,
+                Gun = j.Gun,
+                Buyukluk = j.Buyukluk,
+            }).ToList();
         }
-
 
         public async Task<JobDetailDto?> GetByIdAsync(int id)
         {
-            var job = await _context.Jobs
-                .Include(j => j.History)
-                .FirstOrDefaultAsync(j => j.Id == id);
-
+            var job = await _repo.GecmisleGetirAsync(id);
             if (job is null) return null;
 
             return new JobDetailDto
@@ -71,15 +65,12 @@ namespace WebApplication1.Application.Services
                         NewStage = h.NewStage,
                         ChangedAt = h.ChangedAt,
                         Note = h.Note,
-                        Changes=h.Changes
+                        Changes = h.Changes
                     }).ToList()
             };
         }
 
-        public async Task<bool> IdKullanimdaMi(int id)
-        {
-            return await _context.Jobs.AnyAsync(j => j.Id == id);
-        }
+        public Task<bool> IdKullanimdaMi(int id) => _repo.VarMiAsync(id);
 
         public async Task<Job> CreateAsync(CreateJobDto dto)
         {
@@ -106,15 +97,15 @@ namespace WebApplication1.Application.Services
                 Note = "İş oluşturuldu"
             });
 
-            _context.Jobs.Add(job);
-            await _context.SaveChangesAsync();
+            _repo.Ekle(job);
+            await _repo.KaydetAsync();
 
             return job;
         }
 
         public async Task<bool> UpdateAsync(int id, UpdateJobDto dto)
         {
-            var job = await _context.Jobs.FindAsync(id);
+            var job = await _repo.GetirAsync(id);
             if (job is null) return false;
 
             // 1) EZMEDEN ÖNCE farkları topla (job.X = eski, dto.X = yeni)
@@ -141,7 +132,7 @@ namespace WebApplication1.Application.Services
             // 3) Gerçekten bir şey değiştiyse geçmişe "düzenleme" satırı ekle
             if (degisiklikler.Count > 0)
             {
-                _context.JobHistories.Add(new JobHistory
+                _repo.GecmisEkle(new JobHistory
                 {
                     JobId = job.Id,
                     OldStatus = job.Status,   // durum değişmiyor; kolon boş kalmasın diye mevcut durum
@@ -151,16 +142,17 @@ namespace WebApplication1.Application.Services
                 });
             }
 
-            await _context.SaveChangesAsync();
+            _repo.Guncelle(job);
+            await _repo.KaydetAsync();
             return true;
         }
 
         public async Task<bool> ChangeStatusAsync(int jobId, ChangeStatusDto dto)
         {
-            var job = await _context.Jobs.FindAsync(jobId);
+            var job = await _repo.GetirAsync(jobId);
             if (job is null) return false;
 
-            _context.JobHistories.Add(new JobHistory
+            _repo.GecmisEkle(new JobHistory
             {
                 JobId = job.Id,
                 OldStatus = job.Status,
@@ -177,21 +169,19 @@ namespace WebApplication1.Application.Services
             if (dto.NewStatus == JobStatus.Tamamlandi && job.CompletedAt is null)
                 job.CompletedAt = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync();
+            _repo.Guncelle(job);
+            await _repo.KaydetAsync();
             return true;
         }
 
-        public async Task<bool> DeleteAsync (int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            var job = await _context.Jobs.FindAsync(id);
-            if (job == null) return false;
+            var job = await _repo.GetirAsync(id);
+            if (job is null) return false;
 
-            _context.Jobs.Remove(job);
-            await _context.SaveChangesAsync();
+            _repo.Sil(job);
+            await _repo.KaydetAsync();
             return true;
         }
-
-
-
     }
 }

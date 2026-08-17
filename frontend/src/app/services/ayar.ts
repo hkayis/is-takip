@@ -1,19 +1,23 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, effect } from '@angular/core';
+
+export type Tema = 'acik' | 'koyu' | 'sistem';
 
 export interface Ayarlar {
   buyuklukEsikleri: Record<string, number>;   // adam-gün eşikleri
   hedefSureler: Record<string, number>;        // büyüklük başına hedef takvim günü
   dikkatPenceresiGun: number;                  // "dikkat gerekenler" kaç gün ileriye baksın
+  tema: Tema;
 }
 
 const VARSAYILAN: Ayarlar = {
   buyuklukEsikleri: { FastTrack: 5, XS: 10, S: 25, M: 50, L: 100, XL: 300 },
   hedefSureler:     { FastTrack: 10, XS: 20, S: 40, M: 70, L: 120, XL: 200 },
   dikkatPenceresiGun: 7,
+  tema: 'sistem',
 };
 @Injectable({ providedIn: 'root' })
 export class AyarService {
-
+    
     private readonly ANAHTAR= 'is-akisi-ayarlar';
 
     private _ayarlar=signal<Ayarlar>(this.oku());
@@ -28,6 +32,16 @@ export class AyarService {
     dikkatPenceresiGun = computed(()=>
     this._ayarlar().dikkatPenceresiGun);
 
+    tema= computed(()=>this._ayarlar().tema);
+
+    constructor(){
+        effect(()=> {
+            const t= this._ayarlar().tema;
+            document.documentElement.style.colorScheme=
+              t=== 'koyu' ? 'dark' : t === 'acik' ? 'light' : 'light dark';
+
+        });
+    }
     kaydet(yeni: Ayarlar){
         this._ayarlar.set(yeni);
         localStorage.setItem(this.ANAHTAR, JSON.stringify(yeni));

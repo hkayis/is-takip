@@ -4,8 +4,8 @@
 .kutu {
   padding: 18px;
   margin-bottom: 16px;
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: var(--kart);
+  border: 1px solid var(--cizgi);
   border-radius: 10px;
 }
 .kutu-ust {
@@ -19,14 +19,14 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.7px;
-  color: rgba(0, 0, 0, 0.55);
+  color: var(--metin-soluk);
 }
-.kutu-not { font-size: 12px; color: rgba(0, 0, 0, 0.4); }
+.kutu-not { font-size: 12px; color: var(--metin-silik); }
 
 .aciklama {
   margin: 0 0 14px;
   font-size: 13px;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--metin-soluk);
 }
 
 .alan-izgara {

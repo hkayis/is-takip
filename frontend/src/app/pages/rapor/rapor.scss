@@ -15,15 +15,15 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.7px;
-  color: rgba(0, 0, 0, 0.55);
+  color: var(--metin-soluk);
 }
-.kutu-not { font-size: 12px; color: rgba(0, 0, 0, 0.4); }
+.kutu-not { font-size: 12px; color: var(--metin-silik); }
 
 /* Kutu — dashboard ile aynı desen */
 .kutu {
   padding: 18px;
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: var(--kart);
+  border: 1px solid var(--cizgi);
   border-radius: 10px;
 }
 
@@ -43,17 +43,19 @@
   gap: 16px;
 }
 .metrik-kart {
+  background: var(--kart);
+
   display: flex;
   flex-direction: column;
   gap: 6px;
   padding: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--cizgi);
   border-radius: 10px;
-  background: #fff;
+  
 }
 .metrik-kart .deger { font-size: 32px; font-weight: 700; line-height: 1; }
-.metrik-kart .deger small { font-size: 14px; font-weight: 500; color: rgba(0, 0, 0, 0.5); }
-.metrik-kart .etiket { font-size: 13px; color: rgba(0, 0, 0, 0.55); }
+.metrik-kart .deger small { font-size: 14px; font-weight: 500; color: var(--metin-soluk); }
+.metrik-kart .etiket { font-size: 13px; color: var(--metin-soluk); }
 
 /* Aşama süresi çubukları */
 .asama-grafik { display: flex; flex-direction: column; gap: 10px; }
@@ -63,10 +65,10 @@
   align-items: center;
   gap: 12px;
 }
-.asama-satir .ad { font-size: 13px; color: rgba(0, 0, 0, 0.7); }
+.asama-satir .ad { font-size: 13px; color: var(--metin-soluk); }
 .asama-satir .yol {
   height: 22px;
-  background: rgba(0, 0, 0, 0.06);
+  background: var(--dolgu);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -87,7 +89,7 @@
 .rapor-tablo th, .rapor-tablo td {
   padding: 10px 12px;
   text-align: left;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  border-bottom: 1px solid var(--cizgi);
   font-size: 14px;
   white-space: nowrap;
 }
@@ -95,19 +97,19 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: rgba(0, 0, 0, 0.5);
+  color: var(--metin-soluk);
 }
 .rapor-tablo thead th {
   position: sticky;
   top: 0;
-  background: #fff;
+  background: var(--kart);
   z-index: 1;
 }
 .rapor-tablo tbody tr:last-child td { border-bottom: none; }
 .rapor-tablo td.gecikme { color: #c62828; font-weight: 600; }
 .rapor-tablo td.bos {
   text-align: center;
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--metin-silik);
   padding: 20px;
   white-space: normal;
 }
@@ -118,9 +120,12 @@
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: light-dark(#e8f5e9, #17301a);
+  color:      light-dark(#2e7d32, #a5d6a7);
 }
-.rozet.gec { background: #ffebee; color: #c62828; }
+.rozet.gec {
+  background: light-dark(#ffebee, #3a1e20);
+  color:      light-dark(#c62828, #ef9a9a);
+}
 
-.bos-metin { color: rgba(0, 0, 0, 0.5); }
+.bos-metin { color: var(--metin-silik); }

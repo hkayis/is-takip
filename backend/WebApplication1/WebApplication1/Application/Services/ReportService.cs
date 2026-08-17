@@ -1,17 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
-using WebApplication1.Application.DTOs;
-using WebApplication1.Data;
+﻿using WebApplication1.Application.DTOs;
+using WebApplication1.Application.Interfaces;
 using WebApplication1.Domain.Entities;
 
 namespace WebApplication1.Application.Services
 {
     public class ReportService
     {
-        private readonly AppDbContext _context;
+        private readonly IJobRepository _repo;
 
-        public ReportService(AppDbContext context)
+        public ReportService(IJobRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         public async Task<List<AsamaSuresiDto>> AsamaSureleriAsync()
@@ -19,10 +18,7 @@ namespace WebApplication1.Application.Services
             var simdi = DateTime.UtcNow;
 
             // Sadece devam eden işleri, geçmişleriyle birlikte al
-            var isler = await _context.Jobs
-                .Where(j => j.Status == JobStatus.DevamEdiyor)
-                .Include(j => j.History)
-                .ToListAsync();
+            var isler = await _repo.DurumaGoreGecmisleGetirAsync(JobStatus.DevamEdiyor);
 
             var toplamGun = new Dictionary<string, double>();      // aşama -> toplam gün
             var isKumesi = new Dictionary<string, HashSet<int>>(); // aşama -> o aşamaya giren iş id'leri
