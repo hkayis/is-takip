@@ -35,10 +35,9 @@ export class Jobs implements OnInit {
   protected buyuklukAdi = buyuklukAdi;
   protected asamaAdi = asamaAdi;
   protected notMetni = ''
-
   protected yukDurumu = this.store.durum;
   protected yukHatasi = this.store.hata;
-
+  protected readonly panoGun= 14;
   tekrarDene() { this.store.yenile(); }
 
   asamaSirasi: string[] = ['Analiz', 'Gelistirme', 'Test', 'Tasima'];
@@ -46,10 +45,18 @@ export class Jobs implements OnInit {
 
   bekleyenler = computed(() => this.jobs().filter(j => j.status === 'Beklemede'));
   devamEdenler = computed(() => this.jobs().filter(j => j.status === 'DevamEdiyor'));
-  tamamlananlar = computed(() => this.jobs().filter(j => j.status === 'Tamamlandi'));
-  doluAsamalar = computed(() =>
-    this.asamaSirasi.filter(a => this.devamEdenler().some(j => j.stage === a))
-  );
+  tamamlananlar = computed(() => { 
+    const sinir = Date.now() - this.panoGun * 24 * 60 * 60 * 1000;
+
+    return this.jobs()
+    .filter(j=>
+      j.status === 'Tamamlandi' &&
+      j.completedAt && 
+      new Date(j.completedAt).getTime()>= sinir
+    ).sort((a,b)=>
+    new Date(b.completedAt!).getTime()- new Date(a.completedAt!).getTime())
+  });
+  
   seciliDetay = signal<JobDetail | null>(null);
 
   // Liste görünümü durumu
