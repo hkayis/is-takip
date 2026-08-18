@@ -7,10 +7,11 @@ type YukDurumu= 'bos' | 'yukleniyor' | 'hazir' | 'hata';
 @Injectable ({providedIn: 'root'})
 export class JobStore {
     private api = inject(JobApi);
-
+    private _hata = signal('');
     private _isler = signal<Job[]>([]);
     private _durum =signal<YukDurumu>('bos');
 
+    hata = this._hata.asReadonly();
     isler= this._isler.asReadonly();
     durum=this._durum.asReadonly();
 
@@ -24,10 +25,18 @@ export class JobStore {
         this._durum.set('yukleniyor');
         this.api.getAll().subscribe({
             next: (liste) => {this._isler.set(liste)
+                this._hata.set('');
                 this._durum.set('hazir');
             },
-            error: () => this._durum.set('hata'),
+            error: (err) => {
+                this._hata.set(this.hataMetni(err));
+                this._durum.set('hata')},
         });
+    }
+    private hataMetni(err: any): string{
+        if(err.status === 0) return 'Sunucuya ulaşılamıyor.'
+        if(err.status === 401) return 'Oturumun sona erdi. Yeniden giriş yapman gerekiyor.';
+        return 'İşler alınamadı. Lütfen tekrar dene.';
     }
 
     olustur(dto: Parameters<JobApi['create']>[0]){

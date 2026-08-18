@@ -5,6 +5,28 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
+.durum-ekrani {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 72px 24px;
+  text-align: center;
+  color: var(--metin-soluk);
+}
+.durum-ekrani h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--metin);
+}
+.durum-ekrani p {
+  margin: 0;
+  font-size: 14px;
+  max-width: 380px;
+}
+.durum-ikon { font-size: 40px; line-height: 1; }
+.durum-ekrani.hata h2 { color: light-dark(#c62828, #ef9a9a); }
 html {
   height: 100%;
   @include mat.theme(

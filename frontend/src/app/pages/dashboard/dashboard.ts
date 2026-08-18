@@ -10,9 +10,10 @@ import { oncelikAdi, buyuklukAdi } from '../../etiketler';
 import { MatButtonModule } from '@angular/material/button';
 import { AyarService } from '../../services/ayar';
 import { JobStore } from '../../services/job-store';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-dashboard',
-  imports: [MatCardModule, DatePipe, MatDialogModule, MatSnackBarModule, MatButtonModule],
+  imports: [MatCardModule, MatProgressSpinnerModule,DatePipe, MatDialogModule, MatSnackBarModule, MatButtonModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -24,7 +25,10 @@ export class Dashboard implements OnInit {
   private ayar = inject(AyarService);
   private snackBar = inject(MatSnackBar);
   jobs = this.store.isler;
+  protected yukDurumu = this.store.durum;
+  protected yukHatasi = this.store.hata;
 
+tekrarDene() { this.store.yenile(); }
 
   private router = inject(Router);
   asamaSirasi: string[] = ['Analiz', 'Gelistirme', 'Test', 'Tasima']

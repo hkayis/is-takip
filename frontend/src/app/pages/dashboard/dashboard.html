@@ -1,4 +1,16 @@
-@if (jobs().length === 0) {
+@if (yukDurumu() === 'yukleniyor' || yukDurumu() === 'bos') {
+  <div class="durum-ekrani">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Özet yükleniyor…</p>
+  </div>
+} @else if (yukDurumu() === 'hata') {
+  <div class="durum-ekrani hata">
+    <div class="durum-ikon">⚠️</div>
+    <h2>Bağlantı sorunu</h2>
+    <p>{{ yukHatasi() }}</p>
+    <button matButton="filled" (click)="tekrarDene()">Tekrar dene</button>
+  </div>
+} @else if (jobs().length === 0) {
 <div class="bos-durum">
   <div class="bos-ikon">📊</div>
   <h2>Gösterilecek veri yok</h2>

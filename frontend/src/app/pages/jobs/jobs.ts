@@ -16,10 +16,11 @@ import { OnayDialog } from '../../dialogs/onay-dialog/onay-dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { JobStore } from '../../services/job-store';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-jobs',
-  imports: [FormsModule, DatePipe, MatIconModule, MatTooltip, MatSnackBarModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatDialogModule],
+  imports: [FormsModule, MatProgressSpinnerModule,DatePipe, MatIconModule, MatTooltip, MatSnackBarModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatDialogModule],
   templateUrl: './jobs.html',
   styleUrl: './jobs.scss',
 })
@@ -34,6 +35,11 @@ export class Jobs implements OnInit {
   protected buyuklukAdi = buyuklukAdi;
   protected asamaAdi = asamaAdi;
   protected notMetni = ''
+
+  protected yukDurumu = this.store.durum;
+  protected yukHatasi = this.store.hata;
+
+  tekrarDene() { this.store.yenile(); }
 
   asamaSirasi: string[] = ['Analiz', 'Gelistirme', 'Test', 'Tasima'];
   jobs = this.store.isler;
@@ -156,7 +162,7 @@ export class Jobs implements OnInit {
     ref.afterClosed().subscribe((sonuc) => {
       if (!sonuc) return;
       this.store.olustur(sonuc).subscribe({
-         
+
         error: (err) => {
           const mesaj = err.status === 409
             ? err.error?.message ?? 'Bu iş numarası zaten kullanılıyor.'
@@ -182,7 +188,7 @@ export class Jobs implements OnInit {
       }).subscribe({
         next: () => {
           this.detayYukle(job.id);
-         
+
         },
         error: () => this.snackBar.open('İş güncellenemedi.', 'Tamam', { duration: 4000 }),
       });
@@ -240,7 +246,7 @@ export class Jobs implements OnInit {
           if (this.seciliDetay()?.id === job.id) {
             this.detayYukle(job.id);
           }
-         
+
         },
         error: () => this.snackBar.open('Durum değiştirilemedi.', 'Tamam', { duration: 4000 }),
       });
@@ -263,7 +269,7 @@ export class Jobs implements OnInit {
           if (this.seciliDetay()?.id === job.id) {
             this.kapat();
           }
-          
+
         },
         error: () => this.snackBar.open('İş silinemedi.', 'Tamam', { duration: 4000 }),
       });

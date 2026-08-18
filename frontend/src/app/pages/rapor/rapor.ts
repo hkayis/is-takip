@@ -1,13 +1,14 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { JobApi, Job, AsamaSuresi } from '../../services/job-api';
 import { buyuklukAdi } from '../../etiketler';
-
+import { MatButtonModule } from '@angular/material/button';
 import { DatePipe } from '@angular/common';
 import { AyarService } from '../../services/ayar';
 import { JobStore } from '../../services/job-store';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-rapor',
-  imports: [DatePipe],
+  imports: [DatePipe, MatProgressSpinnerModule, MatButtonModule],
   templateUrl: './rapor.html',
   styleUrl: './rapor.scss',
 })
@@ -18,7 +19,10 @@ export class Rapor implements OnInit {
   private ayar = inject(AyarService);
 
   private gunMs = 1000 * 60 * 60 * 24;
+  protected yukDurumu = this.store.durum;
+  protected yukHatasi = this.store.hata;
 
+  tekrarDene() { this.store.yenile(); }
   // Birçok metriğin ortak temeli: tamamlanmış işler
   tamamlananlar = computed(() => this.jobs().filter(j => j.status === 'Tamamlandi'));
 
@@ -102,6 +106,7 @@ export class Rapor implements OnInit {
 
   yukle() {
     this.store.yukle();
+
     this.jobApi.getAsamaSureleri().subscribe({
       next: (veri) => this.asamaSureleri.set(veri),
       error: (err) => console.error('Aşama süreleri alınamadı:', err),
