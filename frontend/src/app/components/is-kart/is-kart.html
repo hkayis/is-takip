@@ -1,0 +1,15 @@
+<div class="is-kart" [class.secili]="secili()" [attr.data-renk]="renk()"
+     (click)="secildi.emit(job())">
+  <div class="kart-baslik">{{ job().title }}</div>
+  <div class="kart-alt">
+    <span class="oncelik" [attr.data-oncelik]="job().priority">
+      {{ oncelikAdi(job().priority) }}
+    </span>
+    @if (efor()) {
+      <span class="kart-efor">{{ efor() }} AG</span>
+    }
+    <span class="tarih" [attr.data-gecikme]="gecikmeDurumu(job())">
+      {{ job().deadline | date:'d MMM' }}
+    </span>
+  </div>
+</div>

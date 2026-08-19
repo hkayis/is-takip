@@ -106,21 +106,16 @@
     </table>
   </div>
   } @else {
-  <div class="pano">
+  <div class="pano" cdkDropListGroup >
     <div class="sutun">
       <h2>Bekleyen <span class="sayi">{{ bekleyenler().length }}</span></h2>
-      <div class="kartlar">
+      <div class="kartlar" cdkDropList
+      (cdkDropListDropped)="birak($event, 'Beklemede', null)">
         @for (job of bekleyenler(); track job.id) {
-        <div class="is-kart" [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
-          <div class="kart-baslik">{{ job.title }}</div>
-          <div class="kart-alt">
-            <span class="oncelik" [attr.data-oncelik]="job.priority">{{ oncelikAdi(job.priority) }}</span>
-            @if (job.adam && job.gun) {
-            <span class="kart-efor">{{ job.adam * job.gun }} AG</span>
-            }
-            <span class="tarih" [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM' }}</span>
-          </div>
-        </div>
+        <app-is-kart cdkDrag [cdkDragData]="job"
+        [job]="job" renk="bekleyen"
+         [secili]="seciliDetay()?.id === job.id" 
+         (secildi)="sec($event)" />
         } @empty {
         <p class="bos">İş yok</p>
         }
@@ -131,23 +126,18 @@
       <h2>Devam Eden <span class="sayi">{{ devamEdenler().length }}</span></h2>
       <div class="alt-sutunlar">
         @for (asama of asamaSirasi; track asama) {
-        <div class="alt-sutun">
+        <div class="alt-sutun" cdkDropList
+        (cdkDropListDropped)="birak($event, 'DevamEdiyor',asama)">
           <div class="alt-baslik">
             {{ asamaAdi(asama) }}
             <span class="alt-sayi">{{ asamaninIsleri(asama).length }}</span>
           </div>
 
           @for (job of asamaninIsleri(asama); track job.id) {
-          <div class="is-kart" [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
-            <div class="kart-baslik">{{ job.title }}</div>
-            <div class="kart-alt">
-              <span class="oncelik" [attr.data-oncelik]="job.priority">{{ oncelikAdi(job.priority) }}</span>
-              @if (job.adam && job.gun) {
-              <span class="kart-efor">{{ job.adam * job.gun }} AG</span>
-              }
-              <span class="tarih" [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM' }}</span>
-            </div>
-          </div>
+          <app-is-kart cdkDrag [cdkDragData]="job"
+          [job]="job" renk="devam" 
+          [secili]="seciliDetay()?.id === job.id" 
+          (secildi)="sec($event)" />
           } @empty {
           <p class="alt-bos">—</p>
           }
@@ -160,18 +150,13 @@
       <h2>Tamamlanan <span class="sayi">{{ tamamlananlar().length }}</span>
         <span class="sutun-not">son {{ panoGun }} gün</span>
       </h2>
-      <div class="kartlar">
+      <div class="kartlar" cdkDropList
+      (cdkDropListDropped)="birak($event, 'Tamamlandi', null)">
         @for (job of tamamlananlar(); track job.id) {
-        <div class="is-kart" [class.secili]="seciliDetay()?.id === job.id" (click)="sec(job)">
-          <div class="kart-baslik">{{ job.title }}</div>
-          <div class="kart-alt">
-            <span class="oncelik" [attr.data-oncelik]="job.priority">{{ oncelikAdi(job.priority) }}</span>
-            @if (job.adam && job.gun) {
-            <span class="kart-efor">{{ job.adam * job.gun }} AG</span>
-            }
-            <span class="tarih" [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM' }}</span>
-          </div>
-        </div>
+        <app-is-kart cdkDrag [cdkDragData]="job"
+        [job]="job" renk="tamamlanan" 
+        [secili]="seciliDetay()?.id === job.id" 
+        (secildi)="sec($event)" />
         } @empty {
         <p class="bos">İş yok</p>
         }

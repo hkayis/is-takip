@@ -23,21 +23,7 @@
 </div>
 <div class="ozet-serit">
 
-  <span>{{ aktifEfor() }} adam-gün aktif</span>
-  @if (geciken().length > 0) {
-  <span class="ayrac">·</span>
-  <span class="uyari">{{ geciken().length }} geciken</span>
-
-  }
-  @if (buAyTamamlanan() > 0) {
-  <span class="ayrac">·</span>
-  <span class="basari">bu ay {{ buAyTamamlanan() }} tamamlandı</span>
-  }
-
-  @if (ortalamaSure() > 0) {
-  <span class="ayrac">·</span>
-  <span>ortalama {{ ortalamaSure() }} gün</span>
-  }
+  
   <button type="button" class="yeni-is-btn" (click)="yeniIsAc()">+ Yeni İş</button>
   <button type="button" class="yazdir-btn" (click)="yazdir()">PDF olarak indir</button>
 </div>
@@ -93,7 +79,7 @@
   <section class="kutu">
     <div class="kutu-ust">
       <h2>Öncelik Dağılımı</h2>
-      <span class="kutu-not">aktif işler</span>
+      <span class="kutu-not">Aktif İşler</span>
     </div>
 
     <div class="sutunlar">
@@ -154,7 +140,7 @@
   <section class="kutu">
     <div class="kutu-ust">
       <h2>Aşama Dağılımı</h2>
-      <span class="kutu-not">devam edenler</span>
+      <span class="kutu-not">Devam Edenler</span>
     </div>
 
     @for (a of asamaDagilimi(); track a.asama) {

@@ -16,15 +16,19 @@ import { OnayDialog } from '../../dialogs/onay-dialog/onay-dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { JobStore } from '../../services/job-store';
+import { gecikmeDurumu } from '../../etiketler';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import * as XLSX from 'xlsx';
+import { IsKart } from '../../components/is-kart/is-kart';
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 @Component({
   selector: 'app-jobs',
-  imports: [FormsModule, MatProgressSpinnerModule,DatePipe, MatIconModule, MatTooltip, MatSnackBarModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatDialogModule],
+  imports: [FormsModule, DragDropModule,IsKart,MatProgressSpinnerModule,DatePipe, MatIconModule, MatTooltip, MatSnackBarModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatDialogModule],
   templateUrl: './jobs.html',
   styleUrl: './jobs.scss',
 })
 export class Jobs implements OnInit {
+  protected gecikmeDurumu = gecikmeDurumu;
   private store = inject(JobStore);
   private snackBar = inject(MatSnackBar);
   private jobApi = inject(JobApi);
@@ -59,6 +63,23 @@ export class Jobs implements OnInit {
   
   seciliDetay = signal<JobDetail | null>(null);
 
+  birak(olay: CdkDragDrop<Job[]>, hedefDurum: string, hedefAsama: string | null) {
+  if (olay.previousContainer === olay.container) return;
+
+  const job = olay.item.data as Job;
+
+  this.store.tasi(job.id, hedefDurum, hedefAsama).subscribe({
+    next: () => {
+      if (this.seciliDetay()?.id === job.id) {
+        this.detayYukle(job.id);
+      }
+    },
+    error: () => {
+      this.store.yenile();                      // sunucudaki gerçek haline dön
+      this.snackBar.open('İş taşınamadı.', 'Tamam', { duration: 4000 });
+    },
+  });
+}
   // Liste görünümü durumu
   gorunum = signal<'liste' | 'pano'>('liste');
   arama = signal('');
@@ -283,15 +304,5 @@ export class Jobs implements OnInit {
     });
   }
 
-  gecikmeDurumu(job: Job | JobDetail): string | null {
-    if (job.status === 'Tamamlandi' || job.status === 'Iptal') return null;
-
-    const gunMs = 1000 * 60 * 60 * 24;
-
-    const kalanGun = Math.ceil((new Date(job.deadline).getTime() - Date.now()) / gunMs);
-
-    if (kalanGun < 0) return 'gecikti';
-    if (kalanGun < 7) return 'yakin';
-    return null;
-  }
+  
 }

@@ -166,8 +166,10 @@ namespace WebApplication1.Application.Services
             job.Status = dto.NewStatus;
             job.Stage = dto.NewStatus == JobStatus.DevamEdiyor ? dto.NewStage : null;
 
-            if (dto.NewStatus == JobStatus.Tamamlandi && job.CompletedAt is null)
-                job.CompletedAt = DateTime.UtcNow;
+            // Tamamlandı'ya geçişte ilk tamamlanma tarihini koru; çıkışta temizle
+            job.CompletedAt = dto.NewStatus == JobStatus.Tamamlandi
+                ? (job.CompletedAt ?? DateTime.UtcNow)
+                : null;
 
             _repo.Guncelle(job);
             await _repo.KaydetAsync();

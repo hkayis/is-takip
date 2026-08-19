@@ -1,0 +1,47 @@
+:host {
+  display: block;        /* bileşenler varsayılan olarak inline — bloğa çevir */
+  margin-bottom: 8px;    /* eskiden .is-kart'taydı, boşluk artık host'un işi */
+}
+
+.is-kart {
+  background: var(--kart);
+  border: 1px solid var(--cizgi);
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.12s ease;
+}
+
+.is-kart:hover { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }
+
+.is-kart.secili {
+  border-color: var(--mat-sys-primary);
+  box-shadow: 0 0 0 2px var(--mat-sys-primary);
+}
+
+.kart-baslik {
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+}
+
+/* Renk artık ebeveynin konumundan değil, GİRDİDEN geliyor */
+.is-kart[data-renk="bekleyen"]   .kart-baslik { background: #e8873a; }
+.is-kart[data-renk="devam"]      .kart-baslik { background: #4a7fc1; }
+.is-kart[data-renk="tamamlanan"] .kart-baslik { background: #5aa05e; }
+
+.kart-alt {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 8px;
+  font-size: 11px;
+  color: var(--metin-soluk);
+}
+
+.kart-alt .oncelik { padding: 1px 6px; font-size: 10px; }
+.kart-alt .kart-efor { font-weight: 600; }
+.kart-alt .tarih { margin-left: auto; }

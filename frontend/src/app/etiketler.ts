@@ -68,5 +68,16 @@ export function hesaplananBuyukluk(
   if (efor <= esikler['L']) return 'L';
   return 'XL';
 }
+/** İşin termin durumu: 'gecikti' | 'yakin' | null */
+export function gecikmeDurumu(job: { deadline: string; status: string }): string | null {
+  if (job.status === 'Tamamlandi' || job.status === 'Iptal') return null;
+
+  const gunMs = 1000 * 60 * 60 * 24;
+  const kalanGun = Math.ceil((new Date(job.deadline).getTime() - Date.now()) / gunMs);
+
+  if (kalanGun < 0) return 'gecikti';
+  if (kalanGun < 7) return 'yakin';
+  return null;
+}
 
 

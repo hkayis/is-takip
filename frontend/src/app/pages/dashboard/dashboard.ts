@@ -104,14 +104,14 @@ tekrarDene() { this.store.yenile(); }
     const yil = simdi.getFullYear();
 
     return this.jobs().filter(j => {
-      if (!j.completedAt) return false;
+      if (j.status !== 'Tamamlandi' || !j.completedAt) return false;
       const bitis = new Date(j.completedAt);
       return bitis.getMonth() === ay && bitis.getFullYear() === yil;
     }).length;
   });
   ortalamaSure = computed(() => {
     const gunMs = 1000 * 60 * 60 * 24;
-    const bitenler = this.jobs().filter(j => j.completedAt !== null);
+    const bitenler = this.jobs().filter(j => j.status === 'Tamamlandi' && j.completedAt);
 
     if (bitenler.length === 0) return 0;
 

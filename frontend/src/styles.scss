@@ -5,6 +5,15 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
+[data-gecikme="gecikti"] {
+  color: #c62828;
+  font-weight: 700;
+}
+
+[data-gecikme="yakin"] {
+  color: #e65100;
+  font-weight: 600;
+}
 .durum-ekrani {
   display: flex;
   flex-direction: column;
