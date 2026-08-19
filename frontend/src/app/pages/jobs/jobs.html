@@ -1,6 +1,6 @@
 <div class="ust-bar">
   <h1>İşler</h1>
-
+  @if(gorunum()=== 'liste'){
   <input class="arama" type="text" placeholder="Ara…" [ngModel]="arama()" (ngModelChange)="arama.set($event)" />
 
   <select class="filtre" [ngModel]="durumFiltre()" (ngModelChange)="durumFiltre.set($event)">
@@ -22,7 +22,7 @@
   <button matButton (click)="exportExcel()">
     Excel İndir
   </button>
-
+  }
   <div class="gorunum-secim">
     <button type="button" [class.aktif]="gorunum() === 'liste'" (click)="gorunum.set('liste')">Liste</button>
     <button type="button" [class.aktif]="gorunum() === 'pano'" (click)="gorunum.set('pano')">Pano</button>
@@ -72,6 +72,7 @@
                 siralamaOku('efor') }}</span></button></th>
           <th><button type="button" (click)="siralamayiDegistir('deadline')">Son Tarih <span class="ok">{{
                 siralamaOku('deadline') }}</span></button></th>
+          <th class="t-aksiyon"></th>
         </tr>
       </thead>
       <tbody>
@@ -83,7 +84,7 @@
           </td>
           <td><span class="oncelik" [attr.data-oncelik]="job.priority">{{ oncelikAdi(job.priority) }}</span></td>
           <td>
-            <button type="button" class="durum-btn" (click)="$event.stopPropagation(); durumDialogAc(job)">
+            <button type="button" class="durum-btn" (click)="durumDialogAc(job)">
               <span class="rozet" [attr.data-durum]="job.status">{{ durumAdi(job.status) }}</span>
               <span class="ok-kucuk">▾</span>
             </button>
@@ -96,6 +97,14 @@
             <span class="buyukluk" [attr.data-buyukluk]="job.buyukluk">{{ buyuklukAdi(job.buyukluk) }}</span>
           </td>
           <td [attr.data-gecikme]="gecikmeDurumu(job)">{{ job.deadline | date:'d MMM y' }}</td>
+          <td class="t-aksiyon">
+            <button matIconButton matTooltip="Düzenle" aria-label="Düzenle" (click)=" duzenleAc(job)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button matIconButton class="sil-btn" matTooltip="Sil" aria-label="İşi sil" (click)="sil(job)">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </td>
         </tr>
         } @empty {
         <tr>
@@ -106,16 +115,13 @@
     </table>
   </div>
   } @else {
-  <div class="pano" cdkDropListGroup >
+  <div class="pano" cdkDropListGroup>
     <div class="sutun">
       <h2>Bekleyen <span class="sayi">{{ bekleyenler().length }}</span></h2>
-      <div class="kartlar" cdkDropList
-      (cdkDropListDropped)="birak($event, 'Beklemede', null)">
+      <div class="kartlar" cdkDropList (cdkDropListDropped)="birak($event, 'Beklemede', null)">
         @for (job of bekleyenler(); track job.id) {
-        <app-is-kart cdkDrag [cdkDragData]="job"
-        [job]="job" renk="bekleyen"
-         [secili]="seciliDetay()?.id === job.id" 
-         (secildi)="sec($event)" />
+        <app-is-kart cdkDrag [cdkDragData]="job" [job]="job" renk="bekleyen" [secili]="seciliDetay()?.id === job.id"
+          (secildi)="sec($event)" />
         } @empty {
         <p class="bos">İş yok</p>
         }
@@ -126,18 +132,15 @@
       <h2>Devam Eden <span class="sayi">{{ devamEdenler().length }}</span></h2>
       <div class="alt-sutunlar">
         @for (asama of asamaSirasi; track asama) {
-        <div class="alt-sutun" cdkDropList
-        (cdkDropListDropped)="birak($event, 'DevamEdiyor',asama)">
+        <div class="alt-sutun" cdkDropList (cdkDropListDropped)="birak($event, 'DevamEdiyor',asama)">
           <div class="alt-baslik">
             {{ asamaAdi(asama) }}
             <span class="alt-sayi">{{ asamaninIsleri(asama).length }}</span>
           </div>
 
           @for (job of asamaninIsleri(asama); track job.id) {
-          <app-is-kart cdkDrag [cdkDragData]="job"
-          [job]="job" renk="devam" 
-          [secili]="seciliDetay()?.id === job.id" 
-          (secildi)="sec($event)" />
+          <app-is-kart cdkDrag [cdkDragData]="job" [job]="job" renk="devam" [secili]="seciliDetay()?.id === job.id"
+            (secildi)="sec($event)" />
           } @empty {
           <p class="alt-bos">—</p>
           }
@@ -148,15 +151,12 @@
 
     <div class="sutun">
       <h2>Tamamlanan <span class="sayi">{{ tamamlananlar().length }}</span>
-        <span class="sutun-not">son {{ panoGun }} gün</span>
+        <span class="sutun-not">son {{ panoGun() }} gün</span>
       </h2>
-      <div class="kartlar" cdkDropList
-      (cdkDropListDropped)="birak($event, 'Tamamlandi', null)">
+      <div class="kartlar" cdkDropList (cdkDropListDropped)="birak($event, 'Tamamlandi', null)">
         @for (job of tamamlananlar(); track job.id) {
-        <app-is-kart cdkDrag [cdkDragData]="job"
-        [job]="job" renk="tamamlanan" 
-        [secili]="seciliDetay()?.id === job.id" 
-        (secildi)="sec($event)" />
+        <app-is-kart cdkDrag [cdkDragData]="job" [job]="job" renk="tamamlanan" [secili]="seciliDetay()?.id === job.id"
+          (secildi)="sec($event)" />
         } @empty {
         <p class="bos">İş yok</p>
         }
@@ -165,8 +165,9 @@
   </div>
   }
 
+
+  @if (seciliDetay(); as s) {
   <aside class="yan-panel">
-    @if (seciliDetay(); as s) {
     <div class="panel-icerik">
 
       <header class="panel-baslik">
@@ -182,6 +183,11 @@
             <span class="ayrac"></span>
             <button matIconButton class="sil-btn" matTooltip="Sil" aria-label="İşi sil" (click)="sil(s)">
               <mat-icon>delete_outline</mat-icon>
+            </button>
+
+            <span class="ayrac"></span>
+            <button matIconButton matTooltip="Paneli kapat" aria-label="Paneli kapat" (click)="paneliKapat()">
+              <mat-icon>close</mat-icon>
             </button>
           </div>
         </div>
@@ -236,12 +242,8 @@
         </ol>
       </section>
     </div>
-    } @else {
-    <div class="panel-bos">
-      <mat-icon>touch_app</mat-icon>
-      <p>Detayları görmek için bir iş seçin</p>
-    </div>
-    }
+
   </aside>
+  }
 </div>
 }

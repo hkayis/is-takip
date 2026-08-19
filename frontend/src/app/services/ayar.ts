@@ -6,6 +6,7 @@ export interface Ayarlar {
   buyuklukEsikleri: Record<string, number>;   // adam-gün eşikleri
   hedefSureler: Record<string, number>;        // büyüklük başına hedef takvim günü
   dikkatPenceresiGun: number;                  // "dikkat gerekenler" kaç gün ileriye baksın
+  tamamlananGun: number;
   tema: Tema;
 }
 
@@ -13,6 +14,7 @@ const VARSAYILAN: Ayarlar = {
   buyuklukEsikleri: { FastTrack: 5, XS: 10, S: 25, M: 50, L: 100, XL: 300 },
   hedefSureler:     { FastTrack: 10, XS: 20, S: 40, M: 70, L: 120, XL: 200 },
   dikkatPenceresiGun: 7,
+  tamamlananGun: 14,
   tema: 'sistem',
 };
 @Injectable({ providedIn: 'root' })
@@ -32,6 +34,8 @@ export class AyarService {
     dikkatPenceresiGun = computed(()=>
     this._ayarlar().dikkatPenceresiGun);
 
+    tamamlananGun=computed(()=> 
+    this._ayarlar().tamamlananGun);
     tema= computed(()=>this._ayarlar().tema);
 
     constructor(){

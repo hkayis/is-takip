@@ -1,5 +1,10 @@
 :host {
   display: block;
+  padding-right: 0;
+  transition: padding-right 0.2s ease;
+}
+
+:host(.panel-acik) {
   padding-right: 380px;
 }
 
@@ -73,6 +78,7 @@
   border: 1px solid var(--cizgi);
   border-radius: 8px;
   background: var(--kart);
+  max-width: 1400px;
 }
 
 .is-tablo {
@@ -480,11 +486,11 @@
 }
 
 .durum-btn:hover {
-  background: var(--dolgu);
+  background: color-mix(in srgb, var(--mat-sys-on-surface) 8%, transparent);
 }
 
 .durum-btn .ok-kucuk {
-  font-size: 10px;
+  font-size: 20px;
   color: var(--metin-silik);
 }
 
@@ -528,3 +534,22 @@
 .cdk-drag-placeholder { opacity: 0.3; }
 .cdk-drag-animating   { transition: transform 180ms cubic-bezier(0, 0, 0.2, 1); }
 .cdk-drop-list-receiving { background: var(--dolgu); border-radius: 4px; }
+
+is-tablo tbody .t-aksiyon {
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.is-tablo tbody tr:hover .t-aksiyon,
+.is-tablo tbody tr.secili .t-aksiyon,
+.is-tablo tbody tr:focus-within .t-aksiyon {
+  opacity: 1;
+}
+.is-tablo tbody .t-aksiyon {
+  opacity: 0;
+  transition: opacity 0.02s ease;
+}
+.is-tablo tbody tr:hover {
+  background: var(--kart-alt);    /* --dolgu → --kart-alt */
+}
+.is-tablo .t-aksiyon .sil-btn:hover { color: #c62828; }

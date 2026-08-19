@@ -68,6 +68,20 @@
   </mat-form-field>
 </section>
 
+<section class="kutu">
+    <div class="kutu-ust">
+      <h2>Geçmiş Tamamlananlar</h2>
+      <span class="kutu-not">gün</span>
+    </div>
+    <p class="aciklama">
+      Kanban tablosundaki tamamlananlar kaç gün boyunca gözüksün.
+    </p>
+    <mat-form-field appearance="outline" class="dar">
+      <mat-label>Gün</mat-label>
+      <input matInput type="number" [(ngModel)]="tamamlananGun" />
+    </mat-form-field>
+  </section>
+
   @if (hata) {
     <p class="hata">{{ hata }}</p>
   }

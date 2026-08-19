@@ -21,11 +21,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import * as XLSX from 'xlsx';
 import { IsKart } from '../../components/is-kart/is-kart';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
+import { AyarService } from '../../services/ayar';
 @Component({
   selector: 'app-jobs',
   imports: [FormsModule, DragDropModule,IsKart,MatProgressSpinnerModule,DatePipe, MatIconModule, MatTooltip, MatSnackBarModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatDialogModule],
   templateUrl: './jobs.html',
   styleUrl: './jobs.scss',
+  host: {'[class.panel-acik]': 'seciliDetay() !== null'},
 })
 export class Jobs implements OnInit {
   protected gecikmeDurumu = gecikmeDurumu;
@@ -34,6 +36,7 @@ export class Jobs implements OnInit {
   private jobApi = inject(JobApi);
   private dialog = inject(MatDialog);
   private route = inject(ActivatedRoute);
+  private _ayar=inject(AyarService);
   protected durumAdi = durumAdi;
   protected oncelikAdi = oncelikAdi;
   protected buyuklukAdi = buyuklukAdi;
@@ -41,7 +44,7 @@ export class Jobs implements OnInit {
   protected notMetni = ''
   protected yukDurumu = this.store.durum;
   protected yukHatasi = this.store.hata;
-  protected readonly panoGun= 14;
+  protected readonly panoGun= this._ayar.tamamlananGun;
   tekrarDene() { this.store.yenile(); }
 
   asamaSirasi: string[] = ['Analiz', 'Gelistirme', 'Test', 'Tasima'];
@@ -50,7 +53,7 @@ export class Jobs implements OnInit {
   bekleyenler = computed(() => this.jobs().filter(j => j.status === 'Beklemede'));
   devamEdenler = computed(() => this.jobs().filter(j => j.status === 'DevamEdiyor'));
   tamamlananlar = computed(() => { 
-    const sinir = Date.now() - this.panoGun * 24 * 60 * 60 * 1000;
+    const sinir = Date.now() - this.panoGun() * 24 * 60 * 60 * 1000;
 
     return this.jobs()
     .filter(j=>
@@ -62,7 +65,9 @@ export class Jobs implements OnInit {
   });
   
   seciliDetay = signal<JobDetail | null>(null);
-
+  paneliKapat() {
+  this.seciliDetay.set(null);
+}
   birak(olay: CdkDragDrop<Job[]>, hedefDurum: string, hedefAsama: string | null) {
   if (olay.previousContainer === olay.container) return;
 
@@ -200,7 +205,7 @@ export class Jobs implements OnInit {
       });
     });
   }
-  duzenleAc(job: JobDetail) {
+  duzenleAc(job: Job) {
     const ref = this.dialog.open(YeniIsDialog, { width: '420px', data: job });
     ref.afterClosed().subscribe((sonuc) => {
       if (!sonuc) return;

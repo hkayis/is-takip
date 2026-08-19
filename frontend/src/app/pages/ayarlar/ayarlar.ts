@@ -24,6 +24,7 @@ export class Ayarlar {
   esikler: Record<string, number>;
   hedefler: Record<string, number>;
   dikkatGun: number;
+  tamamlananGun: number;
   hata = '';
 
   constructor() {
@@ -31,6 +32,7 @@ export class Ayarlar {
     this.hedefler = { ...this.ayar.hedefSureler() };
     this.dikkatGun = this.ayar.dikkatPenceresiGun();
     this.tema=this.ayar.tema();
+    this.tamamlananGun=this.ayar.tamamlananGun();
   }
 
   kaydet() {
@@ -55,6 +57,7 @@ export class Ayarlar {
       buyuklukEsikleri: this.esikler,
       hedefSureler: this.hedefler,
       dikkatPenceresiGun: this.dikkatGun,
+      tamamlananGun: this.tamamlananGun,
       tema: this.tema,
     });
     this.snackBar.open('Ayarlar kaydedildi.', 'Tamam', { duration: 3000 });
@@ -65,6 +68,7 @@ export class Ayarlar {
     this.esikler = { ...this.ayar.buyuklukEsikleri() };
     this.hedefler = { ...this.ayar.hedefSureler() };
     this.dikkatGun = this.ayar.dikkatPenceresiGun();
+    this.tamamlananGun= this.ayar.tamamlananGun();
     this.tema = this.ayar.tema();
     this.hata = '';
     
