@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Auth } from '../../services/auth';
 import { Router } from '@angular/router';
-
+import { UYGULAMA_ADI } from '../../sabitler';
 @Component({
   selector: 'app-login',
   imports: [FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule],
@@ -16,7 +16,7 @@ import { Router } from '@angular/router';
 export class Login {
   private auth = inject(Auth);
   private router = inject(Router);
-
+  public title=UYGULAMA_ADI;
   username = '';
   password = '';
   hata = '';
@@ -31,6 +31,7 @@ export class Login {
     this.auth.login(this.username, this.password).subscribe({
       next: (cevap) => {
         this.auth.tokenKaydet(cevap.token);
+        
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {

@@ -4,6 +4,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { Auth } from './services/auth';
 import { AyarService } from './services/ayar';
+import { UYGULAMA_ADI } from './sabitler';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, RouterLink, RouterLinkActive, 
@@ -13,7 +14,7 @@ import { AyarService } from './services/ayar';
 })
 export class App {
   private ayar= inject(AyarService)
-  protected readonly title = signal('İş Akışı');
+  protected title = UYGULAMA_ADI;
   protected auth = inject(Auth);
   private router = inject(Router);
 

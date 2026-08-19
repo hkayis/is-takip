@@ -17,14 +17,16 @@
 
 .izgara {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr ;
+  grid-auto-rows: 1fr;
   gap: 16px;
-  align-items: start;
+  
 }
 
 @media (max-width: 900px) {
   .izgara { grid-template-columns: 1fr; }
 }
+
 
 .kutu {
   padding: 18px;
@@ -101,7 +103,7 @@
 
 .sutun-alan {
   width: 100%;
-  height: 130px;
+  height: 150px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -214,7 +216,7 @@
   text-align: right;
 }
 .dikkat-kutu {
-  max-height: 260px;
+  max-height: 200px;
   overflow-y: auto;
 }
 .ozet-serit .basari { color: #2e7d32; font-weight: 600; }
@@ -330,6 +332,7 @@
   font-size: 13px;
   cursor: pointer;
 }
+
 .yazdir-btn:hover { background: var(--dolgu); }
 
 .yazdir-gorunum { display: none; }
