@@ -1,0 +1,22 @@
+<div class="kutu-ust">
+  <h2>Teslim Performansı</h2>
+  <span class="kutu-not">{{ ozet().toplam }} tamamlanan</span>
+  <ng-content />
+</div>
+
+@if (ozet().toplam === 0) {
+<p class="bos">Henüz tamamlanmış iş yok</p>
+} @else {
+<div class="oran">%{{ ozet().oran }}</div>
+<div class="oran-not">zamanında teslim edildi</div>
+
+<div class="serit">
+  <div class="dilim zamaninda" [style.width.%]="ozet().oran"></div>
+  <div class="dilim gecikmis" [style.width.%]="100 - ozet().oran"></div>
+</div>
+
+<div class="lejant">
+  <span><i class="nokta zamaninda"></i> Zamanında <strong>{{ ozet().zamaninda }}</strong></span>
+  <span><i class="nokta gecikmis"></i> Geciken <strong>{{ ozet().gecikmis }}</strong></span>
+</div>
+}

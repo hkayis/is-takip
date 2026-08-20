@@ -1,15 +1,15 @@
 @if (yukDurumu() === 'yukleniyor' || yukDurumu() === 'bos') {
-  <div class="durum-ekrani">
-    <mat-spinner diameter="40"></mat-spinner>
-    <p>Özet yükleniyor…</p>
-  </div>
+<div class="durum-ekrani">
+  <mat-spinner diameter="40"></mat-spinner>
+  <p>Özet yükleniyor…</p>
+</div>
 } @else if (yukDurumu() === 'hata') {
-  <div class="durum-ekrani hata">
-    <div class="durum-ikon">⚠️</div>
-    <h2>Bağlantı sorunu</h2>
-    <p>{{ yukHatasi() }}</p>
-    <button matButton="filled" (click)="tekrarDene()">Tekrar dene</button>
-  </div>
+<div class="durum-ekrani hata">
+  <div class="durum-ikon">⚠️</div>
+  <h2>Bağlantı sorunu</h2>
+  <p>{{ yukHatasi() }}</p>
+  <button matButton="filled" (click)="tekrarDene()">Tekrar dene</button>
+</div>
 } @else if (jobs().length === 0) {
 <div class="bos-durum">
   <div class="bos-ikon">📊</div>
@@ -19,12 +19,12 @@
 </div>
 } @else {
 <div class="yazdir-baslik">
-  İş Akışı — Özet Rapor · {{ bugun | date:'d MMMM y' }}
+  İş Takip — Özet Rapor · {{ bugun | date:'d MMMM y' }}
 </div>
 <div class="ozet-serit">
 
-  <button type="button" class="yeni-is-btn" (click)="yeniIsAc()">+ Yeni İş</button>
-  <button type="button" class="yazdir-btn" (click)="yazdir()">PDF olarak indir</button>
+  <button matButton="filled" (click)="yeniIsAc()">+ Yeni İş</button>
+  <button matButton (click)="yazdir()">PDF olarak indir</button>
 </div>
 
 <div class="durum-kutulari">
@@ -53,100 +53,15 @@
 </div>
 
 <div class="izgara">
-
-  <section class="kutu dikkat-bolum">
-    <div class="kutu-ust">
-      <h2>Dikkat Gerekenler</h2>
-      <span class="kutu-not">{{ dikkatGerekenler().length }} iş</span>
-    </div>
-
-    <div class="dikkat-kutu">
-      @for (job of dikkatGerekenler(); track job.id) {
-      <button type="button" class="dikkat-satiri" (click)="isiAc(job.id)">
-        <span class="oncelik" [attr.data-oncelik]="job.priority">{{ oncelikAdi(job.priority) }}</span>
-        <span class="baslik">{{ job.title }}</span>
-        <span class="sure" [class.gecikti]="job.gecikti">{{ job.etiket }}</span>
-      </button>
-      } @empty {
-      <p class="bos">Yakın vadede dikkat gerektiren iş yok</p>
-      }
-    </div>
-  </section>
-
-  <section class="kutu">
-    <div class="kutu-ust">
-      <h2>Öncelik Dağılımı</h2>
-      <span class="kutu-not">Aktif İşler</span>
-    </div>
-
-    <div class="sutunlar">
-      @for (o of oncelikDagilimi(); track o.oncelik) {
-      <button type="button" class="sutun-kutu" [disabled]="o.sayi === 0" (click)="oncelikListesiniAc(o.oncelik)">
-        <span class="deger">{{ o.sayi }}</span>
-        <div class="sutun-alan">
-          <div class="dikey-cubuk" [attr.data-oncelik]="o.oncelik" [style.height.%]="o.yuzde"></div>
-        </div>
-        <span class="etiket">{{ o.etiket }}</span>
-      </button>
-      }
-    </div>
-  </section>
-
-  <section class="kutu">
-    <div class="kutu-ust">
-      <h2>Büyüklük Dağılımı</h2>
-      <div class="kapsam-secim">
-        <button type="button" [class.aktif]="buyuklukKapsam() === 'DevamEdiyor'"
-          (click)="buyuklukKapsamSec('DevamEdiyor')">Devam Edenler</button>
-        <button type="button" [class.aktif]="buyuklukKapsam() === 'Beklemede'"
-          (click)="buyuklukKapsamSec('Beklemede')">Beklemede</button>
-      </div>
-      <span class="kapsam-yazdir">devam edenler + beklemede</span>
-    </div>
-
-    <div class="ekran-gorunum">
-      @for (b of buyuklukDagilimi(); track b.kod) {
-      <div class="asama-satiri">
-        <span class="asama-ad">{{ b.etiket }}</span>
-        <div class="asama-yol">
-          <div class="asama-cubuk" [style.width.%]="b.yuzde"></div>
-        </div>
-        <span class="asama-sayi">{{ b.sayi }}</span>
-      </div>
-      }
-    </div>
-
-    <div class="yazdir-gorunum">
-      @for (g of buyuklukIkisi(); track g.baslik) {
-      <h3 class="grup-baslik">{{ g.baslik }}</h3>
-      @for (b of g.satirlar; track b.kod) {
-      <div class="asama-satiri">
-        <span class="asama-ad">{{ b.etiket }}</span>
-        <div class="asama-yol">
-          <div class="asama-cubuk" [style.width.%]="b.yuzde"></div>
-        </div>
-        <span class="asama-sayi">{{ b.sayi }}</span>
-      </div>
-      }
-      }
-    </div>
-  </section>
-
-  <section class="kutu">
-    <div class="kutu-ust">
-      <h2>Aşama Dağılımı</h2>
-      <span class="kutu-not">Devam Edenler</span>
-    </div>
-
-    @for (a of asamaDagilimi(); track a.asama) {
-    <div class="asama-satiri">
-      <span class="asama-ad">{{ a.asama }}</span>
-      <div class="asama-yol">
-        <div class="asama-cubuk" [style.width.%]="a.yuzde"></div>
-      </div>
-      <span class="asama-sayi">{{ a.sayi }}</span>
-    </div>
+  @for (slot of slotlar(); track slot; let i = $index) {
+    @switch (slot) {
+      @case ('dikkat')   { <app-dikkat-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-dikkat-karti> }
+      @case ('oncelik')  { <app-oncelik-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-oncelik-karti> }
+      @case ('buyukluk') { <app-buyukluk-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-buyukluk-karti> }
+      @case ('asama')    { <app-asama-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-asama-karti> }
+      @case ('teslim')   { <app-teslim-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-teslim-karti> }
+      @case ('aylik')    { <app-aylik-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-aylik-karti> }
     }
-  </section>
+  }
 </div>
 }

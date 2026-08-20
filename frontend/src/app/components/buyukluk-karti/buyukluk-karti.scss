@@ -1,0 +1,43 @@
+.kapsam-secim {
+  display: inline-flex;
+  gap: 4px;
+  background: var(--dolgu);
+  border-radius: 8px;
+  padding: 3px;
+}
+
+.kapsam-secim button {
+  border: none;
+  background: transparent;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--metin-soluk);
+}
+
+.kapsam-secim button.aktif {
+  background: var(--kart);
+  color: var(--metin);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.yazdir-gorunum { display: none; }
+.kapsam-yazdir  { display: none; }
+
+@media print {
+  .kapsam-secim   { display: none; }
+  .ekran-gorunum  { display: none; }
+  .yazdir-gorunum { display: block; }
+  .kapsam-yazdir  { display: inline; font-size: 12px; color: var(--metin-silik); }
+
+  .grup-baslik {
+    margin: 14px 0 6px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--metin-soluk);
+  }
+
+  .grup-baslik:first-child { margin-top: 0; }
+}

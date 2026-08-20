@@ -1,0 +1,15 @@
+<div class="kutu-ust">
+  <h2>Aylık Tamamlanan</h2>
+  <span class="kutu-not">Son 6 ay</span>
+  <ng-content />
+</div>
+
+@for (a of aylar(); track a.etiket) {
+<div class="asama-satiri">
+  <span class="asama-ad">{{ a.etiket }}</span>
+  <div class="asama-yol">
+    <div class="asama-cubuk" [style.width.%]="a.yuzde"></div>
+  </div>
+  <span class="asama-sayi">{{ a.sayi }}</span>
+</div>
+}

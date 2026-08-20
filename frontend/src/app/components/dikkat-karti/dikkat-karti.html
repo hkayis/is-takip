@@ -1,0 +1,17 @@
+<div class="kutu-ust">
+  <h2>Dikkat Gerekenler</h2>
+  <span class="kutu-not">{{ liste().length }} iş</span>
+  <ng-content />
+</div>
+
+<div class="dikkat-kutu">
+  @for (job of liste(); track job.id) {
+  <button type="button" class="dikkat-satiri" (click)="isiAc(job.id)">
+    <span class="oncelik" [attr.data-oncelik]="job.priority">{{ oncelikAdi(job.priority) }}</span>
+    <span class="baslik">{{ job.title }}</span>
+    <span class="sure" [class.gecikti]="job.gecikti">{{ job.etiket }}</span>
+  </button>
+  } @empty {
+  <p class="bos">Yakın vadede dikkat gerektiren iş yok</p>
+  }
+</div>

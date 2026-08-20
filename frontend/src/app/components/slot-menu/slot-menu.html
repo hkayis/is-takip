@@ -1,0 +1,7 @@
+<button type="button" class="slot-menu" [matMenuTriggerFor]="menu" aria-label="Grafiği değiştir">⋯</button>
+
+<mat-menu #menu="matMenu">
+  @for (g of grafikler; track g.id) {
+  <button mat-menu-item [disabled]="g.id === suAnki()" (click)="sec(g.id)">{{ g.baslik }}</button>
+  }
+</mat-menu>

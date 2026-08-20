@@ -1,0 +1,58 @@
+.dikkat-kutu {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dikkat-satiri {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 4px;
+  border: none;
+  border-bottom: 1px solid var(--cizgi);
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.dikkat-satiri:hover { background: var(--dolgu); }
+
+.dikkat-satiri .oncelik {
+  width: 64px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.dikkat-satiri .baslik { flex: 1; }
+
+.dikkat-satiri .sure {
+  width: 92px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 700;
+  color: #e65100;
+}
+
+.dikkat-satiri .sure.gecikti { color: #c62828; }
+
+.bos {
+  color: var(--metin-silik);
+  font-size: 13px;
+  text-align: center;
+  padding: 20px 0;
+}
+
+@media print {
+  .dikkat-kutu {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .dikkat-satiri { break-inside: avoid; }
+}

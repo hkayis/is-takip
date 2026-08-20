@@ -1,0 +1,17 @@
+<div class="kutu-ust">
+  <h2>Öncelik Dağılımı</h2>
+  <span class="kutu-not">Aktif İşler</span>
+  <ng-content />
+</div>
+
+<div class="sutunlar">
+  @for (o of dagilim(); track o.oncelik) {
+  <button type="button" class="sutun-kutu" [disabled]="o.sayi === 0" (click)="listeyiAc(o.oncelik)">
+    <span class="deger">{{ o.sayi }}</span>
+    <div class="sutun-alan">
+      <div class="dikey-cubuk" [attr.data-oncelik]="o.oncelik" [style.height.%]="o.yuzde"></div>
+    </div>
+    <span class="etiket">{{ o.etiket }}</span>
+  </button>
+  }
+</div>

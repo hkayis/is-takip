@@ -1,0 +1,38 @@
+<div class="kutu-ust">
+  <h2>Büyüklük Dağılımı</h2>
+  <div class="kapsam-secim">
+    <button type="button" [class.aktif]="kapsam() === 'DevamEdiyor'"
+      (click)="kapsamSec('DevamEdiyor')">Devam Edenler</button>
+    <button type="button" [class.aktif]="kapsam() === 'Beklemede'"
+      (click)="kapsamSec('Beklemede')">Beklemede</button>
+  </div>
+  <span class="kapsam-yazdir">devam edenler + beklemede</span>
+  <ng-content />
+</div>
+
+<div class="ekran-gorunum">
+  @for (b of dagilim(); track b.kod) {
+  <div class="asama-satiri">
+    <span class="asama-ad">{{ b.etiket }}</span>
+    <div class="asama-yol">
+      <div class="asama-cubuk" [style.width.%]="b.yuzde"></div>
+    </div>
+    <span class="asama-sayi">{{ b.sayi }}</span>
+  </div>
+  }
+</div>
+
+<div class="yazdir-gorunum">
+  @for (g of ikisi(); track g.baslik) {
+  <h3 class="grup-baslik">{{ g.baslik }}</h3>
+  @for (b of g.satirlar; track b.kod) {
+  <div class="asama-satiri">
+    <span class="asama-ad">{{ b.etiket }}</span>
+    <div class="asama-yol">
+      <div class="asama-cubuk" [style.width.%]="b.yuzde"></div>
+    </div>
+    <span class="asama-sayi">{{ b.sayi }}</span>
+  </div>
+  }
+  }
+</div>

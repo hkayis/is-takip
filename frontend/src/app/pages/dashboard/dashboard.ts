@@ -1,136 +1,64 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-import { JobApi, Job } from '../../services/job-api';
+import { Component, inject, computed, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { YeniIsDialog } from '../../dialogs/yeni-is-dialog/yeni-is-dialog';
-import { oncelikAdi, buyuklukAdi } from '../../etiketler';
 import { MatButtonModule } from '@angular/material/button';
-import { AyarService } from '../../services/ayar';
-import { JobStore } from '../../services/job-store';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { YeniIsDialog } from '../../dialogs/yeni-is-dialog/yeni-is-dialog';
+import { JobStore } from '../../services/job-store';
+import { DikkatKarti } from '../../components/dikkat-karti/dikkat-karti';
+import { OncelikKarti } from '../../components/oncelik-karti/oncelik-karti';
+import { BuyuklukKarti } from '../../components/buyukluk-karti/buyukluk-karti';
+import { AsamaKarti } from '../../components/asama-karti/asama-karti';
+import { AylikKarti } from '../../components/aylik-karti/aylik-karti';
+import { TeslimKarti } from '../../components/teslim-karti/teslim-karti';
+import { AyarService } from '../../services/ayar';
+import { SlotMenu } from '../../components/slot-menu/slot-menu';
 @Component({
   selector: 'app-dashboard',
-  imports: [MatCardModule, MatProgressSpinnerModule,DatePipe, MatDialogModule, MatSnackBarModule, MatButtonModule],
+  imports: [
+    TeslimKarti,
+    AylikKarti,
+    DikkatKarti,
+    OncelikKarti,
+    BuyuklukKarti,
+    AsamaKarti,
+    DatePipe,
+    MatButtonModule,
+    MatDialogModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule,
+    SlotMenu
+  ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit {
-  protected oncelikAdi = oncelikAdi;
   private store = inject(JobStore);
-  private jobApi = inject(JobApi);
   private dialog = inject(MatDialog);
-  private ayar = inject(AyarService);
   private snackBar = inject(MatSnackBar);
+  private router = inject(Router);
+  private ayar = inject(AyarService);
+
+  protected slotlar = this.ayar.panoSlotlari;
   jobs = this.store.isler;
   protected yukDurumu = this.store.durum;
   protected yukHatasi = this.store.hata;
+  protected bugun = new Date();
 
-tekrarDene() { this.store.yenile(); }
+  protected toplam = computed(() => this.jobs().length);
 
-  private router = inject(Router);
-  asamaSirasi: string[] = ['Analiz', 'Gelistirme', 'Test', 'Tasima']
-  buyuklukSirasi: string[] = ['FastTrack', 'XS', 'S', 'M', 'L', 'XL'];
+  private bekleyen = computed(() => this.jobs().filter(j => j.status === 'Beklemede').length);
+  private devamEden = computed(() => this.jobs().filter(j => j.status === 'DevamEdiyor').length);
+  private tamamlanan = computed(() => this.jobs().filter(j => j.status === 'Tamamlandi').length);
+  private iptal = computed(() => this.jobs().filter(j => j.status === 'Iptal').length);
 
-  buyuklukKapsam = signal<'Beklemede' | 'DevamEdiyor'>('DevamEdiyor');
-  buyuklukKapsamSec(kapsam: 'Beklemede' | 'DevamEdiyor') {
-    this.buyuklukKapsam.set(kapsam);
-  }
-
-  buyuklukDagilimi = computed(() => {
-    const kapsam = this.buyuklukKapsam();
-    const isler = this.jobs().filter(j => j.status === kapsam);
-
-    const ham = this.buyuklukSirasi.map(b => ({
-      kod: b,
-      etiket: buyuklukAdi(b),
-      sayi: isler.filter(j => j.buyukluk === b).length,
-    }));
-
-    const enBuyuk = Math.max(...ham.map(x => x.sayi), 1);
-    return ham.map(x => ({ ...x, yuzde: (x.sayi / enBuyuk) * 100 }));
-  });
-
-  buyuklukIkisi = computed(() => {
-    const say = (kapsam: string, kod: string) =>
-      this.jobs().filter(j => j.status === kapsam && j.buyukluk === kod).length;
-
-    const gruplar = [
-      { baslik: 'Devam Edenler', kapsam: 'DevamEdiyor' },
-      { baslik: 'Beklemede', kapsam: 'Beklemede' },
-    ].map(g => ({
-      baslik: g.baslik,
-      satirlar: this.buyuklukSirasi.map(kod => ({
-        kod,
-        etiket: buyuklukAdi(kod),
-        sayi: say(g.kapsam, kod),
-      })),
-    }));
-
-    const enBuyuk = Math.max(...gruplar.flatMap(g => g.satirlar.map(s => s.sayi)), 1);
-
-    return gruplar.map(g => ({
-      ...g,
-      satirlar: g.satirlar.map(s => ({ ...s, yuzde: (s.sayi / enBuyuk) * 100 })),
-    }));
-  });
-  oncelikPuani: Record<string, number> = {
-    Dusuk: 1,
-    Normal: 2,
-    Yuksek: 3,
-    Acil: 4,
-  };
-
-  listeyeGit(durum?: string) {
-    this.router.navigate(['/jobs'], { queryParams: durum ? { durum } : {} });
-  }
-  oncelikListesiniAc(oncelik: string) {
-    this.router.navigate(['/jobs'], { queryParams: { oncelik } });
-  }
-  isiAc(id: number) {
-    this.router.navigate(['/jobs'], { queryParams: { sec: id } });
-  }
-
-  buAyTamamlanan = computed(() => {
-    const simdi = new Date();
-    const ay = simdi.getMonth();
-    const yil = simdi.getFullYear();
-
-    return this.jobs().filter(j => {
-      if (j.status !== 'Tamamlandi' || !j.completedAt) return false;
-      const bitis = new Date(j.completedAt);
-      return bitis.getMonth() === ay && bitis.getFullYear() === yil;
-    }).length;
-  });
-  ortalamaSure = computed(() => {
-    const gunMs = 1000 * 60 * 60 * 24;
-    const bitenler = this.jobs().filter(j => j.status === 'Tamamlandi' && j.completedAt);
-
-    if (bitenler.length === 0) return 0;
-
-    const toplamGun = bitenler.reduce((toplam, j) => {
-      const sure = new Date(j.completedAt!).getTime() - new Date(j.createdAt).getTime();
-      return toplam + sure / gunMs;
-    }, 0);
-
-    return Math.round(toplamGun / bitenler.length);
-  });
-
-  toplam = computed(() => this.jobs().length);
-  bekleyen = computed(() => this.jobs().filter(j => j.status === 'Beklemede').length);
-  devamEden = computed(() => this.jobs().filter(j => j.status === 'DevamEdiyor').length);
-  tamamlanan = computed(() => this.jobs().filter(j => j.status === 'Tamamlandi').length);
-  iptal = computed(() => this.jobs().filter(j => j.status === 'Iptal').length);
-
-  aktifEfor = computed(() =>
-    this.jobs()
-      .filter(j => j.status === 'DevamEdiyor')
-      .reduce((toplam, j) => toplam + (j.adam ?? 0) * (j.gun ?? 0), 0)
+  protected toplamEfor = computed(() =>
+    this.jobs().reduce((t, j) => t + (j.adam ?? 0) * (j.gun ?? 0), 0)
   );
 
-  durumDagilimi = computed(() => {
+  protected durumDagilimi = computed(() => {
     const toplam = this.toplam();
     const efor = (durum: string) =>
       this.jobs()
@@ -147,93 +75,32 @@ tekrarDene() { this.store.yenile(); }
     return ham.map(x => ({ ...x, yuzde: toplam ? (x.sayi / toplam) * 100 : 0 }));
   });
 
-  toplamEfor = computed(() =>
-    this.jobs().reduce((t, j) => t + (j.adam ?? 0) * (j.gun ?? 0), 0)
-  );
-
-  geciken = computed(() => {
-    const simdi = new Date();
-    return this.jobs().filter(j =>
-      j.status !== 'Tamamlandi' &&
-      j.status !== 'Iptal' &&
-      new Date(j.deadline) < simdi
-    );
-  });
-
-  oncelikDagilimi = computed(() => {
-    const say = (p: string) => this.jobs().filter(j => j.priority === p && (j.status === 'DevamEdiyor')).length
-
-    const ham = [
-      { oncelik: 'Dusuk', etiket: 'Düşük', sayi: say('Dusuk') },
-      { oncelik: 'Normal', etiket: 'Normal', sayi: say('Normal') },
-      { oncelik: 'Yuksek', etiket: 'Yuksek', sayi: say('Yuksek') },
-      { oncelik: 'Acil', etiket: 'Acil', sayi: say('Acil') },
-    ];
-    const enBuyuk = Math.max(...ham.map(x => x.sayi), 1);
-    return ham.map(x => ({ ...x, yuzde: (x.sayi / enBuyuk) * 100 }));
-  })
-
-  dikkatGerekenler = computed(() => {
-    const simdi = Date.now();
-    const gunMs = 1000 * 60 * 60 * 24;
-    const sinir = simdi + this.ayar.dikkatPenceresiGun() * gunMs;
-
-    return this.jobs()
-      .filter(j => {
-        if (j.status === 'Tamamlandi' || j.status === 'Iptal') return false;
-        return new Date(j.deadline).getTime() <= sinir;
-      })
-      .map(j => {
-        const fark = Math.ceil((new Date(j.deadline).getTime() - simdi) / gunMs);
-        const aciliyet = 10 - fark;
-        const skor = (this.oncelikPuani[j.priority] ?? 1) * aciliyet;
-
-        return {
-          ...j,
-          fark,
-          skor,
-          gecikti: fark < 0,
-          etiket: fark < 0
-            ? `${Math.abs(fark)} gün gecikti`
-            : fark === 0
-              ? 'bugün'
-              : `${fark} gün kaldı`,
-        };
-      })
-      .sort((a, b) => b.skor - a.skor);
-  });
-
-  asamaDagilimi = computed(() => {
-    const devam = this.jobs().filter(j => j.status === 'DevamEdiyor');
-    const ham = this.asamaSirasi.map(a => ({
-      asama: a,
-      sayi: devam.filter(j => j.stage === a).length,
-    }));
-    const enBuyuk = Math.max(...ham.map(x => x.sayi), 1);
-    return ham.map(x => ({ ...x, yuzde: (x.sayi / enBuyuk) * 100 }))
-  });
-
-  bugun = new Date();
-
-  yazdir() {
-    window.print();
-  }
-
   ngOnInit() {
     this.yukle();
   }
 
-  yukle() {
-    this.store.yukle()
+  protected yukle() {
+    this.store.yukle();
   }
 
-  yeniIsAc() {
+  protected tekrarDene() {
+    this.store.yenile();
+  }
+
+  protected listeyeGit(durum?: string) {
+    this.router.navigate(['/jobs'], { queryParams: durum ? { durum } : {} });
+  }
+
+  protected yazdir() {
+    window.print();
+  }
+
+  protected yeniIsAc() {
     const ref = this.dialog.open(YeniIsDialog, { width: '420px' });
-    ref.afterClosed().subscribe((sonuc) => {
+    ref.afterClosed().subscribe(sonuc => {
       if (!sonuc) return;
       this.store.olustur(sonuc).subscribe({
-
-        error: (err) => {
+        error: err => {
           const mesaj = err.status === 409
             ? err.error?.message ?? 'Bu iş numarası zaten kullanılıyor.'
             : 'İş oluşturulamadı.';
