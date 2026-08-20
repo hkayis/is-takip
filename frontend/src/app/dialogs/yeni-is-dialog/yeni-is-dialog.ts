@@ -19,7 +19,7 @@ import { TrDateAdapter } from '../../tr-date-adapter';
   providers: [
     provideNativeDateAdapter(),
     { provide: MAT_DATE_LOCALE, useValue: 'tr-TR' },
-    { provide: DateAdapter, useClass: TrDateAdapter },   // takvim Türkçe, gg.aa.yyyy
+    { provide: DateAdapter, useClass: TrDateAdapter },
   ],
   templateUrl: './yeni-is-dialog.html',
   styleUrl: './yeni-is-dialog.scss',
@@ -28,7 +28,6 @@ export class YeniIsDialog {
   private dialogRef = inject(MatDialogRef<YeniIsDialog>);
   private data = inject<JobDetail | null>(MAT_DIALOG_DATA);
   private ayar = inject(AyarService);
-
 
   duzenleme = this.data !== null;
 
@@ -43,17 +42,14 @@ export class YeniIsDialog {
   oncelik = this.data?.priority ?? "Normal";
   hata = '';
 
-  /** Kullanıcı büyüklüğü elle seçtiyse artık otomatik önerme. */
   buyuklukElleSecildi = false;
 
-  /** Adam veya gün değişince öneriyi tazele. */
   eforDegisti() {
     if (!this.buyuklukElleSecildi && this.adam && this.gun) {
       this.buyukluk = hesaplananBuyukluk(this.adam, this.gun, this.ayar.buyuklukEsikleri());
     }
   }
 
-  /** Seçili büyüklük, adam-günden önerilenden farklıysa öneriyi döndürür. */
   get onerilenBuyukluk(): string | null {
     if (!this.adam || !this.gun) return null;
     const oneri = hesaplananBuyukluk(this.adam, this.gun, this.ayar.buyuklukEsikleri());
@@ -63,7 +59,6 @@ export class YeniIsDialog {
   get adamGun(): number | null {
     return this.adam && this.gun ? this.adam * this.gun : null;
   }
-  /** Date → "YYYY-MM-DD" (yerel tarih, saat dilimi kaymadan). */
   private tarihMetni(d: Date): string {
     const ay = String(d.getMonth() + 1).padStart(2, '0');
     const gun = String(d.getDate()).padStart(2, '0');

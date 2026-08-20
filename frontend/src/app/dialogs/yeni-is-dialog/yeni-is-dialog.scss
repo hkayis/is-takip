@@ -1,9 +1,9 @@
 mat-dialog-content.form {
   display: flex;
   flex-direction: column;
-  gap: 10px;              /* 12 → 10, biraz daha sıkı */
+  gap: 10px;
   min-width: 320px;
-  max-height: 78vh;       /* varsayılan 65vh'yi ez */
+  max-height: 78vh;
   padding-top: 16px !important;
 }
 
@@ -17,7 +17,7 @@ mat-dialog-content.form {
 
 .ikili mat-form-field {
   flex: 1;
-  min-width: 0;   /* flex öğesi etiketten dolayı taşmasın */
+  min-width: 0;
 }
 
 .efor-ozet {

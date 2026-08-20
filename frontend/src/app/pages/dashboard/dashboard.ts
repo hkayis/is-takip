@@ -34,14 +34,13 @@ tekrarDene() { this.store.yenile(); }
   asamaSirasi: string[] = ['Analiz', 'Gelistirme', 'Test', 'Tasima']
   buyuklukSirasi: string[] = ['FastTrack', 'XS', 'S', 'M', 'L', 'XL'];
 
-  // UI durumu: hangi kapsamı görüyoruz?
   buyuklukKapsam = signal<'Beklemede' | 'DevamEdiyor'>('DevamEdiyor');
   buyuklukKapsamSec(kapsam: 'Beklemede' | 'DevamEdiyor') {
     this.buyuklukKapsam.set(kapsam);
   }
 
   buyuklukDagilimi = computed(() => {
-    const kapsam = this.buyuklukKapsam();                         // ← signal'ı oku (bağımlılık)
+    const kapsam = this.buyuklukKapsam();
     const isler = this.jobs().filter(j => j.status === kapsam);
 
     const ham = this.buyuklukSirasi.map(b => ({
@@ -54,7 +53,6 @@ tekrarDene() { this.store.yenile(); }
     return ham.map(x => ({ ...x, yuzde: (x.sayi / enBuyuk) * 100 }));
   });
 
-  /** Yazdırma için: iki kapsam da, ORTAK ölçekle. */
   buyuklukIkisi = computed(() => {
     const say = (kapsam: string, kod: string) =>
       this.jobs().filter(j => j.status === kapsam && j.buyukluk === kod).length;
@@ -71,7 +69,6 @@ tekrarDene() { this.store.yenile(); }
       })),
     }));
 
-    // İki grubun ortak en büyüğü — çubuklar birbiriyle kıyaslanabilir olsun
     const enBuyuk = Math.max(...gruplar.flatMap(g => g.satirlar.map(s => s.sayi)), 1);
 
     return gruplar.map(g => ({
@@ -86,7 +83,6 @@ tekrarDene() { this.store.yenile(); }
     Acil: 4,
   };
 
-
   listeyeGit(durum?: string) {
     this.router.navigate(['/jobs'], { queryParams: durum ? { durum } : {} });
   }
@@ -96,7 +92,6 @@ tekrarDene() { this.store.yenile(); }
   isiAc(id: number) {
     this.router.navigate(['/jobs'], { queryParams: { sec: id } });
   }
-
 
   buAyTamamlanan = computed(() => {
     const simdi = new Date();
@@ -165,10 +160,6 @@ tekrarDene() { this.store.yenile(); }
     );
   });
 
-
-
-
-
   oncelikDagilimi = computed(() => {
     const say = (p: string) => this.jobs().filter(j => j.priority === p && (j.status === 'DevamEdiyor')).length
 
@@ -212,7 +203,6 @@ tekrarDene() { this.store.yenile(); }
       .sort((a, b) => b.skor - a.skor);
   });
 
-
   asamaDagilimi = computed(() => {
     const devam = this.jobs().filter(j => j.status === 'DevamEdiyor');
     const ham = this.asamaSirasi.map(a => ({
@@ -222,7 +212,6 @@ tekrarDene() { this.store.yenile(); }
     const enBuyuk = Math.max(...ham.map(x => x.sayi), 1);
     return ham.map(x => ({ ...x, yuzde: (x.sayi / enBuyuk) * 100 }))
   });
-
 
   bugun = new Date();
 
@@ -243,7 +232,7 @@ tekrarDene() { this.store.yenile(); }
     ref.afterClosed().subscribe((sonuc) => {
       if (!sonuc) return;
       this.store.olustur(sonuc).subscribe({
-        
+
         error: (err) => {
           const mesaj = err.status === 409
             ? err.error?.message ?? 'Bu iş numarası zaten kullanılıyor.'

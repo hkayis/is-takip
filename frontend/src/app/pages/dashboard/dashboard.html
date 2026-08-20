@@ -23,7 +23,6 @@
 </div>
 <div class="ozet-serit">
 
-  
   <button type="button" class="yeni-is-btn" (click)="yeniIsAc()">+ Yeni İş</button>
   <button type="button" class="yazdir-btn" (click)="yazdir()">PDF olarak indir</button>
 </div>
@@ -74,8 +73,6 @@
     </div>
   </section>
 
-
-
   <section class="kutu">
     <div class="kutu-ust">
       <h2>Öncelik Dağılımı</h2>
@@ -107,7 +104,6 @@
       <span class="kapsam-yazdir">devam edenler + beklemede</span>
     </div>
 
-    <!-- Ekran: seçili kapsam -->
     <div class="ekran-gorunum">
       @for (b of buyuklukDagilimi(); track b.kod) {
       <div class="asama-satiri">
@@ -120,7 +116,6 @@
       }
     </div>
 
-    <!-- Yazdırma: iki grup birden -->
     <div class="yazdir-gorunum">
       @for (g of buyuklukIkisi(); track g.baslik) {
       <h3 class="grup-baslik">{{ g.baslik }}</h3>

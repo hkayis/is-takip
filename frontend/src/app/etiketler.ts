@@ -44,7 +44,6 @@ export function oncelikAdi(kod: string): string {
 
 import { BUYUKLUK_ESIKLERI } from "./sabitler";
 
-// Ekranda görünen adlar. Kodlar backend enum'ıyla birebir aynı olmalı.
 const BUYUKLUK_ADLARI: Record<string, string> = {
   FastTrack: 'Fast Track',
 };
@@ -53,7 +52,6 @@ export function buyuklukAdi(kod: string): string {
   return BUYUKLUK_ADLARI[kod] ?? kod;
 }
 
-/** Adam-günden önerilen büyüklük kodu (backend JobSize enum adlarıyla aynı). */
 export function hesaplananBuyukluk(
   adam: number,
   gun: number,
@@ -68,7 +66,6 @@ export function hesaplananBuyukluk(
   if (efor <= esikler['L']) return 'L';
   return 'XL';
 }
-/** İşin termin durumu: 'gecikti' | 'yakin' | null */
 export function gecikmeDurumu(job: { deadline: string; status: string }): string | null {
   if (job.status === 'Tamamlandi' || job.status === 'Iptal') return null;
 
@@ -79,5 +76,3 @@ export function gecikmeDurumu(job: { deadline: string; status: string }): string
   if (kalanGun < 7) return 'yakin';
   return null;
 }
-
-

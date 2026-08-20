@@ -1,7 +1,6 @@
 import { Service, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-
 export interface Job{
     id: number;
     title: string;
@@ -15,7 +14,7 @@ export interface Job{
     adam: number | null;
     gun: number | null;
     buyukluk: string;
-    
+
 }
 
 export interface JobHistory{

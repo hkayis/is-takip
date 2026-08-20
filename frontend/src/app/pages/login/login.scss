@@ -1,12 +1,12 @@
 .login-page {
-  position: fixed;      /* ebeveynin padding'i etkilemesin */
-  inset: 0;             /* tam olarak viewport kadar */
+  position: fixed;
+  inset: 0;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 24px;
-  overflow-y: auto;     /* çok kısa ekranda kart sığmazsa içeride kaysın */
+  overflow-y: auto;
   background: linear-gradient(
     160deg,
     var(--mat-sys-surface) 0%,
@@ -27,7 +27,6 @@
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
 }
 
-/* Marka bloğu */
 .marka {
   text-align: center;
   margin-bottom: 6px;
@@ -45,7 +44,6 @@
   color: var(--metin-soluk);
 }
 
-/* Hata kutusu */
 .hata {
   margin: 0;
   padding: 9px 12px;

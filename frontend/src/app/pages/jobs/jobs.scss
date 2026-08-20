@@ -1,11 +1,11 @@
 :host {
   display: block;
-  padding-right: 0;
-  transition: padding-right 0.2s ease;
+
 }
 
-:host(.panel-acik) {
+:host(.panel-acik) .board-layout {
   padding-right: 380px;
+  transition: padding-right 0.2s ease;
 }
 
 .ust-bar {
@@ -14,6 +14,8 @@
   gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 16px;
+
+  padding-right: 380px;
 }
 
 .ust-bar h1 { font-size: 22px; margin: 0; }
@@ -68,6 +70,7 @@
 .board-layout {
   display: flex;
   align-items: flex-start;
+
 }
 
 .liste-alani {
@@ -116,7 +119,7 @@
 }
 
 .is-tablo tbody tr.secili {
-  /* koyu zeminde %8 mavi neredeyse görünmez — koyu temada daha belirgin */
+
   background: light-dark(rgba(25, 118, 210, 0.08), rgba(25, 118, 210, 0.28));
 }
 
@@ -153,7 +156,6 @@
 
 .sutun:last-child { border-right: none; }
 
-// "Devam Eden" sütunu alt sütunlara bölündüğü için diğerlerinin ~3 katı geniş
 .sutun:nth-child(2) { flex: 3; }
 
 .sutun h2 {
@@ -174,12 +176,12 @@
   gap: 7px;
 }
 .sutun-not {
-  flex-basis: 100%;          /* kendi satırına insin */
+  flex-basis: 100%;
   margin-top: 2px;
   font-size: 9px;
   font-weight: 400;
   letter-spacing: 0.3px;
-  text-transform: none;      /* başlık büyük harf, bu değil */
+  text-transform: none;
   color: var(--metin-silik);
 }
 .sutun:nth-child(1) h2 { border-top-color: #f57c00; color: #b35c00; }
@@ -202,11 +204,11 @@
   gap: 8px;
   padding: 8px;
   align-items: flex-start;
-  overflow-x: auto;   // aşamalar sığmazsa yatay kaydırma
+  overflow-x: auto;
 }
 
 .alt-sutun {
-  flex: 1 0 150px;    // büyüsün, ama 170px'in altına sıkışmasın
+  flex: 1 0 150px;
 }
 
 .alt-baslik {
@@ -235,7 +237,6 @@
 }
 .alt-sutunlar .bos { flex: 1; }
 
-
 .bos {
   color: var(--metin-silik);
   font-size: 12px;
@@ -246,7 +247,7 @@
 .yan-panel {
   position: fixed;
   right: 0;
-  top: var(--mat-toolbar-standard-height, 64px);   /* toolbar'ın altından başla */
+  top: var(--mat-toolbar-standard-height, 64px);
   bottom: 0;
   width: 360px;
   overflow-y: auto;
@@ -256,14 +257,12 @@
   z-index: 5;
 }
 
-/* Material toolbar dar ekranda 56px'e düşer */
 @media (max-width: 599px) {
   .yan-panel { top: var(--mat-toolbar-mobile-height, 56px); }
 }
 
 .panel-icerik { display: flex; flex-direction: column; }
 
-/* ---- Sticky başlık ---- */
 .panel-baslik {
   position: sticky;
   top: 0;
@@ -339,10 +338,6 @@
   color: var(--metin-soluk);
 }
 
-/* ---- Bilgi ızgarası ---- */
-
-
-/* ---- Bölümler ---- */
 .panel-bolum {
   display: flex;
   flex-direction: column;
@@ -366,7 +361,6 @@
 
 .not-kaydet { display: flex; justify-content: flex-end; margin-top: -8px; }
 
-/* ---- Geçmiş timeline ---- */
 .zaman-cizgisi {
   list-style: none;
   margin: 4px 0 0;
@@ -423,7 +417,6 @@
   color: var(--metin-soluk);
 }
 
-/* ---- Boş durum ---- */
 .panel-bos {
   display: flex;
   flex-direction: column;
@@ -550,6 +543,6 @@ is-tablo tbody .t-aksiyon {
   transition: opacity 0.02s ease;
 }
 .is-tablo tbody tr:hover {
-  background: var(--kart-alt);    /* --dolgu → --kart-alt */
+  background: var(--kart-alt);
 }
 .is-tablo .t-aksiyon .sil-btn:hover { color: #c62828; }

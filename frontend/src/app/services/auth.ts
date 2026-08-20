@@ -8,8 +8,6 @@ export interface LoginResponse{
 
 }
 
-
-
 @Service()
 export class Auth {
 
@@ -21,7 +19,7 @@ export class Auth {
             username,
             password,
 
-        }); 
+        });
     }
     girisYapildi=signal(!!localStorage.getItem('token'));
 

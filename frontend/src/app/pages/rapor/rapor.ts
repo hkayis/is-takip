@@ -23,13 +23,10 @@ export class Rapor implements OnInit {
   protected yukHatasi = this.store.hata;
 
   tekrarDene() { this.store.yenile(); }
-  // Birçok metriğin ortak temeli: tamamlanmış işler
   tamamlananlar = computed(() => this.jobs().filter(j => j.status === 'Tamamlandi'));
 
-  // 1) Tamamlanan iş sayısı
   tamamlananSayi = computed(() => this.tamamlananlar().length);
 
-  // 2) Ortalama döngü süresi (gün) = tamamlanma − oluşturulma
   ortalamaDonguSuresi = computed(() => {
     const bitenler = this.tamamlananlar().filter(j => j.completedAt);
     if (bitenler.length === 0) return 0;
@@ -40,7 +37,6 @@ export class Rapor implements OnInit {
     return Math.round(toplamGun / bitenler.length);
   });
 
-  // 3) Zamanında teslim oranı (%) = termininden önce bitenler / tüm bitenler
   zamanindaTeslimOrani = computed(() => {
     const bitenler = this.tamamlananlar().filter(j => j.completedAt);
     if (bitenler.length === 0) return 0;
@@ -52,10 +48,10 @@ export class Rapor implements OnInit {
   protected buyuklukAdi = buyuklukAdi;
 
   teslimGecmisi = computed(() =>
-    [...this.tamamlananlar()]                       // KOPYA — signal dizisini yerinde sıralama!
+    [...this.tamamlananlar()]
       .filter(j => j.completedAt)
       .sort((a, b) =>
-        new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime()  // yeniden → eskiye
+        new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime()
       )
       .map(j => {
         const dongu = Math.round(
@@ -83,7 +79,7 @@ export class Rapor implements OnInit {
         adet,
         ortalama,
         hedef,
-        gecikme: adet > 0 && ortalama > hedef,   // hedefi aşınca kırmızı
+        gecikme: adet > 0 && ortalama > hedef,
       };
     })
   );
@@ -92,11 +88,11 @@ export class Rapor implements OnInit {
 
   asamaCubuklari = computed(() => {
     const veri = this.asamaSureleri();
-    const enBuyuk = Math.max(...veri.map(a => a.ortalamaGun), 1);   // en uzun çubuk = %100
+    const enBuyuk = Math.max(...veri.map(a => a.ortalamaGun), 1);
     return veri.map(a => ({
       ...a,
       yuzde: (a.ortalamaGun / enBuyuk) * 100,
-      darbogaz: a.ortalamaGun === enBuyuk && a.ortalamaGun > 0,      // en yavaş aşama
+      darbogaz: a.ortalamaGun === enBuyuk && a.ortalamaGun > 0,
     }));
   });
 

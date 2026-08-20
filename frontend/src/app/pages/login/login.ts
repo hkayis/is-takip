@@ -24,14 +24,14 @@ export class Login {
   sifreGorunur = false;
 
   girisYap() {
-    if (this.yukleniyor) return;        // çift gönderimi engelle
+    if (this.yukleniyor) return;
     this.hata = '';
     this.yukleniyor = true;
 
     this.auth.login(this.username, this.password).subscribe({
       next: (cevap) => {
         this.auth.tokenKaydet(cevap.token);
-        
+
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {

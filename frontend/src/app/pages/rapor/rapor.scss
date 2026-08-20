@@ -1,7 +1,6 @@
 .rapor { padding: 24px; }
 .rapor h1 { margin: 0 0 20px; font-size: 22px; }
 
-/* Bölüm başlığı (kutu içinde ve dışında aynı görünüm) */
 .bolum-ust,
 .kutu-ust {
   display: flex;
@@ -19,7 +18,6 @@
 }
 .kutu-not { font-size: 12px; color: var(--metin-silik); }
 
-/* Kutu — dashboard ile aynı desen */
 .kutu {
   padding: 18px;
   background: var(--kart);
@@ -36,7 +34,6 @@
 }
 .tam-genislik { grid-column: 1 / -1; }
 
-/* Özet kartları */
 .metrik-satiri {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -51,13 +48,12 @@
   padding: 20px;
   border: 1px solid var(--cizgi);
   border-radius: 10px;
-  
+
 }
 .metrik-kart .deger { font-size: 32px; font-weight: 700; line-height: 1; }
 .metrik-kart .deger small { font-size: 14px; font-weight: 500; color: var(--metin-soluk); }
 .metrik-kart .etiket { font-size: 13px; color: var(--metin-soluk); }
 
-/* Aşama süresi çubukları */
 .asama-grafik { display: flex; flex-direction: column; gap: 10px; }
 .asama-satir {
   display: grid;
@@ -81,7 +77,6 @@
 .asama-satir .cubuk.darbogaz { background: #c62828; }
 .asama-satir .deger { font-size: 13px; font-weight: 600; text-align: right; }
 
-/* Tablolar */
 .tablo-sar { overflow-x: auto; }
 .tablo-sar.uzun { max-height: 400px; overflow-y: auto; }
 

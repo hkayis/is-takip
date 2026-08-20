@@ -1,6 +1,6 @@
 :host {
-  display: block;        /* bileşenler varsayılan olarak inline — bloğa çevir */
-  margin-bottom: 8px;    /* eskiden .is-kart'taydı, boşluk artık host'un işi */
+  display: block;
+  margin-bottom: 8px;
 }
 
 .is-kart {
@@ -27,7 +27,6 @@
   line-height: 1.3;
 }
 
-/* Renk artık ebeveynin konumundan değil, GİRDİDEN geliyor */
 .is-kart[data-renk="bekleyen"]   .kart-baslik { background: #e8873a; }
 .is-kart[data-renk="devam"]      .kart-baslik { background: #4a7fc1; }
 .is-kart[data-renk="tamamlanan"] .kart-baslik { background: #5aa05e; }

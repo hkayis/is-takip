@@ -3,9 +3,9 @@ import { Injectable, signal, computed, effect } from '@angular/core';
 export type Tema = 'acik' | 'koyu' | 'sistem';
 
 export interface Ayarlar {
-  buyuklukEsikleri: Record<string, number>;   // adam-gün eşikleri
-  hedefSureler: Record<string, number>;        // büyüklük başına hedef takvim günü
-  dikkatPenceresiGun: number;                  // "dikkat gerekenler" kaç gün ileriye baksın
+  buyuklukEsikleri: Record<string, number>;
+  hedefSureler: Record<string, number>;
+  dikkatPenceresiGun: number;
   tamamlananGun: number;
   tema: Tema;
 }
@@ -19,7 +19,7 @@ const VARSAYILAN: Ayarlar = {
 };
 @Injectable({ providedIn: 'root' })
 export class AyarService {
-    
+
     private readonly ANAHTAR= 'is-akisi-ayarlar';
 
     private _ayarlar=signal<Ayarlar>(this.oku());
@@ -34,7 +34,7 @@ export class AyarService {
     dikkatPenceresiGun = computed(()=>
     this._ayarlar().dikkatPenceresiGun);
 
-    tamamlananGun=computed(()=> 
+    tamamlananGun=computed(()=>
     this._ayarlar().tamamlananGun);
     tema= computed(()=>this._ayarlar().tema);
 

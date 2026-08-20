@@ -61,10 +61,7 @@ export class JobStore {
             this.yenile()));
     }
 
-
-
     tasi(id: number, yeniDurum: string, yeniAsama: string | null) {
-        // 1) İyimser: ekranı hemen güncelle
         this._isler.set(this._isler().map(j =>
             j.id === id
                 ? {
@@ -76,7 +73,6 @@ export class JobStore {
                 : j
         ));
 
-        // 2) Gerisini mevcut metoda bırak — o zaten API'yi çağırıp listeyi tazeliyor
         return this.durumDegistir(id, {
             newStatus: yeniDurum,
             newStage: yeniAsama,

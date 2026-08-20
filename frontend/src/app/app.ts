@@ -7,7 +7,7 @@ import { AyarService } from './services/ayar';
 import { UYGULAMA_ADI } from './sabitler';
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, 
+  imports: [RouterOutlet, RouterLink, RouterLinkActive,
     MatToolbarModule, MatButtonModule],
   templateUrl: './app.html',
   styleUrl: './app.scss',

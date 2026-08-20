@@ -20,13 +20,12 @@
   grid-template-columns: 1fr 1fr ;
   grid-auto-rows: 1fr;
   gap: 16px;
-  
+
 }
 
 @media (max-width: 900px) {
   .izgara { grid-template-columns: 1fr; }
 }
-
 
 .kutu {
   padding: 18px;
@@ -52,7 +51,6 @@
 
 .kutu-not { font-size: 12px; color: var(--metin-silik); }
 
-/* --- Dikkat gerekenler --- */
 .dikkat-satiri {
   display: flex;
   align-items: center;
@@ -80,15 +78,6 @@
 
 .dikkat-satiri .sure.gecikti { color: #c62828; }
 
-
-/* --- Durum dağılımı --- */
-
-
-
-
-
-
-/* --- Öncelik sütun grafiği --- */
 .sutunlar { display: flex; gap: 16px; align-items: flex-end; }
 
 .sutun-kutu {
@@ -124,7 +113,6 @@
 .dikey-cubuk[data-oncelik="Yuksek"] { background: #ffb74d; }
 .dikey-cubuk[data-oncelik="Acil"]   { background: #e57373; }
 
-/* --- Aşama dağılımı --- */
 .asama-satiri {
   display: flex;
   align-items: center;
@@ -277,7 +265,7 @@
   gap: 2px;
   padding: 14px 16px;
   border: 1px solid var(--cizgi);
-  border-left: 4px solid var(--metin-silik);   /* durum rengiyle ezilecek */
+  border-left: 4px solid var(--metin-silik);
   border-radius: 10px;
   background: var(--kart);
   cursor: pointer;
@@ -308,19 +296,19 @@
 .durum-kutu.toplam { cursor: default; }
 .durum-kutu .kutu-ust-satir {
   display: flex;
-  justify-content: space-between;   /* sayı solda, AG sağda */
-  align-items: flex-start;          /* AG üste hizalansın */
+  justify-content: space-between;
+  align-items: flex-start;
   width: 100%;
 }
 .durum-kutu .ag {
   display: flex;
   flex-direction: column;
-  align-items: center;              /* sayı ve "AG" alt alta ortalı */
+  align-items: center;
   line-height: 1;
 }
 .durum-kutu .ag-sayi   { font-size: 13px; font-weight: 600; color: var(--metin-soluk); }
 .durum-kutu .ag-etiket { font-size: 9px; letter-spacing: 0.5px; color: var(--metin-silik); }
-.yazdir-baslik { display: none; }   /* sadece yazdırmada görünür */
+.yazdir-baslik { display: none; }
 
 .yazdir-btn {
   margin-left: 8px;
@@ -338,25 +326,20 @@
 .yazdir-gorunum { display: none; }
 .kapsam-yazdir  { display: none; }
 @media print {
-  /* Kaydırma kalksın, liste tam görünsün */
   .dikkat-kutu {
     max-height: none;
     overflow: visible;
   }
 
-  /* Kâğıtta tek sütun daha rahat okunur */
   .izgara { grid-template-columns: 1fr; }
 
-  /* En sona at + uzun liste sayfalara bölünebilsin */
   .dikkat-bolum {
     order: 99;
     break-inside:avoid;
   }
 
-  /* Ama tek bir satır ikiye bölünmesin */
   .dikkat-satiri { break-inside: avoid; }
 
-    /* Büyüklük: ekranda toggle, kâğıtta iki grup */
   .kapsam-secim   { display: none; }
   .ekran-gorunum  { display: none; }
   .yazdir-gorunum { display: block; }

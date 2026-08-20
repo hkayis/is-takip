@@ -20,7 +20,6 @@ export class Ayarlar {
   protected buyuklukAdi = buyuklukAdi;
   buyuklukSirasi = ['FastTrack', 'XS', 'S', 'M', 'L', 'XL'];
 
-  // Düzenleme taslağı — Kaydet'e basılana kadar gerçek ayarlara dokunmaz
   esikler: Record<string, number>;
   hedefler: Record<string, number>;
   dikkatGun: number;
@@ -28,7 +27,7 @@ export class Ayarlar {
   hata = '';
 
   constructor() {
-    this.esikler = { ...this.ayar.buyuklukEsikleri() };   // KOPYA (bkz. not)
+    this.esikler = { ...this.ayar.buyuklukEsikleri() };
     this.hedefler = { ...this.ayar.hedefSureler() };
     this.dikkatGun = this.ayar.dikkatPenceresiGun();
     this.tema=this.ayar.tema();
@@ -38,7 +37,6 @@ export class Ayarlar {
   kaydet() {
     this.hata = '';
 
-    // Eşikler artan sırada olmalı, yoksa hesaplananBuyukluk saçmalar
     for (let i = 1; i < this.buyuklukSirasi.length; i++) {
       const oncekiKod = this.buyuklukSirasi[i - 1];
       const kod = this.buyuklukSirasi[i];
@@ -71,7 +69,7 @@ export class Ayarlar {
     this.tamamlananGun= this.ayar.tamamlananGun();
     this.tema = this.ayar.tema();
     this.hata = '';
-    
+
     this.snackBar.open('Varsayılanlara dönüldü.', 'Tamam', { duration: 3000 });
   }
 }

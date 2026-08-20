@@ -28,8 +28,6 @@
     <button type="button" [class.aktif]="gorunum() === 'pano'" (click)="gorunum.set('pano')">Pano</button>
   </div>
 
-
-
   <button matButton="filled" (click)="yeniIsAc()">+ Yeni İş</button>
 </div>
 @if (yukDurumu() === 'yukleniyor' || yukDurumu() === 'bos') {
@@ -88,7 +86,6 @@
               <span class="rozet" [attr.data-durum]="job.status">{{ durumAdi(job.status) }}</span>
               <span class="ok-kucuk">▾</span>
             </button>
-
 
           </td>
           <td>{{ job.stage ?? '—' }}</td>
@@ -165,7 +162,6 @@
   </div>
   }
 
-
   @if (seciliDetay(); as s) {
   <aside class="yan-panel">
     <div class="panel-icerik">
@@ -201,8 +197,6 @@
 
         @if (s.description) { <p class="aciklama">{{ s.description }}</p> }
       </header>
-
-
 
       <section class="panel-bolum">
         <h3>Not</h3>

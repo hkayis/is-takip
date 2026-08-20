@@ -52,18 +52,18 @@ export class Jobs implements OnInit {
 
   bekleyenler = computed(() => this.jobs().filter(j => j.status === 'Beklemede'));
   devamEdenler = computed(() => this.jobs().filter(j => j.status === 'DevamEdiyor'));
-  tamamlananlar = computed(() => { 
+  tamamlananlar = computed(() => {
     const sinir = Date.now() - this.panoGun() * 24 * 60 * 60 * 1000;
 
     return this.jobs()
     .filter(j=>
       j.status === 'Tamamlandi' &&
-      j.completedAt && 
+      j.completedAt &&
       new Date(j.completedAt).getTime()>= sinir
     ).sort((a,b)=>
     new Date(b.completedAt!).getTime()- new Date(a.completedAt!).getTime())
   });
-  
+
   seciliDetay = signal<JobDetail | null>(null);
   paneliKapat() {
   this.seciliDetay.set(null);
@@ -80,12 +80,11 @@ export class Jobs implements OnInit {
       }
     },
     error: () => {
-      this.store.yenile();                      // sunucudaki gerçek haline dön
+      this.store.yenile();
       this.snackBar.open('İş taşınamadı.', 'Tamam', { duration: 4000 });
     },
   });
 }
-  // Liste görünümü durumu
   gorunum = signal<'liste' | 'pano'>('liste');
   arama = signal('');
   durumFiltre = signal('hepsi');
@@ -99,7 +98,7 @@ export class Jobs implements OnInit {
     } else if (this.siralamaYonu() === 'artan') {
       this.siralamaYonu.set('azalan');
     } else {
-      this.siralamaAlani.set('varsayilan');   // 3. tık → varsayılana dön
+      this.siralamaAlani.set('varsayilan');
     }
   }
   siralamaOku(alan: string): string {
@@ -309,5 +308,4 @@ export class Jobs implements OnInit {
     });
   }
 
-  
 }

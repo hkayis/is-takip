@@ -11,7 +11,6 @@ export const hataInterceptor: HttpInterceptorFn = (req, next) => {
   const snackBar= inject(MatSnackBar);
   const auth = inject(Auth);
 
-
   return next(req).pipe(
     catchError((err)=>{
       if(err.status===401){
