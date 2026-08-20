@@ -77,9 +77,9 @@
             @for (b of buyuklukSureleri(); track b.kod) {
               <tr>
                 <td>{{ b.etiket }}</td>
-                <td>{{ b.adet }}</td>
-                <td [class.gecikme]="b.gecikme">{{ b.adet > 0 ? b.ortalama + ' gün' : '—' }}</td>
-                <td>{{ b.hedef }} gün</td>
+                <td class="sayisal">{{ b.adet }}</td>
+                <td [class.gecikme]="b.gecikme" class="sayisal">{{ b.adet > 0 ? b.ortalama + ' gün' : '—' }}</td>
+                <td class="sayisal">{{ b.hedef }} gün</td>
               </tr>
             }
           </tbody>

@@ -1,19 +1,12 @@
 .ozet-serit {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
-  padding: 14px 18px;
   margin-bottom: 16px;
-  background: var(--kart);
-  border: 1px solid var(--cizgi);
-  border-radius: 10px;
-  font-size: 15px;
-  color:var(--metin);
 }
 
-.ozet-serit strong { font-size: 18px; color: var(--metin); }
-.ozet-serit .ayrac { color: var(--metin-silik); }
-.ozet-serit .uyari { color: #c62828; font-weight: 700; }
+
 
 .izgara {
   display: grid;

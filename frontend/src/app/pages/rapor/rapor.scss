@@ -29,7 +29,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
   gap: 16px;
-  align-items: start;
+  
   margin-top: 24px;
 }
 .tam-genislik { grid-column: 1 / -1; }
@@ -77,8 +77,7 @@
 .asama-satir .cubuk.darbogaz { background: #c62828; }
 .asama-satir .deger { font-size: 13px; font-weight: 600; text-align: right; }
 
-.tablo-sar { overflow-x: auto; }
-.tablo-sar.uzun { max-height: 400px; overflow-y: auto; }
+
 
 .rapor-tablo { width: 100%; border-collapse: collapse; }
 .rapor-tablo th, .rapor-tablo td {
@@ -124,3 +123,41 @@
 }
 
 .bos-metin { color: var(--metin-silik); }
+
+.rapor-tablo .sayisal {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.rapor-tablo .t-baslik {
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rapor-izgara .kutu {
+  display: flex;
+  flex-direction: column;
+}
+
+.tablo-sar {
+  overflow-x: auto;
+  flex: 1;
+  min-height: 0;
+}
+.tablo-sar.uzun { max-height: 400px; overflow-y: auto; }
+.tablo-sar:not(.uzun) .rapor-tablo {
+  height: 100%;
+}
+.asama-grafik {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;                          /* kutunun kalan yüksekliğini al */
+  justify-content: space-between;   /* çubukları dikeyde yay */
+}
+.asama-grafik .ad{
+  font-size: 15px;
+}
+.tablo-sar:not(.uzun) { overflow-x: visible; }
+.tablo-sar:not(.uzun) .rapor-tablo th {
+  white-space: normal;
+}
