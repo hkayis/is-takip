@@ -1,6 +1,6 @@
 import { Service, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
+import { environment } from '../../environments/environment';
 export interface LoginResponse{
     token: string;
     username: string;
@@ -12,7 +12,7 @@ export interface LoginResponse{
 export class Auth {
 
     private http= inject(HttpClient);
-    private readonly apiUrl= 'http://localhost:5227';
+    private readonly apiUrl= environment.apiUrl;
 
     login(username: string, password: string){
         return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`,{

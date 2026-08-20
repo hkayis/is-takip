@@ -1,5 +1,6 @@
 import { Service, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 export interface Job{
     id: number;
@@ -57,7 +58,7 @@ export interface AsamaSuresi {
 
 export class JobApi {
     private http = inject(HttpClient);
-    private readonly apiUrl= 'http://localhost:5227';
+    private readonly apiUrl= environment.apiUrl;
 
     getAll(){
         return this.http.get<Job[]>(`${this.apiUrl}/jobs`);
