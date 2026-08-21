@@ -54,14 +54,15 @@
 
 <div class="izgara">
   @for (slot of slotlar(); track slot; let i = $index) {
-    @switch (slot) {
-      @case ('dikkat')   { <app-dikkat-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-dikkat-karti> }
-      @case ('oncelik')  { <app-oncelik-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-oncelik-karti> }
-      @case ('buyukluk') { <app-buyukluk-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-buyukluk-karti> }
-      @case ('asama')    { <app-asama-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-asama-karti> }
-      @case ('teslim')   { <app-teslim-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-teslim-karti> }
-      @case ('aylik')    { <app-aylik-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-aylik-karti> }
-    }
+  @switch (slot) {
+  @case ('dikkat') { <app-dikkat-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-dikkat-karti> }
+  @case ('oncelik') { <app-oncelik-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-oncelik-karti> }
+  @case ('buyukluk') { <app-buyukluk-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-buyukluk-karti> }
+  @case ('asama') { <app-asama-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-asama-karti> }
+  @case ('teslim') { <app-teslim-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-teslim-karti> }
+  @case ('aylik') { <app-aylik-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-aylik-karti> }
+  @case ('tahmin') { <app-tahmin-karti [jobs]="jobs()"><app-slot-menu [indeks]="i" /></app-tahmin-karti> }
+  }
   }
 </div>
 }

@@ -18,8 +18,6 @@ namespace WebApplication1.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Veritabanından okunan DateTime'ları UTC olarak işaretle
-            // (yoksa Kind=Unspecified döner, JSON'a 'Z' konmaz, istemci yanlış saat gösterir)
             var utcConverter = new ValueConverter<DateTime, DateTime>(
                 v => v,
                 v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
@@ -30,7 +28,6 @@ namespace WebApplication1.Data
 
             modelBuilder.Entity<Job>(entity =>
             {
-                // Id'yi kullanıcı belirliyor -> otomatik artan (IDENTITY) kapalı
                 entity.Property(j => j.Id).ValueGeneratedNever();
 
                 entity.Property(j => j.Title)
@@ -69,7 +66,6 @@ namespace WebApplication1.Data
                       .HasForeignKey(h => h.JobId)
                       .OnDelete(DeleteBehavior.Cascade);
 
-                // timeline sorguları için indeks
                 entity.HasIndex(h => new { h.JobId, h.ChangedAt });
             });
 

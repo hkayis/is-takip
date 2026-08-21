@@ -1,0 +1,22 @@
+<div class="kutu-ust">
+  <h2>Tahmin vs Gerçekleşen</h2>
+  <span class="kutu-not">{{ oranlar().length }} iş</span>
+  <ng-content />
+</div>
+
+@if (oranlar().length === 0) {
+<p class="bos">Kıyaslanacak tamamlanmış iş yok</p>
+} @else {
+<div class="oran">%{{ ortanca() }}</div>
+<div class="oran-not">işler planlanan sürenin ortanca bu kadarında bitiyor</div>
+
+@for (k of dagilim(); track k.id) {
+<div class="asama-satiri">
+  <span class="asama-ad">{{ k.etiket }}</span>
+  <div class="asama-yol">
+    <div class="asama-cubuk" [attr.data-kova]="k.id" [style.width.%]="k.yuzde"></div>
+  </div>
+  <span class="asama-sayi">{{ k.sayi }}</span>
+</div>
+}
+}

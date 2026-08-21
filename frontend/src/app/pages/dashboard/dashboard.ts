@@ -13,12 +13,14 @@ import { BuyuklukKarti } from '../../components/buyukluk-karti/buyukluk-karti';
 import { AsamaKarti } from '../../components/asama-karti/asama-karti';
 import { AylikKarti } from '../../components/aylik-karti/aylik-karti';
 import { TeslimKarti } from '../../components/teslim-karti/teslim-karti';
+import { TahminKarti } from '../../components/tahmin-karti/tahmin-karti';
 import { AyarService } from '../../services/ayar';
 import { SlotMenu } from '../../components/slot-menu/slot-menu';
 @Component({
   selector: 'app-dashboard',
   imports: [
     TeslimKarti,
+    TahminKarti,
     AylikKarti,
     DikkatKarti,
     OncelikKarti,

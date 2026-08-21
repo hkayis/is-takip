@@ -47,7 +47,6 @@
         public DateTime? CompletedAt { get; set; }
         public DateTime Deadline { get; set; }
 
-        // Efor tahmini: kaç kişi × kaç gün = adam-gün
         public int? Adam { get; set; }
         public int? Gun { get; set; }
 

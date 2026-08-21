@@ -48,7 +48,6 @@ builder.Services.AddRateLimiter(options =>
 
     }, cancellationToken: token);
     };
-    // Giriş denemeleri: IP başına 5 dakikada 5 deneme
     options.AddPolicy("giris", http =>
         RateLimitPartition.GetFixedWindowLimiter(
             partitionKey: http.Connection.RemoteIpAddress?.ToString() ?? "bilinmeyen",
@@ -59,7 +58,6 @@ builder.Services.AddRateLimiter(options =>
                 QueueLimit = 0,
             }));
 
-    // Genel emniyet supabı: IP başına dakikada 100 istek
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(http =>
         RateLimitPartition.GetFixedWindowLimiter(
             http.Connection.RemoteIpAddress?.ToString() ?? "bilinmeyen",
@@ -70,7 +68,6 @@ builder.Services.AddRateLimiter(options =>
                 QueueLimit = 0,
             }));
 });
-// JWT doğrulama
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -90,7 +87,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// Angular için CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AngularApp", policy =>
@@ -103,7 +99,6 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// ilk admin kullanıcısını oluştur
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -119,12 +114,10 @@ using (var scope = app.Services.CreateScope())
         });
         await db.SaveChangesAsync();
     }
-    // örnek iş verisi (sadece tablo boşsa)
     if (!await db.Jobs.AnyAsync())
     {
         var bugun = DateTime.UtcNow.Date;
 
-        // Büyüklük, adam-günden türetilir (frontend'deki eşiklerle aynı)
         JobSize BuyuklukBul(int? adam, int? gun)
         {
             var efor = (adam ?? 0) * (gun ?? 0);
@@ -136,7 +129,6 @@ using (var scope = app.Services.CreateScope())
             return JobSize.XL;
         }
 
-        // yolculuk: (aşama, açılıştan kaç gün sonra o aşamaya girildi)
         Job Olustur(
             int id, string baslik, string aciklama,
             int teslimGun, JobStatus durum, JobPriority oncelik,
@@ -149,7 +141,6 @@ using (var scope = app.Services.CreateScope())
             var acilis = bugun.AddDays(-acilisGunOnce);
             DateTime? kapanis = kapanisGunOnce.HasValue ? bugun.AddDays(-kapanisGunOnce.Value) : null;
 
-            // Kapanmış işlerde yolculuk verilmediyse makul bir aşama dağılımı üret
             if (yolculuk is null && kapanis.HasValue)
             {
                 var toplam = (kapanis.Value - acilis).TotalDays;
@@ -221,7 +212,6 @@ using (var scope = app.Services.CreateScope())
                 });
             }
 
-            // Düzenleme geçmişi örneği (Changes dolu = aşama hesabına girmez)
             if (duzenlemeOzeti is not null)
             {
                 job.History.Add(new JobHistory
@@ -237,7 +227,6 @@ using (var scope = app.Services.CreateScope())
         }
 
         db.Jobs.AddRange(
-            // ---------- DEVAM EDEN (aşama süreleri buradan hesaplanır) ----------
             Olustur(1001, "Ödeme altyapısı entegrasyonu", "Yeni ödeme sağlayıcısının sisteme entegre edilmesi.",
                     -5, JobStatus.DevamEdiyor, JobPriority.Acil, 3, 12, 40,
                     new[] { (JobStage.Analiz, 2), (JobStage.Gelistirme, 6) },
@@ -264,7 +253,6 @@ using (var scope = app.Services.CreateScope())
                     6, JobStatus.DevamEdiyor, JobPriority.Normal, 2, 10, 30,
                     new[] { (JobStage.Analiz, 2), (JobStage.Gelistirme, 7), (JobStage.Test, 20), (JobStage.Tasima, 27) }),
 
-            // ---------- BEKLEMEDE ----------
             Olustur(1002, "Tedarikçi sözleşme yenileme", "Lojistik tedarikçisiyle yıllık sözleşmenin gözden geçirilmesi.",
                     -12, JobStatus.Beklemede, JobPriority.Yuksek, 1, 5, 30),
             Olustur(1006, "Bütçe revizyonu", "Yılsonu bütçesinin güncel harcamalara göre revize edilmesi.",
@@ -279,7 +267,6 @@ using (var scope = app.Services.CreateScope())
             Olustur(1016, "Veri ambarı migrasyonu", "Raporlama verisinin yeni ambara taşınması.",
                     90, JobStatus.Beklemede, JobPriority.Yuksek, 4, 30, 10),
 
-            // ---------- TAMAMLANAN: FastTrack ----------
             Olustur(1101, "Fatura şablonu düzeltmesi", "Fatura çıktısındaki hatalı alan düzeltildi.",
                     -143, JobStatus.Tamamlandi, JobPriority.Normal, 1, 2, 150, kapanisGunOnce: 144),
             Olustur(1102, "E-posta imza güncellemesi", "Kurumsal e-posta imzalarının yenilenmesi.",
@@ -287,7 +274,6 @@ using (var scope = app.Services.CreateScope())
             Olustur(1103, "Yazıcı sözleşmesi yenileme", "Ofis yazıcı bakım sözleşmesinin uzatılması.",
                     -50, JobStatus.Tamamlandi, JobPriority.Dusuk, 1, 3, 60, kapanisGunOnce: 45),
 
-            // ---------- TAMAMLANAN: XS ----------
             Olustur(1104, "Personel oryantasyon kiti", "Yeni çalışanlar için karşılama dokümanları hazırlandı.",
                     -114, JobStatus.Tamamlandi, JobPriority.Normal, 2, 4, 130, kapanisGunOnce: 115),
             Olustur(1105, "Depo sayım uygulaması", "Mobil sayım aracının devreye alınması.",
@@ -295,7 +281,6 @@ using (var scope = app.Services.CreateScope())
             Olustur(1106, "Mobil bildirim ayarları", "Uygulama bildirim tercihlerinin eklenmesi.",
                     -27, JobStatus.Tamamlandi, JobPriority.Yuksek, 3, 3, 45, kapanisGunOnce: 28),
 
-            // ---------- TAMAMLANAN: S ----------
             Olustur(1107, "Muhasebe entegrasyon testi", "Muhasebe yazılımıyla veri alışverişinin doğrulanması.",
                     -104, JobStatus.Tamamlandi, JobPriority.Normal, 2, 8, 140, kapanisGunOnce: 105),
             Olustur(1108, "Bayi portalı iyileştirme", "Bayi ekranlarındaki performans sorunlarının giderilmesi.",
@@ -306,7 +291,6 @@ using (var scope = app.Services.CreateScope())
             Olustur(1110, "Çağrı merkezi raporu", "Çağrı istatistiklerinin raporlanması.",
                     -14, JobStatus.Tamamlandi, JobPriority.Normal, 4, 5, 55, kapanisGunOnce: 15),
 
-            // ---------- TAMAMLANAN: M ----------
             Olustur(1111, "İK portalı yenileme", "İnsan kaynakları self-servis ekranlarının yenilenmesi.",
                     -94, JobStatus.Tamamlandi, JobPriority.Normal, 3, 12, 160, kapanisGunOnce: 95),
             Olustur(1112, "Stok yönetim modülü", "Depo stok takibinin sisteme taşınması.",
@@ -314,18 +298,15 @@ using (var scope = app.Services.CreateScope())
             Olustur(1113, "Tedarik zinciri panosu", "Tedarik süreçleri için izleme panosu geliştirildi.",
                     -21, JobStatus.Tamamlandi, JobPriority.Normal, 2, 20, 90, kapanisGunOnce: 22),
 
-            // ---------- TAMAMLANAN: L ----------
             Olustur(1114, "ERP sürüm yükseltme", "ERP sisteminin yeni ana sürüme geçirilmesi.",
                     -84, JobStatus.Tamamlandi, JobPriority.Yuksek, 4, 20, 200, kapanisGunOnce: 85),
             Olustur(1115, "Mağaza otomasyon projesi", "Şube kasa ve stok sistemlerinin yenilenmesi.",
                     -40, JobStatus.Tamamlandi, JobPriority.Acil, 5, 15, 170, kapanisGunOnce: 25),
 
-            // ---------- TAMAMLANAN: XL ----------
             Olustur(1116, "Veri merkezi taşıma", "Sunucuların yeni veri merkezine taşınması.",
                     -55, JobStatus.Tamamlandi, JobPriority.Acil, 6, 25, 260, kapanisGunOnce: 40,
                     not: "Taşıma penceresi iki kez ertelendi."),
 
-            // ---------- İPTAL ----------
             Olustur(1014, "Fuar katılımı", "Sektör fuarına stant ile katılım organizasyonu.",
                     20, JobStatus.Iptal, JobPriority.Normal, 2, 5, 18, kapanisGunOnce: 10)
         );
@@ -342,8 +323,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AngularApp");
 app.UseRateLimiter();
-app.UseAuthentication();   // önce authentication
-app.UseAuthorization();    // sonra authorization
+app.UseAuthentication();   
+app.UseAuthorization();    
 app.MapControllers();
 
 app.Run();
