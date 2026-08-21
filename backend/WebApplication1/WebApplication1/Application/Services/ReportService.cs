@@ -17,15 +17,13 @@ namespace WebApplication1.Application.Services
         {
             var simdi = DateTime.UtcNow;
 
-            // Sadece devam eden işleri, geçmişleriyle birlikte al
             var isler = await _repo.DurumaGoreGecmisleGetirAsync(JobStatus.DevamEdiyor);
 
-            var toplamGun = new Dictionary<string, double>();      // aşama -> toplam gün
-            var isKumesi = new Dictionary<string, HashSet<int>>(); // aşama -> o aşamaya giren iş id'leri
+            var toplamGun = new Dictionary<string, double>();     
+            var isKumesi = new Dictionary<string, HashSet<int>>(); 
 
             foreach (var job in isler)
             {
-                // Gerçek olaylar: düzenleme satırlarını (Changes dolu) AT, zamana göre sırala
                 var olaylar = job.History
                     .Where(h => h.Changes == null)
                     .OrderBy(h => h.ChangedAt)
@@ -33,17 +31,15 @@ namespace WebApplication1.Application.Services
 
                 if (olaylar.Count == 0) continue;
 
-                // Ardışık iki olay arası aralığı, o aralığın BAŞINDAKİ aşamaya yaz
                 for (int i = 0; i < olaylar.Count; i++)
                 {
                     var baslangic = olaylar[i].ChangedAt;
                     var bitis = (i + 1 < olaylar.Count)
                         ? olaylar[i + 1].ChangedAt
-                        : simdi;                       // son aralık AÇIK → şimdiye kadar say
+                        : simdi;                       
                     var gun = (bitis - baslangic).TotalDays;
                     if (gun <= 0) continue;
 
-                    // Aralık boyunca iş, o olayın NewStage'indeydi; aşama yoksa Beklemede
                     var asama = olaylar[i].NewStage?.ToString() ?? "Beklemede";
 
                     toplamGun[asama] = (toplamGun.TryGetValue(asama, out var t) ? t : 0) + gun;
@@ -53,7 +49,6 @@ namespace WebApplication1.Application.Services
                 }
             }
 
-            // Sabit sıra: Beklemede, Analiz, Gelistirme, Test, Tasima
             var sira = new[] { "Beklemede", "Analiz", "Gelistirme", "Test", "Tasima" };
 
             return toplamGun

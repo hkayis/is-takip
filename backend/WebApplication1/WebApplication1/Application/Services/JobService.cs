@@ -76,7 +76,7 @@ namespace WebApplication1.Application.Services
         {
             var job = new Job
             {
-                Id = dto.Id,                     // numarayı kullanıcı belirliyor
+                Id = dto.Id,                    
                 Title = dto.Title,
                 Description = dto.Description,
                 Deadline = dto.Deadline,
@@ -88,10 +88,9 @@ namespace WebApplication1.Application.Services
                 CreatedAt = DateTime.UtcNow
             };
 
-            // Id önceden belli olduğu için geçmiş kaydını aynı anda ekleyebiliyoruz
             job.History.Add(new JobHistory
             {
-                OldStatus = null,                // ilk kayıt
+                OldStatus = null,               
                 NewStatus = JobStatus.Beklemede,
                 ChangedAt = DateTime.UtcNow,
                 Note = "İş oluşturuldu"
@@ -108,7 +107,6 @@ namespace WebApplication1.Application.Services
             var job = await _repo.GetirAsync(id);
             if (job is null) return false;
 
-            // 1) EZMEDEN ÖNCE farkları topla (job.X = eski, dto.X = yeni)
             var degisiklikler = new List<string>();
             if (job.Title != dto.Title) degisiklikler.Add("Başlık güncellendi");
             if (job.Description != dto.Description) degisiklikler.Add("Açıklama güncellendi");
@@ -119,7 +117,6 @@ namespace WebApplication1.Application.Services
                 degisiklikler.Add($"Efor: {job.Adam}×{job.Gun} → {dto.Adam}×{dto.Gun}");
             if (job.Not != dto.Not) degisiklikler.Add("Not güncellendi");
 
-            // 2) Alanları uygula
             job.Title = dto.Title;
             job.Description = dto.Description;
             job.Deadline = dto.Deadline;
@@ -129,13 +126,12 @@ namespace WebApplication1.Application.Services
             job.Buyukluk = dto.Buyukluk;
             job.Not = dto.Not;
 
-            // 3) Gerçekten bir şey değiştiyse geçmişe "düzenleme" satırı ekle
             if (degisiklikler.Count > 0)
             {
                 _repo.GecmisEkle(new JobHistory
                 {
                     JobId = job.Id,
-                    OldStatus = job.Status,   // durum değişmiyor; kolon boş kalmasın diye mevcut durum
+                    OldStatus = job.Status,   
                     NewStatus = job.Status,
                     ChangedAt = DateTime.UtcNow,
                     Changes = string.Join(", ", degisiklikler)
@@ -166,7 +162,6 @@ namespace WebApplication1.Application.Services
             job.Status = dto.NewStatus;
             job.Stage = dto.NewStatus == JobStatus.DevamEdiyor ? dto.NewStage : null;
 
-            // Tamamlandı'ya geçişte ilk tamamlanma tarihini koru; çıkışta temizle
             job.CompletedAt = dto.NewStatus == JobStatus.Tamamlandi
                 ? (job.CompletedAt ?? DateTime.UtcNow)
                 : null;

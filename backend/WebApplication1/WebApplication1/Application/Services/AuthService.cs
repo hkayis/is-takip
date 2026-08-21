@@ -19,7 +19,6 @@ namespace WebApplication1.Application.Services
         {
             var user = await _repo.KullaniciAdiylaGetirAsync(dto.Username);
 
-            // kullanıcı yok VEYA şifre yanlış — ikisini de aynı şekilde ele al
             if (user is null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 return null;
 
