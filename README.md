@@ -1,4 +1,4 @@
-# İş Akışı
+# İş Takip Portalı
 
 İş takip uygulaması. İşler liste ve kanban görünümünde takip edilir, durum ve
 aşama değişiklikleri geçmişe yazılır, bu geçmişten aşama süreleri ve darboğaz
@@ -78,11 +78,6 @@ kaydına bir satır ekle, `dashboard.html`'deki `@switch`'e bir dal ekle.
 
 ### Backend
 
-Katmanlar içten dışa doğru bağımlıdır — `Domain` hiçbir şeye, `Application`
-yalnızca `Domain`'e bakar. Veritabanı erişimi `Application/Interfaces` altındaki
-repository arayüzleriyle soyutlanmış, EF Core'a bağlı implementasyonlar `Data`
-katmanında durur.
-
 ```
 backend/WebApplication1/WebApplication1/
   Domain/Entities/        Job, JobHistory, User — hiçbir katmana bağımlı değil
@@ -112,10 +107,6 @@ frontend/src/app/
   etiketler.ts     Enum kodu → görünen ad eşlemeleri
 ```
 
-Veri erişimi `JobStore` üzerinden yürür: sayfalar API'yi doğrudan çağırmaz,
-store'un sinyallerini okur. Bir iş güncellendiğinde store yenilenir ve onu
-dinleyen bütün ekranlar birlikte güncellenir.
-
 ## Teknik notlar
 
 ### Mimari ve bağımlılık yönü
@@ -139,8 +130,8 @@ hangi arayüzün hangi sınıfa bağlanacağı orada kararlaştırılır.
 
 ### Veri katmanı
 
-- **Code First + migration.** Şema C# sınıflarından üretilir, uygulama açılışta
-  `MigrateAsync()` ile bekleyen migration'ları uygular.
+- **Code First + migration.** Şema C# sınıflarından üretilir, açılışta
+  `MigrateAsync()` uygulanır.
 - **Repository + Unit of Work.** `Ekle`/`Guncelle`/`Sil` değişiklikleri biriktirir,
   `KaydetAsync()` hepsini tek transaction'da yazar. Bir iş güncellenip geçmiş
   kaydı eklendiğinde ikisi ya birlikte olur ya hiç olmaz.
@@ -152,8 +143,6 @@ hangi arayüzün hangi sınıfa bağlanacağı orada kararlaştırılır.
   gösterir.
 - **`ValueGeneratedNever()`.** İş numarasını kullanıcı belirlediği için otomatik
   artan kimlik kapalıdır.
-- **Bileşik indeks** `(JobId, ChangedAt)` — geçmiş kayıtları hep bu ikisiyle
-  sorgulanır.
 
 ### Denetim izi
 
@@ -165,9 +154,7 @@ hem "ne zaman ne oldu" zaman çizelgesini hem de düzenleme geçmişini taşır.
 
 ### Güvenlik
 
-- JWT (HS256) ile kimlik doğrulama, uç noktalarda `[Authorize]`, giriş uç
-  noktasında `[AllowAnonymous]`.
-- Şifreler BCrypt ile hash'lenir, düz metin saklanmaz.
+- JWT (HS256) ile kimlik doğrulama, şifreler BCrypt ile hash'lenir.
 - **Rate limiting**: giriş için IP başına 5 dakikada 5 deneme (kaba kuvvet
   denemesine karşı), genel trafik için IP başına dakikada 100 istek. Sınır
   aşıldığında `Retry-After` başlığı ve kullanıcının anlayacağı bir mesaj döner.
@@ -176,9 +163,9 @@ hem "ne zaman ne oldu" zaman çizelgesini hem de düzenleme geçmişini taşır.
 
 ### Frontend mimarisi
 
-- **Standalone bileşenler** ve **sinyal tabanlı durum yönetimi** (`signal`,
-  `computed`, `effect`, `input.required`). Türetilmiş her değer `computed`'dır,
-  elle senkronlanan kopya durum tutulmaz.
+- Standalone bileşenler, sinyal tabanlı durum (`signal`, `computed`,
+  `input.required`); türetilmiş her değer `computed`, elle senkronlanan kopya
+  durum yok.
 - **`JobStore` tek veri kaynağıdır.** Sayfalar API'yi doğrudan çağırmaz; store'un
   sinyallerini okur. Bir iş güncellendiğinde store yenilenir ve onu dinleyen
   bütün ekranlar birlikte güncellenir.
@@ -190,41 +177,9 @@ hem "ne zaman ne oldu" zaman çizelgesini hem de düzenleme geçmişini taşır.
 - **İçerik projeksiyonu** (`<ng-content>`). Pano yuva menüsü dashboard'da yazılır
   ama kartların başlığına yerleşir; kartlar menünün varlığından habersizdir ve
   kendi başlıklarının sahibi kalır.
-- **Stil yerleşimi görünüm kapsüllemesine göre.** Angular bileşen stillerini o
-  bileşenin şablonuyla sınırlar. Bu yüzden kural şudur: bir sınıfı tek bileşen
-  kullanıyorsa bileşenin kendi `.scss`'inde, birden fazla bileşen kullanıyorsa
-  `styles.scss`'te durur.
 - Kanban sürükle-bırak için Angular CDK, koyu tema için Material 3 tasarım
   token'ları ve `light-dark()`, pano ve rapor çıktıları için `@media print`
   kuralları.
-
-### Öne çıkan hesaplar
-
-**Aşama süreleri (darboğaz analizi).** Bir işin geçmiş kayıtları kronolojik
-sıralanır; ardışık iki kayıt arasındaki süre, o aralıkta işin bulunduğu aşamaya
-yazılır. Son aralık hâlâ açıksa şu ana kadar sayılır. Aşama ortalaması, o aşamada
-geçen toplam gün ÷ o aşamadan geçen **benzersiz iş sayısı** olarak hesaplanır —
-aynı işin bir aşamaya iki kez girmesi böylece ortalamayı bozmaz.
-
-**Ortalama yerine ortanca.** Döngü süresi ve tahmin sapması hesaplarında ortanca
-kullanılır. Birkaç çok uzun iş ortalamayı tek başına yukarı çeker ve "tipik iş"
-hakkında yanlış fikir verir; ortanca bundan etkilenmez.
-
-**Aciliyet skoru.** Kanban sıralaması, öncelik puanı ile teslim tarihine kalan
-gün birleştirilerek yapılır; yaklaşan yüksek öncelikli işler yukarı çıkar.
-
-**Büyüklük türetme.** `adam × gün` eforu, ayarlardan gelen eşiklerden geçirilerek
-FastTrack / XS / S / M / L / XL kovalarına yerleştirilir. Eşikler çalışma anında
-değiştirilebilir olduğu için sabit kodlanmamıştır.
-
-### Değerlendirilip uygulanmayanlar
-
-- **CQRS.** Okuma ve yazma modellerini ayırmak bu ölçekte karşılığı olmayan bir
-  karmaşıklık getirirdi; tek servis katmanı yeterli.
-- **Sunucu tarafı sayfalama.** Ölçüldü: 30 iş yaklaşık 9 KB. Ayrıca pano ve rapor
-  toplamları zaten tüm veriyi gerektiriyor, sayfalama bunları bozardı.
-- **Otomatik testler.** Proje kapsamı dışında bırakıldı; üretime gidecek bir
-  sürümde ilk eklenecek şey olurdu.
 
 ## Notlar
 
@@ -232,5 +187,3 @@ değiştirilebilir olduğu için sabit kodlanmamıştır.
   içindir; üretimde `Jwt__Key` ortam değişkeninden verilmelidir.
 - Ayarlar (eşikler, hedefler, tema, pano yuvaları) sunucuda değil tarayıcının
   localStorage'ında tutulur — makine değiştirince sıfırlanır.
-- Pano ve rapor ekranları yazdırmaya hazırdır; "PDF olarak indir" düğmesi
-  tarayıcının yazdırma penceresini açar.
