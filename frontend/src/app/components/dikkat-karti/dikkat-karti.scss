@@ -41,13 +41,6 @@
 
 .dikkat-satiri .sure.gecikti { color: #c62828; }
 
-.bos {
-  color: var(--metin-silik);
-  font-size: 13px;
-  text-align: center;
-  padding: 20px 0;
-}
-
 @media print {
   .dikkat-kutu {
     max-height: none;

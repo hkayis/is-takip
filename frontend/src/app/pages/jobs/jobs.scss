@@ -417,19 +417,6 @@
   color: var(--metin-soluk);
 }
 
-.panel-bos {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  gap: 10px;
-  color: var(--metin-silik);
-  font-size: 13px;
-
-  mat-icon { font-size: 34px; width: 34px; height: 34px; }
-  p { margin: 0; }
-}
 .is-tablo .t-no {
   width: 90px;
   font-variant-numeric: tabular-nums;

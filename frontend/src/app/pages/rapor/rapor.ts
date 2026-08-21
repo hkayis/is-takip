@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
-import { JobApi, Job, AsamaSuresi } from '../../services/job-api';
+import { JobApi, AsamaSuresi } from '../../services/job-api';
 import { buyuklukAdi } from '../../etiketler';
 import { MatButtonModule } from '@angular/material/button';
 import { DatePipe } from '@angular/common';

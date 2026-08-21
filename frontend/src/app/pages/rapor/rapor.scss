@@ -1,28 +1,18 @@
 .rapor { padding: 24px; }
 .rapor h1 { margin: 0 0 20px; font-size: 22px; }
 
-.bolum-ust,
-.kutu-ust {
+.bolum-ust {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   margin-bottom: 14px;
 }
-.bolum-ust h2,
-.kutu-ust h2 {
+.bolum-ust h2 {
   margin: 0;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.7px;
   color: var(--metin-soluk);
-}
-.kutu-not { font-size: 12px; color: var(--metin-silik); }
-
-.kutu {
-  padding: 18px;
-  background: var(--kart);
-  border: 1px solid var(--cizgi);
-  border-radius: 10px;
 }
 
 .rapor-izgara {
